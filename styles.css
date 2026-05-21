@@ -77,35 +77,31 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: linear-gradient(135deg, #fff 0%, #f5f5f5 100%);
-  color: #0a0a0c;
-  padding: 8px 14px 8px 16px;
-  border-radius: 8px;
-  border: 2px solid var(--accent);
+  gap: 18px;
+  text-decoration: none;
 }
 
-.logo-brand {
-  font-family: 'Brush Script MT', cursive;
-  font-style: italic;
-  font-weight: 700;
-  font-size: 1.55rem;
-  letter-spacing: -0.02em;
-  line-height: 1;
+.logo-img {
+  height: 56px;
+  width: auto;
+  display: block;
 }
 
-.logo-flag { display: inline-flex; }
-
-.logo-sub {
+.logo-model {
   font-family: 'Inter', sans-serif;
-  font-size: 0.55rem;
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: 0.18em;
-  color: #0a0a0c;
-  text-transform: uppercase;
-  border-left: 1px solid #0a0a0c;
-  padding-left: 8px;
+  font-weight: 800;
+  font-size: 2.4rem;
+  line-height: 1;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  padding-left: 18px;
+  border-left: 2px solid rgba(255,255,255,0.18);
+  transition: color .2s, transform .2s;
+}
+
+@media (max-width: 720px) {
+  .logo-img { height: 42px; }
+  .logo-model { font-size: 1.8rem; padding-left: 12px; }
 }
 
 .header-controls {
@@ -976,31 +972,26 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   .pv-logo {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    border: 2px solid #dc1f26;
+    gap: 10px;
+    background: #111;
     border-radius: 6px;
-    padding: 6px 10px;
-    background: #fff;
+    padding: 6px 12px;
   }
 
-  .pv-logo-name {
-    font-family: 'Brush Script MT', cursive;
-    font-style: italic;
-    font-weight: 700;
+  .pv-logo-img {
+    height: 24px;
+    width: auto;
+    display: block;
+  }
+
+  .pv-logo-model {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
     font-size: 18px;
-    color: #111;
+    color: #EE202E;
     line-height: 1;
-  }
-
-  .pv-logo-sub {
-    font-size: 6px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    line-height: 1.1;
-    border-left: 1px solid #111;
-    padding-left: 6px;
-    color: #111;
+    padding-left: 8px;
+    border-left: 1px solid rgba(255,255,255,0.35);
   }
 
   .pv-meta {

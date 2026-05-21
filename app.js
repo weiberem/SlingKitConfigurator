@@ -363,12 +363,19 @@
     if (id === 'summary') renderFullSummaryPanel();
   }
 
+  const LOGO_MODEL_SUFFIX = { sling2: '2', tsi: 'TSi', highwing: 'HW' };
+
   function renderHeader() {
     const m = findModel(state.config.modelId);
     document.getElementById('modelTitle').textContent = m ? m.name : '—';
     document.getElementById('modelSubtitle').textContent = m ? `Konfigurieren Sie Ihre ${m.name}` : '';
     document.getElementById('summaryModelName').textContent = m ? m.name : '—';
     document.getElementById('summaryImage').innerHTML = m ? `<div style="color:#dc1f26">${ICONS[m.icon] || ICONS['plane-low']}</div>` : '';
+    const suffix = LOGO_MODEL_SUFFIX[state.config.modelId] || '';
+    const logoModel = document.getElementById('logoModel');
+    if (logoModel) logoModel.textContent = suffix;
+    const pvLogoModel = document.getElementById('pvLogoModel');
+    if (pvLogoModel) pvLogoModel.textContent = suffix;
     document.getElementById('curLabel').textContent = state.currency;
     document.getElementById('fxMiniValue').textContent = state.currency === 'USD'
       ? '1 USD = 1.00 USD (Basis)'
