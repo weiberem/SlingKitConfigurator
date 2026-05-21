@@ -313,10 +313,10 @@
       return `
         <button type="button" class="model-tab ${active}" data-model="${m.id}" role="tab" aria-selected="${!!active}">
           <span class="mt-icon">${ICONS[m.icon] || ICONS['plane-low']}</span>
-          <span>
+          <span class="mt-body">
             <span class="mt-name">${m.name}</span>
             <span class="mt-tag">${m.tag}</span>
-            <span class="mt-from">Kit-Teile ab <strong>${fromPrice}</strong></span>
+            <span class="mt-from">ab <strong>${fromPrice}</strong></span>
           </span>
         </button>
       `;
@@ -365,7 +365,7 @@
 
   const LOGO_MODEL_SUFFIX = {
     sling2:   '<span class="ws">2</span>',
-    tsi:      '<span class="ws">TS</span><span class="rs sm">i</span>',
+    tsi:      '<span class="ws">TS</span><span class="rs">i</span>',
     highwing: '<span class="ws">H</span><span class="rs">W</span>'
   };
 
