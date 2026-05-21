@@ -500,13 +500,26 @@
     { id: 'summary',   label: 'Bestellen' }
   ];
 
+  /* Liefert die für das aktuell gewählte Modell relevanten Steps.
+     Steps, in denen es keine echte Auswahl gibt (z.B. nur 1 Motor
+     verfügbar), werden ausgeblendet – ihr Item wird im Hintergrund
+     trotzdem ausgewählt, damit es in den Summen erscheint. */
+  function activeSteps() {
+    const m = findModel(state.config.modelId);
+    return STEPS.filter(s => {
+      if (s.id === 'engine' && m && Array.isArray(m.compatibleEngines) && m.compatibleEngines.length <= 1) return false;
+      return true;
+    });
+  }
+
   function renderSidebar() {
     const host = document.getElementById('stepsBar');
     if (!host) return;
-    const activeIdx = STEPS.findIndex(s => s.id === state.activeSection);
+    const steps = activeSteps();
+    const activeIdx = steps.findIndex(s => s.id === state.activeSection);
     const parts = [];
     parts.push('<div class="steps-inner">');
-    STEPS.forEach((s, i) => {
+    steps.forEach((s, i) => {
       const cls = i === activeIdx ? 'active' : (i < activeIdx ? 'done' : '');
       const inner = (i < activeIdx) ? STEP_CHECK : (STEP_ICONS[s.id] || '');
       parts.push(`
@@ -515,7 +528,7 @@
           <span class="step-label">${s.label}</span>
         </button>
       `);
-      if (i < STEPS.length - 1) {
+      if (i < steps.length - 1) {
         parts.push(`<span class="step-sep ${i < activeIdx ? 'done' : ''}"></span>`);
       }
     });
@@ -964,10 +977,11 @@
   }
 
   function renderPanelNav() {
-    const idx = STEPS.findIndex(s => s.id === state.activeSection);
+    const steps = activeSteps();
+    const idx = steps.findIndex(s => s.id === state.activeSection);
     if (idx < 0) return;
-    const prev = idx > 0 ? STEPS[idx - 1] : null;
-    const next = idx < STEPS.length - 1 ? STEPS[idx + 1] : null;
+    const prev = idx > 0 ? steps[idx - 1] : null;
+    const next = idx < steps.length - 1 ? steps[idx + 1] : null;
     const html = `
       <footer class="panel-nav">
         ${prev ? `<button type="button" class="btn btn-ghost" data-go-step="${prev.id}">← Zurück: ${prev.label}</button>` : '<span></span>'}
