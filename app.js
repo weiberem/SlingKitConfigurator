@@ -662,10 +662,16 @@
           <div class="qb-list" hidden>
             ${qbForPart.map(q => {
               const sel = state.config.quickbuild.includes(q.id);
+              const reqLabels = Array.isArray(q.requires)
+                ? q.requires.map(r => qbAll.find(x => x.id === r)?.label).filter(Boolean)
+                : [];
+              const reqHint = reqLabels.length
+                ? `<div class="qb-req">↳ benötigt automatisch: ${reqLabels.join(', ')}</div>`
+                : '';
               return `
                 <label class="qb-item ${sel ? 'selected' : ''}" data-qb-id="${q.id}">
                   <span class="qb-check">${sel ? checkSvg() : ''}</span>
-                  <span class="qb-label">${q.label}</span>
+                  <span class="qb-label">${q.label}${reqHint}</span>
                   <span class="qb-price">+ ${format(q.price)}</span>
                 </label>
               `;
@@ -730,7 +736,22 @@
         const id = item.dataset.qbId;
         const arr = state.config.quickbuild;
         const i = arr.indexOf(id);
-        if (i >= 0) arr.splice(i, 1); else arr.push(id);
+        if (i >= 0) {
+          arr.splice(i, 1);
+          // Items, die diesen als requires hatten, auch entfernen
+          for (let k = arr.length - 1; k >= 0; k--) {
+            const other = qbAll.find(q => q.id === arr[k]);
+            if (other && Array.isArray(other.requires) && other.requires.includes(id)) {
+              arr.splice(k, 1);
+            }
+          }
+        } else {
+          arr.push(id);
+          const q = qbAll.find(qq => qq.id === id);
+          if (q && Array.isArray(q.requires)) {
+            q.requires.forEach(req => { if (!arr.includes(req)) arr.push(req); });
+          }
+        }
         update();
       });
     });

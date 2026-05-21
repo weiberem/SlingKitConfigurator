@@ -340,7 +340,7 @@ window.SLING_CATALOG = {
     sling2: [
       { id: 'qb-empennage',      kitPartId: 'empennage',     label: 'Empennage vor-montiert',                                          price: 2600 },
       { id: 'qb-fuel-standard',  kitPartId: 'wing',          label: 'Fuel Tanks – Standard',                                           price: 2406 },
-      { id: 'qb-fuel-longrange', kitPartId: 'wing',          label: 'Fuel Tanks – Long Range (Add extra)',                             price: 2406 },
+      { id: 'qb-fuel-longrange', kitPartId: 'wing',          label: 'Fuel Tanks – Long Range (Add extra)',                             price: 2406, requires: ['qb-fuel-standard'] },
       { id: 'qb-wings',          kitPartId: 'wing',          label: 'Wings vor-montiert (Klappen/Querruder/Tanks unmontiert)',         price: 4827 },
       { id: 'qb-fuselage',       kitPartId: 'fuselage',      label: 'Fuselage vor-montiert (ohne Fahrwerk/Steuerung)',                 price: 6335 },
       { id: 'qb-undercarriage',  kitPartId: 'undercarriage', label: 'Undercarriage assembled und am Rumpf montiert',                   price: 1155 }
@@ -348,7 +348,7 @@ window.SLING_CATALOG = {
     tsi: [
       { id: 'qb-empennage',      kitPartId: 'empennage',     label: 'Empennage vor-montiert',                                          price: 2771 },
       { id: 'qb-fuel-standard',  kitPartId: 'wing',          label: 'Fuel Tanks – Standard',                                           price: 2268 },
-      { id: 'qb-fuel-longrange', kitPartId: 'wing',          label: 'Fuel Tanks – Long Range (Add extra)',                             price: 2268 },
+      { id: 'qb-fuel-longrange', kitPartId: 'wing',          label: 'Fuel Tanks – Long Range (Add extra)',                             price: 2268, requires: ['qb-fuel-standard'] },
       { id: 'qb-wings',          kitPartId: 'wing',          label: 'Wings vor-montiert (Klappen/Querruder/Tanks unmontiert)',         price: 6105 },
       { id: 'qb-fuselage',       kitPartId: 'fuselage',      label: 'Fuselage vor-montiert (ohne Fahrwerk/Steuerung)',                 price: 8664 },
       { id: 'qb-undercarriage',  kitPartId: 'undercarriage', label: 'Undercarriage assembled und am Rumpf montiert',                   price: 1184 },
@@ -357,7 +357,7 @@ window.SLING_CATALOG = {
     highwing: [
       { id: 'qb-empennage',      kitPartId: 'empennage',     label: 'Empennage vor-montiert',                                          price: 3947 },
       { id: 'qb-fuel-standard',  kitPartId: 'wing',          label: 'Fuel Tanks – Standard',                                           price: 2268 },
-      { id: 'qb-fuel-longrange', kitPartId: 'wing',          label: 'Fuel Tanks – Long Range (Add extra)',                             price: 2268 },
+      { id: 'qb-fuel-longrange', kitPartId: 'wing',          label: 'Fuel Tanks – Long Range (Add extra)',                             price: 2268, requires: ['qb-fuel-standard'] },
       { id: 'qb-wings',          kitPartId: 'wing',          label: 'Wings vor-montiert (Klappen/Querruder/Tanks unmontiert)',         price: 6105 },
       { id: 'qb-fuselage',       kitPartId: 'fuselage',      label: 'Fuselage vor-montiert (Rumpfheck am CFK-Mittelteil)',             price: 4823 },
       { id: 'qb-undercarriage',  kitPartId: 'undercarriage', label: 'Undercarriage assembled und am Rumpf montiert',                   price: 1800 },
