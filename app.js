@@ -328,12 +328,16 @@
       }
     }
 
-    // Packing – Pflicht, immer auto-inkludiert
-    if (CATALOG.shipping && CATALOG.shipping.packing) {
-      const packP = (CATALOG.shipping.packing.prices || {})[cfg.modelId];
-      if (typeof packP === 'number') {
-        lines.push({ type: 'add', label: CATALOG.shipping.packing.label, value: packP, required: true });
-      }
+    // Packing – Pflicht, prozentual pro gewähltem Kit-Teil
+    const packPct = (CATALOG.shipping && CATALOG.shipping.packing && CATALOG.shipping.packing.percent || {})[cfg.modelId];
+    if (typeof packPct === 'number' && packPct > 0 && partsSubtotal > 0) {
+      const packValue = Math.round(partsSubtotal * packPct);
+      lines.push({
+        type: 'add',
+        label: `${CATALOG.shipping.packing.label} (${(packPct * 100).toFixed(2)} % pro Kit-Teil)`,
+        value: packValue,
+        required: true
+      });
     }
 
     const subtotal = lines.reduce((s, l) => s + l.value, 0);
@@ -925,11 +929,19 @@
   function renderPackingBanner() {
     const txt = document.getElementById('packingText');
     if (!txt) return;
-    const packP = ((CATALOG.shipping || {}).packing && CATALOG.shipping.packing.prices || {})[state.config.modelId];
-    if (typeof packP === 'number') {
-      txt.innerHTML = `Wird automatisch eingerechnet – für den Export ab Werk Johannesburg. <strong>${format(packP)}</strong>`;
-    } else {
+    const packPct = ((CATALOG.shipping || {}).packing && CATALOG.shipping.packing.percent || {})[state.config.modelId];
+    if (typeof packPct !== 'number') {
       txt.textContent = 'Wird automatisch eingerechnet – für den Export ab Werk Johannesburg.';
+      return;
+    }
+    const m = findModel(state.config.modelId);
+    const selectedSum = m ? m.parts.filter(p => state.config.parts.includes(p.id)).reduce((s, p) => s + p.price, 0) : 0;
+    const pctText = (packPct * 100).toFixed(2);
+    if (selectedSum > 0) {
+      const val = Math.round(selectedSum * packPct);
+      txt.innerHTML = `<strong>${pctText} %</strong> auf jedes Kit-Teil – aktuell <strong>${format(val)}</strong> für die ausgewählten Kit-Teile. Ab Werk Johannesburg.`;
+    } else {
+      txt.innerHTML = `<strong>${pctText} %</strong> auf jedes gewählte Kit-Teil – ab Werk Johannesburg.`;
     }
   }
 
@@ -1167,11 +1179,14 @@
       lines.push('');
     }
 
-    // Packing (Pflicht)
-    const pack = (CATALOG.shipping && CATALOG.shipping.packing && CATALOG.shipping.packing.prices || {})[state.config.modelId];
-    if (typeof pack === 'number') {
+    // Packing (Pflicht, prozentual)
+    const pctP = (CATALOG.shipping && CATALOG.shipping.packing && CATALOG.shipping.packing.percent || {})[state.config.modelId];
+    if (typeof pctP === 'number' && sel.length) {
+      const partsSum = sel.reduce((s, p) => s + p.price, 0);
+      const packVal = Math.round(partsSum * pctP);
       lines.push('-- PACKING (PFLICHT, AUTOMATISCH) --');
-      lines.push('  ' + pad('Packing & Container-Vorbereitung', formatUSD(pack)));
+      lines.push('  ' + pad(`Packing & Container-Vorbereitung (${(pctP * 100).toFixed(2)} % pro Kit-Teil)`, formatUSD(packVal)));
+      sel.forEach(p => lines.push('     ↳ ' + p.label.padEnd(40) + ': ' + formatUSD(Math.round(p.price * pctP))));
       lines.push('');
     }
 

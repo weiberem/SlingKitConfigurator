@@ -45,13 +45,13 @@ window.SLING_CATALOG = {
       tag: '2-Seat · LSA',
       icon: 'plane-low',
       description: '2-Sitzer-Tiefdecker. Robust, sparsam, ideal für Schulung und Reise.',
-      partsBaseSum: 38500,
+      partsBaseSum: 67409,
       parts: [
-        { id: 'empennage',   label: 'Empennage (Tail) Kit', desc: 'Leitwerk komplett: Stabilisatoren, Ruder, Scharniere, Trimmtab, Endkappen, Trim Servo Unit, Clevis Kit, Hardware und Bauanleitung.', price: 3260 },
-        { id: 'wing',        label: 'Wing Kit',             desc: 'Flügelsatz komplett: Holme, Klappen, Querruder, Tanks, Composite Wingtips, AOA, 2x LED Landelichter, Strobes, Tankgeber. Pitotrohr separat.', price: 12640 },
-        { id: 'fuselage',    label: 'Fuselage Kit',         desc: 'Rumpf komplett: Mittelholm, 2 Sitze, Steuerung (Stick, Pedale), Brandschott, Motoraufhängung, Klappenaktuator, Heizsystem.', price: 13180 },
-        { id: 'undercarriage', label: 'Undercarriage Kit',  desc: 'Fahrwerk komplett: Haupt-/Bugfahrwerk, Aufhängung, Lager, Achsen, hydraulisches Bremssystem, 6-Ply Reifen und Schläuche.', price: 6720 },
-        { id: 'finishing',   label: 'Finishing Kit',        desc: 'Verkleidungen, Interieur-Panels, Türmechanismen, Hardware-Kits, Bauanleitungs-Set, Decals.', price: 2700 }
+        { id: 'empennage',   label: 'Empennage (Tail) Kit', desc: 'Komplettes Leitwerk: Horizontal- und Vertikalstabilisator, Ruder, Höhenruder, Scharniere, Steuerverbindungen, Trimmtab, Composite-Tips, Trim Servo Unit inkl. Clevis Kit und Verkabelung, Hardware und Bauanleitung.', price: 5283 },
+        { id: 'wing',        label: 'Wing Kit',             desc: 'Kompletter Flügelsatz: vormontierte Holme, Klappen, Querruder, Tanks, Composite Wingtips, verriegelnde Tankdeckel, Pitot-Schläuche, Standard-Landelichter mit Verkabelung, Strobes-Verkabelung, Tankgeber, rutschfester Gehbereich, Hardware und Bauanleitung. Pitotrohr separat.', price: 18647 },
+        { id: 'fuselage',    label: 'Fuselage Kit',         desc: 'Kompletter Rumpf (Bug, Mitte, Heck): vormontierter Mittelholm, Heckholm, 2 Sitze, alle Steuermechanismen (Throttle, Stick, Pedale), Brandschott, Motoraufhängung am Brandschott, Trittstufen, elektrischer Klappenaktuator, seitliche Griffe, Firex Sound-Damping, Garmin-Autopilot-Halterungen, Autopilot-Pushrods, Hardware und Bauanleitung.', price: 20491 },
+        { id: 'undercarriage', label: 'Undercarriage Kit',  desc: 'Komplettes Fahrwerk: Haupt- und Bugfahrwerk, Frontaufhängung, Lager und Anbauteile, Achsen, komplettes hydraulisches Bremssystem, 6-Ply Aviation-Reifen und -Schläuche, Hardware und Bauanleitung.', price: 11563 },
+        { id: 'finishing',   label: 'Canopy, Dash, Final Assembly & Finishing Kit', desc: 'Komplettes Canopy-Kit inkl. Front- und Hauptcanopyrahmen, Front- und Hauptacrylglas, Closing-Skins und -Panels, lederbezogenes Top-Instrumentenpanel, Lüftungsdüsen, Instrumententafel-Cutout nach Kundenwunsch, individuelles Canopy-Schloss, alles für die finale Montage inkl. Wheel-Spats (3 Räder), Nosecowl, Composite-Closing-Fairings, Pushrod-Baugruppen, Hardware und Bauanleitung.', price: 11425 }
       ],
       compatibleEngines: ['rotax912uls', 'rotax912is', 'rotax915is'],
       compatibleAvionics: ['vfr', 'standard', 'advanced', 'premium'],
@@ -69,13 +69,13 @@ window.SLING_CATALOG = {
       icon: 'plane-low',
       badge: 'Bestseller',
       description: 'High-Performance 4-Sitzer mit Rotax 915/916 iS. Mehrfach ausgezeichnet, schnell, effizient.',
-      partsBaseSum: 79436,
+      partsBaseSum: 100590,
       parts: [
-        { id: 'empennage',   label: 'Empennage (Tail) Kit', desc: 'Leitwerk komplett: Stabilisatoren, Ruder, Scharniere, Trimmtab, Endkappen, Trim Servo Unit, Clevis Kit, Hardware und Bauanleitung.', price: 5318 },
-        { id: 'wing',        label: 'Wing Kit',             desc: 'Flügelsatz komplett: vormontierte Holme, Klappen, Querruder, Tanks, Composite Wingtips, AOA, 4x LED Landelichter, Strobes, Tankgeber, rutschfester Gehbereich. Pitotrohr separat.', price: 20801 },
-        { id: 'fuselage',    label: 'Fuselage Kit',         desc: 'Rumpf komplett: Mittelholm, 4 Sitze, Steuerung (Gas, Knüppel, Pedale), Brandschott, Motoraufhängung, Klappenaktuator, Firex Foam, Autopilot-Halterungen, Klima-/Heizsystem.', price: 22198 },
-        { id: 'undercarriage', label: 'Undercarriage Kit',  desc: 'Fahrwerk komplett: Haupt-/Bugfahrwerk, Aufhängung, Lager, Achsen, hydraulisches Bremssystem, 6-Ply Reifen und Schläuche.', price: 13840 },
-        { id: 'finishing',   label: 'Finishing Kit',        desc: 'Verkleidungen, Interieur-Panels, Türmechanismen, Hardware-Kits, Bauanleitungs-Set, Decals.', price: 17279 }
+        { id: 'empennage',   label: 'Empennage (Tail) Kit', desc: 'Komplettes Leitwerk: Horizontal- und Vertikalstabilisator, Ruder, Höhenruder, Scharniere, Steuerverbindungen, Trimmtab, Composite-Tips, Dimpling-Dies, Trim Servo Unit inkl. Clevis Kit und Verkabelung, Hardware und Bauanleitung.', price: 6734 },
+        { id: 'wing',        label: 'Wing Kit',             desc: 'Kompletter Flügelsatz: vormontierte Holme, Klappen, Querruder, Tanks, Composite Wingtips. Inkl. verriegelnde Tankdeckel, AOA mit Schläuchen, 4× LED-Landelichter mit Verkabelung, Strobes-Verkabelung, Tankgeber, rutschfester Gehbereich und Hardware. Pitotrohr separat.', price: 26340 },
+        { id: 'fuselage',    label: 'Fuselage Kit',         desc: 'Kompletter Rumpf: vormontierter Mittelholm, Heckholm, Vorder- und Rücksitze, alle Steuermechanismen (Throttle, Stick, Pedale), Brandschott, Motoraufhängung am Brandschott, Trittstufen. Inkl. elektrischer Klappenaktuator, Firex Sound-Damping, Garmin-Autopilot-Halterungen, Autopilot-Pushrods, komplette Klima-/Heizanlage und Hardware.', price: 28109 },
+        { id: 'undercarriage', label: 'Undercarriage Kit',  desc: 'Komplettes Fahrwerk: Haupt- und Bugfahrwerk, Frontaufhängung, Lager und Anbauteile, Achsen, komplettes hydraulisches Bremssystem, 6-Ply Aviation-Reifen und -Schläuche, Hardware und Bauanleitung.', price: 17273 },
+        { id: 'finishing',   label: 'Canopy, Dash, Final Assembly & Finishing Kit', desc: 'Komplettes Canopy-Kit inkl. Canopy-Rahmen, Frontscheibe, Türen und Fenster, lederbezogenes Top-Dashboard, Lüftungsdüsen, Instrumententafel-Cutout, individuelles Canopy-Schloss für beide Türen, alles für die finale Montage inkl. Nosecowl, Wheel-Spats (3 Räder), Composite-Closing-Fairings, Pushrod-Baugruppen, Hardware und Bauanleitung.', price: 22134 }
       ],
       compatibleEngines: ['rotax915is', 'rotax916is'],
       compatibleAvionics: ['standard', 'advanced', 'premium'],
@@ -92,13 +92,13 @@ window.SLING_CATALOG = {
       icon: 'plane-high',
       badge: 'Neu',
       description: 'Hochdecker mit Rundumsicht – ideal für Backcountry, Bush und Familie.',
-      partsBaseSum: 81450,
+      partsBaseSum: 134636,
       parts: [
-        { id: 'empennage',   label: 'Empennage (Tail) Kit', desc: 'Leitwerk komplett mit V-Stabilisator-Streben, Ruder, Trimmtab, Trim Servo Unit, Endkappen.', price: 5510 },
-        { id: 'wing',        label: 'Wing Kit',             desc: 'Hochdecker-Flügel mit Streben, Tanks, Klappen, Querruder, LED-Beleuchtung, Strobes, AOA-Sensor.', price: 22980 },
-        { id: 'fuselage',    label: 'Fuselage Kit',         desc: 'Rumpf komplett: 4 Sitze, Steuerung, Brandschott, Motoraufhängung, grosse Schiebetüren, Klima-/Heizsystem.', price: 23260 },
-        { id: 'undercarriage', label: 'Undercarriage Kit',  desc: 'Robustes Fahrwerk mit Federbeinen, Tundra-tauglichen Achsen, hydraulischen Bremsen.', price: 13900 },
-        { id: 'finishing',   label: 'Finishing Kit',        desc: 'Cockpit-Verkleidungen, Bodenplatten, Cargo-Bereich, Hardware-Kit, Decals, Bauanleitung.', price: 15800 }
+        { id: 'empennage',   label: 'Empennage (Tail) Kit', desc: 'Komplettes Leitwerk: Horizontal- und Vertikalstabilisator, Ruder, Höhenruder, Scharniere, Steuerverbindungen, Trimmtab, Composite-Tips, Dimpling-Dies, Trim Servo Unit inkl. Clevis Kit und Verkabelung, Hardware und Bauanleitung.', price: 6887 },
+        { id: 'wing',        label: 'Wing Kit',             desc: 'Kompletter Flügelsatz (Hochdecker mit Streben): vormontierte Holme, Klappen, Querruder, Tanks, Composite Wingtips. Inkl. verriegelnde Tankdeckel, AOA-Schläuche, 4× LED-Landelichter mit Verkabelung, Strobes-Verkabelung, Tankgeber und Hardware. Pitotrohr separat.', price: 26340 },
+        { id: 'fuselage',    label: 'Fuselage Kit',         desc: 'Kompletter Rumpf inkl. CFK-Mittelteil (in einem Stück verklebt), vormontierter Mittelholm, Vorder- und Rücksitze, alle Steuermechanismen (Throttle, Stick, Pedale), Brandschott, Motoraufhängung am Brandschott, Trittstufen. Inkl. elektrischer Klappenaktuator, Sound-Damping-Foam, Garmin-Autopilot-Halterungen, Autopilot-Pushrods, komplette Klima-/Heizanlage und Hardware.', price: 73365 },
+        { id: 'undercarriage', label: 'Undercarriage Kit',  desc: 'Komplettes Fahrwerk: Haupt- und Bugfahrwerk, Frontaufhängung, Lager und Anbauteile, Achsen, komplettes hydraulisches Bremssystem, 6-Ply Aviation-Reifen und -Schläuche, Hardware und Bauanleitung.', price: 17273 },
+        { id: 'finishing',   label: 'Dash, Final Assembly & Finishing Kit', desc: 'Komplettes Dash-Kit (lederbezogen), Lüftungsdüsen, Instrumententafel-Cutout, alles für die finale Montage inkl. Nosecowl, Wheel-Spats (3 Räder), Composite-Closing-Fairings, Pushrod-Baugruppen, Hardware und Bauanleitung.', price: 10771 }
       ],
       compatibleEngines: ['rotax915is', 'rotax916is'],
       compatibleAvionics: ['standard', 'advanced', 'premium'],
@@ -264,6 +264,14 @@ window.SLING_CATALOG = {
    * Aktuell nur für Sling High Wing in der offiziellen Preisliste.
    * ----------------------------------------------------------------*/
   quickbuild: {
+    sling2: [
+      { id: 'qb-empennage',      label: 'Empennage',                                                       price: 2600 },
+      { id: 'qb-fuel-standard',  label: 'Fuel tanks – Standard',                                           price: 2406 },
+      { id: 'qb-fuel-longrange', label: 'Fuel tanks – Long Range (Add extra auf Standard)',                price: 2406 },
+      { id: 'qb-wings',          label: 'Wings (Klappen, Querruder und Tanks unmontiert)',                 price: 4827 },
+      { id: 'qb-fuselage',       label: 'Fuselage (ohne Fahrwerk/Steuerung montiert)',                     price: 6335 },
+      { id: 'qb-undercarriage',  label: 'Undercarriage (assembled und am Rumpf angebaut)',                 price: 1155 }
+    ],
     tsi: [
       { id: 'qb-empennage',      label: 'Empennage',                                                       price: 2771 },
       { id: 'qb-fuel-standard',  label: 'Fuel tanks – Standard',                                           price: 2268 },
@@ -296,14 +304,17 @@ window.SLING_CATALOG = {
       id: 'packing',
       label: 'Packing & Container-Vorbereitung (Pflicht)',
       desc: 'Verpackung des Kits in den Container für den Export ab Werk Johannesburg.',
-      info: 'Pflicht-Position – wird für den Export benötigt und kann nicht abgewählt werden.',
-      prices: { sling2: 2494, tsi: 2810, highwing: 2494 }
+      info: 'Pflicht-Position – wird automatisch pro gewähltem Kit-Teil prozentual berechnet und kann nicht abgewählt werden.',
+      /* Prozentwert pro Modell, errechnet aus offizieller EU-Preisliste:
+         (Packing-Pauschale / Summe aller Kit-Teile). Wird in totals()
+         pro selektiertem Kit-Teil-Preis angewendet. */
+      percent: { sling2: 0.0451, tsi: 0.0279, highwing: 0.0185 }
     },
     quickbuildCrating: {
       id: 'crating-quickbuild',
       label: 'Wooden Crating & Container-Loading (Quickbuild)',
       desc: 'Holzverschlag und Container-Beladung – wird automatisch ergänzt sobald mindestens eine Quickbuild-Option gewählt ist.',
-      prices: { tsi: 4522, highwing: 3919 }
+      prices: { sling2: 4773, tsi: 4522, highwing: 3919 }
     }
   },
 
