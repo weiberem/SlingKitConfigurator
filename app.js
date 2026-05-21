@@ -305,62 +305,143 @@
 
   /* -------- Renderers -------- */
 
-  function renderModelTabs() {
-    const host = document.getElementById('modelTabs');
-    host.innerHTML = CATALOG.models.map(m => {
-      const active = state.config.modelId === m.id ? 'active' : '';
-      const fromPrice = format(m.partsBaseSum);
-      return `
-        <button type="button" class="model-tab ${active}" data-model="${m.id}" role="tab" aria-selected="${!!active}">
-          <span class="mt-icon">${ICONS[m.icon] || ICONS['plane-low']}</span>
-          <span class="mt-body">
-            <span class="mt-name">${m.name}</span>
-            <span class="mt-tag">${m.tag}</span>
-            <span class="mt-from">ab <strong>${fromPrice}</strong></span>
-          </span>
-        </button>
-      `;
-    }).join('');
+  function renderModelStage() {
+    const host = document.getElementById('modelStage');
+    if (!host) return;
+    const models = CATALOG.models;
+    const idx = Math.max(0, models.findIndex(m => m.id === state.config.modelId));
+    const m = models[idx];
+    if (!m) return;
 
-    host.querySelectorAll('.model-tab').forEach(tab => {
-      tab.addEventListener('click', () => switchModel(tab.dataset.model));
+    document.getElementById('msName').textContent = m.name;
+    document.getElementById('msTag').textContent = m.tag;
+    document.getElementById('msFrom').innerHTML = `ab <strong>${format(m.partsBaseSum)}</strong>`;
+
+    const dots = document.getElementById('msDots');
+    dots.innerHTML = models.map((mm, i) => `<button class="ms-dot ${i === idx ? 'active' : ''}" data-i="${i}" type="button" aria-label="${mm.name}"></button>`).join('');
+    dots.querySelectorAll('.ms-dot').forEach(d => {
+      d.addEventListener('click', () => switchModel(models[+d.dataset.i].id));
     });
+
+    const img = document.getElementById('mpImg');
+    const fb = document.getElementById('mpFallback');
+    fb.innerHTML = ICONS[m.icon] || ICONS['plane-low'];
+    if (m.image) {
+      img.onload = () => { img.style.display = 'block'; };
+      img.onerror = () => { img.style.display = 'none'; };
+      img.style.display = 'none';
+      img.src = m.image;
+      img.alt = m.name;
+    } else {
+      img.style.display = 'none';
+      img.removeAttribute('src');
+    }
   }
 
+  function stepIndex(id) {
+    const order = ['parts','engine','propeller','avionics','extras','summary'];
+    return order.indexOf(id);
+  }
+  function stepAtIndex(i) {
+    const order = ['parts','engine','propeller','avionics','extras','summary'];
+    return order[Math.max(0, Math.min(order.length - 1, i))];
+  }
+
+  function nextModel(dir) {
+    const models = CATALOG.models;
+    const cur = models.findIndex(mm => mm.id === state.config.modelId);
+    const ni = (cur + dir + models.length) % models.length;
+    switchModel(models[ni].id);
+  }
+
+  function bindHeaderIconButtons() {
+    const savedBtn = document.getElementById('savedBtn');
+    const compareBtn = document.getElementById('compareBtn');
+    if (savedBtn) savedBtn.addEventListener('click', () => setSection('saved'));
+    if (compareBtn) compareBtn.addEventListener('click', () => setSection('compare'));
+  }
+
+  function bindModelStage() {
+    const prev = document.getElementById('msPrev');
+    const next = document.getElementById('msNext');
+    if (prev) prev.addEventListener('click', () => nextModel(-1));
+    if (next) next.addEventListener('click', () => nextModel(+1));
+
+    // Touch swipe für iPad
+    const stage = document.getElementById('modelStage');
+    if (stage) {
+      let sx = 0, sy = 0, t = 0;
+      stage.addEventListener('touchstart', e => {
+        const tt = e.changedTouches[0];
+        sx = tt.clientX; sy = tt.clientY; t = Date.now();
+      }, { passive: true });
+      stage.addEventListener('touchend', e => {
+        const tt = e.changedTouches[0];
+        const dx = tt.clientX - sx;
+        const dy = tt.clientY - sy;
+        const dt = Date.now() - t;
+        if (dt < 500 && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+          nextModel(dx < 0 ? +1 : -1);
+        }
+      }, { passive: true });
+    }
+  }
+
+  const STEPS = [
+    { id: 'parts',     label: 'Kit-Teile' },
+    { id: 'engine',    label: 'Motor' },
+    { id: 'propeller', label: 'Propeller' },
+    { id: 'avionics',  label: 'Avionik' },
+    { id: 'extras',    label: 'Extras' },
+    { id: 'summary',   label: 'Bestellen' }
+  ];
+
   function renderSidebar() {
-    const items = [
-      { id: 'parts',      label: 'Kit-Teile',       icon: ICONS.parts },
-      { id: 'engine',     label: 'Motor',           icon: ICONS.engine },
-      { id: 'propeller',  label: 'Propeller',       icon: ICONS.propeller },
-      { id: 'avionics',   label: 'Avionik',         icon: ICONS.avionics },
-      { id: 'extras',     label: 'Extras',          icon: ICONS.extras },
-      { id: 'summary',    label: 'Zusammenfassung', icon: ICONS.summary },
-      { id: 'saved',      label: 'Gespeichert',     icon: ICONS.saved },
-      { id: 'compare',    label: 'Vergleichen',     icon: ICONS.compare }
-    ];
-    const host = document.getElementById('sectionNav');
-    host.innerHTML = items.map(it => `
-      <li class="${state.activeSection === it.id ? 'active' : ''}" data-section="${it.id}" tabindex="0" role="button">
-        ${it.icon}<span>${it.label}</span>
-      </li>
-    `).join('');
-    host.querySelectorAll('li').forEach(li => {
-      li.addEventListener('click', () => setSection(li.dataset.section));
-      li.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSection(li.dataset.section); }
-      });
+    const host = document.getElementById('stepsBar');
+    if (!host) return;
+    const activeIdx = STEPS.findIndex(s => s.id === state.activeSection);
+    const parts = [];
+    parts.push('<div class="steps-inner">');
+    STEPS.forEach((s, i) => {
+      const cls = i === activeIdx ? 'active' : (i < activeIdx ? 'done' : '');
+      parts.push(`
+        <button type="button" class="step ${cls}" data-section="${s.id}" aria-current="${i === activeIdx}">
+          <span class="step-num"><span class="step-num-label">${i + 1}</span></span>
+          <span class="step-label">${s.label}</span>
+        </button>
+      `);
+      if (i < STEPS.length - 1) {
+        parts.push(`<span class="step-sep ${i < activeIdx ? 'done' : ''}"></span>`);
+      }
+    });
+    parts.push('</div>');
+    host.innerHTML = parts.join('');
+    host.querySelectorAll('.step').forEach(b => {
+      b.addEventListener('click', () => setSection(b.dataset.section));
     });
   }
 
   function setSection(id) {
+    if (state.activeSection === id) return;
+    const panels = document.querySelectorAll('.main-panel .panel');
+    const cur = document.getElementById(`panel-${state.activeSection}`);
     state.activeSection = id;
-    renderSidebar();
-    document.querySelectorAll('.main-panel .panel').forEach(p => {
-      p.hidden = p.id !== `panel-${id}`;
-    });
-    if (id === 'saved') renderSavedPanel();
-    if (id === 'compare') renderComparePanel();
-    if (id === 'summary') renderFullSummaryPanel();
+    const finish = () => {
+      panels.forEach(p => {
+        p.hidden = p.id !== `panel-${id}`;
+        p.classList.remove('leaving');
+      });
+      if (id === 'saved') renderSavedPanel();
+      if (id === 'compare') renderComparePanel();
+      if (id === 'summary') renderFullSummaryPanel();
+      renderSidebar();
+    };
+    if (cur && !cur.hidden) {
+      cur.classList.add('leaving');
+      setTimeout(finish, 180);
+    } else {
+      finish();
+    }
   }
 
   const LOGO_MODEL_SUFFIX = {
@@ -1007,7 +1088,8 @@
   function update() {
     persist();
     location.hash = encodeConfigToHash(state.config);
-    renderModelTabs();
+    renderModelStage();
+    renderSidebar();
     renderHeader();
     renderCurrencyPills();
     renderParts();
@@ -1146,8 +1228,13 @@
     document.getElementById('langLabel').textContent = 'DE';
 
     renderSidebar();
+    bindModelStage();
+    bindHeaderIconButtons();
     update();
-    setSection('parts');
+    state.activeSection = 'parts';
+    document.querySelectorAll('.main-panel .panel').forEach(p => {
+      p.hidden = p.id !== 'panel-parts';
+    });
     setPriceStand(CATALOG.pricesUpdated, 'local');
     fetchSheetPrices();
 
