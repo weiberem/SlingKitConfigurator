@@ -554,6 +554,25 @@
     EUR: [0.85, 0.88, 0.90, 0.92, 0.94, 0.96]
   };
 
+  function renderCurrencyMenu() {
+    const menu = document.getElementById('curMenu');
+    if (!menu) return;
+    const items = ['USD', 'CHF', 'EUR'];
+    menu.innerHTML = items.map(cur => {
+      const active = cur === state.currency ? 'active' : '';
+      const rate = cur === 'USD' ? null : (state.rates[cur] || 1);
+      const rateHtml = rate === null
+        ? '<span class="cur-rate cur-rate-base">Basis</span>'
+        : `<button type="button" class="cur-rate" data-edit="${cur}" title="Kurs bearbeiten">1 = ${rate.toFixed(4)}</button>`;
+      return `
+        <li role="option" data-value="${cur}" class="${active}">
+          <span class="cur-name">${cur}</span>
+          ${rateHtml}
+        </li>
+      `;
+    }).join('');
+  }
+
   function renderRateDropdown() {
     const dd = document.getElementById('rateDropdown');
     if (!dd) return;
@@ -601,6 +620,7 @@
     const pvLogoModel = document.getElementById('pvLogoModel');
     if (pvLogoModel) pvLogoModel.innerHTML = suffix;
     document.getElementById('curLabel').textContent = state.currency;
+    renderCurrencyMenu();
     renderRateDropdown();
     document.getElementById('summaryNote').textContent =
       state.currency === 'USD'
@@ -1723,6 +1743,72 @@
     });
   }
 
+  function wireCurrencyDropdown() {
+    const dd = document.getElementById('curDropdown');
+    if (!dd) return;
+    const btn = dd.querySelector('.dd-btn');
+    const menu = document.getElementById('curMenu');
+
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const open = dd.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.querySelectorAll('.dropdown.open').forEach(d => { if (d !== dd) d.classList.remove('open'); });
+    });
+    document.addEventListener('click', () => { dd.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); });
+
+    menu.addEventListener('click', e => {
+      const editBtn = e.target.closest('[data-edit]');
+      if (editBtn) {
+        e.stopPropagation();
+        startRateEdit(editBtn);
+        return;
+      }
+      const li = e.target.closest('li[data-value]');
+      if (!li) return;
+      state.currency = li.dataset.value;
+      dd.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      update();
+    });
+  }
+
+  function startRateEdit(btnEl) {
+    const cur = btnEl.dataset.edit;
+    const current = (state.rates[cur] || 1).toFixed(4);
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.step = '0.0001';
+    input.min = '0';
+    input.value = current;
+    input.className = 'cur-rate-input';
+    input.setAttribute('aria-label', `1 USD in ${cur}`);
+    btnEl.replaceWith(input);
+    input.focus();
+    input.select();
+    let done = false;
+    const commit = () => {
+      if (done) return; done = true;
+      const v = parseFloat(input.value);
+      if (isFinite(v) && v > 0) {
+        state.rates[cur] = v;
+        try { localStorage.setItem(KEY_RATES, JSON.stringify(state.rates)); } catch {}
+      }
+      update();
+    };
+    const cancel = () => {
+      if (done) return; done = true;
+      renderCurrencyMenu();
+    };
+    input.addEventListener('keydown', e => {
+      e.stopPropagation();
+      if (e.key === 'Enter') { e.preventDefault(); commit(); }
+      else if (e.key === 'Escape') { e.preventDefault(); cancel(); }
+    });
+    input.addEventListener('blur', commit);
+    input.addEventListener('click', e => e.stopPropagation());
+  }
+
   function wireRateDropdown() {
     const dd = document.getElementById('rateDropdown');
     if (!dd) return;
@@ -1824,7 +1910,7 @@
       document.getElementById('langLabel').textContent = val;
       // i18n hook – aktuell nur DE inhaltlich verfügbar
     });
-    wireDropdown('curDropdown', val => { state.currency = val; update(); });
+    wireCurrencyDropdown();
     wireCurrencyPills();
     wireRateDropdown();
     wireModalsClose();

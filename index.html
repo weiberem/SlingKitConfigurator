@@ -53,16 +53,12 @@
             <li role="option" data-value="EN">English</li>
           </ul>
         </div>
-        <div class="dropdown" id="curDropdown">
+        <div class="dropdown dropdown-cur" id="curDropdown">
           <button class="dd-btn" type="button" aria-haspopup="listbox" aria-expanded="false">
             <span id="curLabel">CHF</span>
             <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M0 0l5 6 5-6" fill="currentColor"/></svg>
           </button>
-          <ul class="dd-menu" role="listbox">
-            <li role="option" data-value="USD">USD</li>
-            <li role="option" data-value="CHF">CHF</li>
-            <li role="option" data-value="EUR">EUR</li>
-          </ul>
+          <ul class="dd-menu cur-menu" role="listbox" id="curMenu"></ul>
         </div>
         <div class="dropdown" id="rateDropdown" hidden>
           <button class="dd-btn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Wechselkurs auswählen">

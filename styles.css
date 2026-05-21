@@ -468,6 +468,59 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 }
 
 .dd-menu li:hover { background: var(--bg-card-hover); color: var(--text); }
+.dd-menu li.active { color: var(--text); }
+.dd-menu li.active::before {
+  content: '';
+  display: inline-block;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* --- Currency-Menu mit Inline-Kurs --- */
+.cur-menu { min-width: 220px; }
+.cur-menu li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-right: 6px;
+}
+.cur-name { font-weight: 600; }
+.cur-rate {
+  font-family: 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  color: var(--text-mute);
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.cur-rate:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(220, 31, 38, 0.08);
+}
+.cur-rate-base {
+  cursor: default;
+  color: var(--text-mute);
+  font-style: italic;
+}
+.cur-rate-base:hover { color: var(--text-mute); border-color: transparent; background: transparent; }
+.cur-rate-input {
+  width: 90px;
+  font-family: 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  background: var(--bg-elev);
+  color: var(--text);
+  outline: none;
+}
 .dd-menu li.active { color: var(--accent); }
 
 .sr-only {
