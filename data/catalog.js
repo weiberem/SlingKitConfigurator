@@ -23,8 +23,8 @@ window.SLING_CATALOG = {
     EUR: 0.92
   },
 
-  /* Komplett-Rabatt (USD), wenn alle Pflicht-Kit-Teile zusammen bestellt werden */
-  bundleDiscountUSD: 200,
+  /* Komplett-Rabatt in Prozent auf den Gesamtpreis, wenn alle Kit-Teile gewählt sind. */
+  bundleDiscountPct: 0.02,
 
   models: [
     {

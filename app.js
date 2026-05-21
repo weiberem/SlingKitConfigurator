@@ -161,7 +161,7 @@
     });
     if (meta.rate_chf) { const v = parseFloat(meta.rate_chf); if (isFinite(v) && v > 0) CATALOG.defaultRates.CHF = v; }
     if (meta.rate_eur) { const v = parseFloat(meta.rate_eur); if (isFinite(v) && v > 0) CATALOG.defaultRates.EUR = v; }
-    if (meta.bundle_discount_usd) { const v = parseFloat(meta.bundle_discount_usd); if (isFinite(v)) CATALOG.bundleDiscountUSD = v; }
+    if (meta.bundle_discount_pct) { const v = parseFloat(meta.bundle_discount_pct); if (isFinite(v) && v >= 0) CATALOG.bundleDiscountPct = v > 1 ? v / 100 : v; }
     return applied;
   }
 
@@ -257,9 +257,6 @@
     const partsSubtotal = selectedParts.reduce((s, p) => s + p.price, 0);
 
     const allSelected = selectedParts.length === model.parts.length;
-    // Komplett-Rabatt = informativer Vergleichswert (Ersparnis ggü. Einzelteilen),
-    // wirkt nicht doppelt auf die Summe – Kit-Teil-Preise sind bereits Bundle-Preise.
-    const discount = allSelected ? CATALOG.bundleDiscountUSD : 0;
 
     if (selectedParts.length > 0) {
       lines.push({ type: 'group', label: 'Kit-Teile', value: partsSubtotal, sub: selectedParts.map(p => ({ label: p.label, value: p.price })) });
@@ -284,8 +281,11 @@
       if (x) lines.push({ type: 'add', label: x.label, value: x.price });
     });
 
-    const total = lines.reduce((s, l) => s + l.value, 0);
-    return { lines, partsSubtotal, total, discount };
+    const subtotal = lines.reduce((s, l) => s + l.value, 0);
+    const pct = CATALOG.bundleDiscountPct || 0;
+    const discount = allSelected && pct > 0 ? Math.round(subtotal * pct) : 0;
+    const total = subtotal - discount;
+    return { lines, partsSubtotal, subtotal, total, discount, discountPct: allSelected ? pct : 0 };
   }
 
   /* -------- Icons -------- */
@@ -535,8 +535,13 @@
     document.getElementById('togglePartsBtn').textContent = allSelected ? 'Alle abwählen' : 'Alle wählen';
     const badge = document.getElementById('bundleBadge');
     if (allSelected) {
+      const t = totals();
+      const pctText = ((CATALOG.bundleDiscountPct || 0) * 100).toFixed(0);
       badge.hidden = false;
-      document.getElementById('bundleAmt').textContent = `Sie sparen ${format(CATALOG.bundleDiscountUSD)}`;
+      document.getElementById('bundleAmt').textContent =
+        t.discount > 0
+          ? `Komplett-Kit: ${pctText}% Rabatt – Sie sparen ${format(t.discount)}`
+          : `Komplett-Kit: ${pctText}% Rabatt`;
     } else {
       badge.hidden = true;
     }
@@ -690,13 +695,18 @@
       showLines.push({ label: cleaned, value: l.value, add: true });
     });
 
+    if (t.discount > 0) {
+      const pctText = (t.discountPct * 100).toFixed(0);
+      showLines.push({ label: `Komplett-Kit-Rabatt (${pctText}%)`, value: -t.discount, discount: true });
+    }
+
     if (showLines.length === 0) {
       linesHost.innerHTML = '<li><span class="sum-name muted">Noch keine Auswahl getroffen.</span></li>';
     } else {
       linesHost.innerHTML = showLines.map(l => {
-        const cls = l.add ? 'is-add' : l.discount ? 'is-discount' : '';
-        const sign = l.add ? '+ ' : '';
-        return `<li class="${cls}"><span class="sum-name">${l.label}</span><span class="sum-val">${sign}${format(l.value)}</span></li>`;
+        const cls = l.discount ? 'is-discount' : l.add ? 'is-add' : '';
+        const sign = l.discount ? '− ' : (l.add ? '+ ' : '');
+        return `<li class="${cls}"><span class="sum-name">${l.label}</span><span class="sum-val">${sign}${format(Math.abs(l.value))}</span></li>`;
       }).join('');
     }
     document.getElementById('summaryTotal').textContent = format(t.total);
@@ -710,7 +720,13 @@
 
     const selectedParts = m ? m.parts.filter(p => state.config.parts.includes(p.id)) : [];
     selectedParts.forEach(p => rows.push([p.label, format(p.price)]));
-    if (t.discount) rows.push(['<span style="color:var(--ok)">Komplett-Paket-Ersparnis</span>', `<span style="color:var(--ok)">−${format(t.discount)} (in den Preisen enthalten)</span>`]);
+    if (t.discount) {
+      const pctText = (t.discountPct * 100).toFixed(0);
+      rows.push([
+        `<span style="color:var(--ok)">Komplett-Kit-Rabatt (${pctText}%)</span>`,
+        `<span style="color:var(--ok)">−${format(t.discount)}</span>`
+      ]);
+    }
 
     const e = findEngine(state.config.engineId);
     if (e) rows.push([`Motor: ${e.label}`, format(e.price)]);
@@ -999,7 +1015,7 @@
     rows.push({ group: 'Kit-Teile' });
     const selectedParts = m.parts.filter(p => cfg.parts.includes(p.id));
     selectedParts.forEach(p => rows.push({ label: p.label, value: format(p.price) }));
-    if (t.discount) rows.push({ label: 'Komplett-Paket – Sie sparen', value: `−${format(t.discount)}`, savings: true });
+    if (t.discount) rows.push({ label: `Komplett-Kit-Rabatt (${(t.discountPct * 100).toFixed(0)}%)`, value: `−${format(t.discount)}`, savings: true });
 
     const e = findEngine(cfg.engineId);
     if (e || cfg.propellerId || cfg.avionicsId) rows.push({ group: 'Antrieb & Avionik' });
