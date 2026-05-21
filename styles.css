@@ -930,6 +930,18 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 .panel-nav .btn { min-height: 44px; }
 .panel-nav .btn-primary { margin-left: auto; }
 
+.approx-note {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+.approx-note strong { color: var(--text); }
+
 .opt-grouptag {
   display: inline-block;
   margin-left: 8px;

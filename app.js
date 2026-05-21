@@ -256,6 +256,12 @@
 
   /* -------- Formatting -------- */
 
+  function formatApprox(usd, currencyOverride) {
+    if (!isFinite(usd)) return '—';
+    if (usd === 0) return 'inkl.';
+    return 'ca. ' + format(usd, currencyOverride);
+  }
+
   function format(usd, currencyOverride) {
     if (!isFinite(usd)) return '—';
     const cur = currencyOverride || state.currency;
@@ -285,11 +291,13 @@
     }
 
     const engine = findEngine(cfg.engineId);
-    if (engine) lines.push({ type: 'add', label: `Motor: ${engine.label}`, value: engine.price });
+    if (engine && engine.id !== 'own-engine') {
+      lines.push({ type: 'add', label: `Motor: ${engine.label}`, value: engine.price, approx: !!engine.approxPrice });
+    }
 
-    if (cfg.includeFFwd && engine) {
+    if (cfg.includeFFwd && engine && engine.id !== 'own-engine') {
       const ffPrice = (CATALOG.firewallForward.perEngine || {})[engine.id];
-      if (ffPrice) lines.push({ type: 'add', label: `${CATALOG.firewallForward.label} (${engine.label})`, value: ffPrice });
+      if (ffPrice) lines.push({ type: 'add', label: `${CATALOG.firewallForward.label} (${engine.label})`, value: ffPrice, approx: !!engine.approxPrice });
     }
 
     const prop = findProp(cfg.propellerId);
@@ -768,29 +776,31 @@
     const host = document.getElementById('engineList');
     const compatibleEngines = CATALOG.engines.filter(e => !m || m.compatibleEngines.includes(e.id));
 
-    // Wenn nur ein Motor freigegeben ist (z.B. TSi/HW = 916 iS C), automatisch wählen
-    if (compatibleEngines.length === 1 && state.config.engineId !== compatibleEngines[0].id) {
-      state.config.engineId = compatibleEngines[0].id;
-    }
-
     host.innerHTML = compatibleEngines.map(e => {
       const selected = state.config.engineId === e.id;
-      const brand = 'Rotax';
+      const isOwn = e.id === 'own-engine';
+      const brand = isOwn ? null : 'Rotax';
+      const priceTxt = isOwn ? '<em>Nicht im Sling-Preis enthalten</em>' :
+        (e.approxPrice ? formatApprox(e.price) : format(e.price));
+      const ffwdHtml = (!isOwn && state.config.includeFFwd && CATALOG.firewallForward.perEngine[e.id])
+        ? ` <span style="color:var(--text-mute);font-weight:400">+ ${e.approxPrice ? formatApprox(CATALOG.firewallForward.perEngine[e.id]) : format(CATALOG.firewallForward.perEngine[e.id])} FF-Kit</span>`
+        : '';
       return `
         <label class="option is-radio ${selected ? 'selected' : ''}" data-engine="${e.id}" tabindex="0" role="radio" aria-checked="${selected}">
           <span class="opt-check">${checkSvg()}</span>
           <span class="opt-body">
             <span class="opt-title">${e.label}</span>
             <span class="opt-desc">${e.desc}</span>
-            <div class="opt-price">${format(e.price)}${state.config.includeFFwd && CATALOG.firewallForward.perEngine[e.id] ? ` <span style="color:var(--text-mute);font-weight:400">+ ${format(CATALOG.firewallForward.perEngine[e.id])} FF-Kit</span>` : ''}</div>
-            ${infoLinkHtml(e, brand)}
+            <div class="opt-price">${priceTxt}${ffwdHtml}</div>
+            ${brand ? infoLinkHtml(e, brand) : ''}
           </span>
         </label>
       `;
     }).join('');
-    if (compatibleEngines.length === 1) {
-      host.insertAdjacentHTML('beforeend', '<p class="muted" style="margin-top:14px;font-size:0.85rem">ℹ️ Dieses Modell wird ausschliesslich mit dem oben genannten Motor angeboten – die Wahl ist daher fix.</p>');
-    }
+
+    host.insertAdjacentHTML('beforeend',
+      '<div class="approx-note">ℹ️ <strong>Motor-Preise sind unverbindliche Richtwerte</strong> – die finale Offerte erfolgt bei Bestellung direkt vom Hersteller bzw. Importeur (Rotax). Alternativ können Sie den Motor selbst organisieren („Eigener Motor").</div>'
+    );
     host.querySelectorAll('.option:not(.disabled)').forEach(opt => {
       const pick = () => { state.config.engineId = opt.dataset.engine; update(); };
       opt.addEventListener('click', e => { if (e.target.closest('.opt-link')) return; e.preventDefault(); pick(); });
@@ -835,18 +845,22 @@
     host.innerHTML = CATALOG.avionics.map(a => {
       const compatible = !m || m.compatibleAvionics.includes(a.id);
       const selected = state.config.avionicsId === a.id;
+      const priceTxt = a.approxPrice ? formatApprox(a.price) : format(a.price);
       return `
         <label class="option is-radio ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-av="${a.id}" tabindex="0" role="radio" aria-checked="${selected}">
           <span class="opt-check"></span>
           <span class="opt-body">
             <span class="opt-title">${a.label}</span>
             <span class="opt-desc">${a.desc}${compatible ? '' : ' <em>(nicht freigegeben)</em>'}</span>
-            <div class="opt-price">${format(a.price)}</div>
+            <div class="opt-price">${priceTxt}</div>
             ${infoLinkHtml(a, 'Garmin')}
           </span>
         </label>
       `;
     }).join('');
+    host.insertAdjacentHTML('beforeend',
+      '<div class="approx-note">ℹ️ <strong>Avionik-Preise sind unverbindliche Richtwerte</strong> – die finale Offerte erfolgt bei Bestellung direkt vom Hersteller (Garmin / Importeur). FLARM/ADS-B-Add-ons wie der AirAvionics AT-1 finden sich im Extras-Step.</div>'
+    );
     host.querySelectorAll('.option:not(.disabled)').forEach(opt => {
       const pick = () => { state.config.avionicsId = opt.dataset.av; update(); };
       opt.addEventListener('click', e => { if (e.target.closest('.opt-link')) return; e.preventDefault(); pick(); });
@@ -914,7 +928,7 @@
             <span class="opt-body">
               <span class="opt-title">${x.label}${x.group ? ` <span class="opt-grouptag">1 aus ${x.group === 'brakes' ? 'Bremsen' : x.group}</span>` : ''}</span>
               <span class="opt-desc">${x.desc || ''}${compatible ? '' : ' <em>(nicht für gewähltes Modell)</em>'}</span>
-              <div class="opt-price">${compatible ? format(price) : '—'}</div>
+              <div class="opt-price">${compatible ? (x.approxPrice ? formatApprox(price) : format(price)) : '—'}</div>
               ${noteHtml}
               <div class="opt-action-row">
                 ${showDetails ? `<button class="opt-details-btn" type="button" data-details="${x.id}" aria-expanded="false">Details &amp; Bilder ▾</button>` : ''}
@@ -942,6 +956,12 @@
             });
           }
           state.config.extras.push(id);
+          // Pflicht-Dependencies (z.B. BRS → parachute-prep) automatisch mit aufnehmen
+          if (x && Array.isArray(x.requires)) {
+            x.requires.forEach(reqId => {
+              if (!state.config.extras.includes(reqId)) state.config.extras.push(reqId);
+            });
+          }
         }
         update();
       };

@@ -53,7 +53,7 @@ window.SLING_CATALOG = {
         { id: 'undercarriage', label: 'Undercarriage Kit',  desc: 'Komplettes Fahrwerk: Haupt- und Bugfahrwerk, Frontaufhängung, Lager und Anbauteile, Achsen, komplettes hydraulisches Bremssystem, 6-Ply Aviation-Reifen und -Schläuche, Hardware und Bauanleitung.', price: 11563 },
         { id: 'finishing',   label: 'Canopy, Dash, Final Assembly & Finishing Kit', desc: 'Komplettes Canopy-Kit inkl. Front- und Hauptcanopyrahmen, Front- und Hauptacrylglas, Closing-Skins und -Panels, lederbezogenes Top-Instrumentenpanel, Lüftungsdüsen, Instrumententafel-Cutout nach Kundenwunsch, individuelles Canopy-Schloss, alles für die finale Montage inkl. Wheel-Spats (3 Räder), Nosecowl, Composite-Closing-Fairings, Pushrod-Baugruppen, Hardware und Bauanleitung.', price: 11425 }
       ],
-      compatibleEngines: ['rotax912is'],
+      compatibleEngines: ['rotax912is', 'own-engine'],
       compatibleAvionics: ['vfr', 'standard', 'advanced', 'premium'],
       image: 'assets/models/sling2/Sling2-InFlight.jpg',
       gallery: [
@@ -77,7 +77,7 @@ window.SLING_CATALOG = {
         { id: 'undercarriage', label: 'Undercarriage Kit',  desc: 'Komplettes Fahrwerk: Haupt- und Bugfahrwerk, Frontaufhängung, Lager und Anbauteile, Achsen, komplettes hydraulisches Bremssystem, 6-Ply Aviation-Reifen und -Schläuche, Hardware und Bauanleitung.', price: 17273 },
         { id: 'finishing',   label: 'Canopy, Dash, Final Assembly & Finishing Kit', desc: 'Komplettes Canopy-Kit inkl. Canopy-Rahmen, Frontscheibe, Türen und Fenster, lederbezogenes Top-Dashboard, Lüftungsdüsen, Instrumententafel-Cutout, individuelles Canopy-Schloss für beide Türen, alles für die finale Montage inkl. Nosecowl, Wheel-Spats (3 Räder), Composite-Closing-Fairings, Pushrod-Baugruppen, Hardware und Bauanleitung.', price: 22134 }
       ],
-      compatibleEngines: ['rotax916is'],
+      compatibleEngines: ['rotax916is', 'own-engine'],
       compatibleAvionics: ['standard', 'advanced', 'premium'],
       image: 'assets/models/tsi/SlingTSI-InFlight.jpg',
       gallery: [
@@ -100,7 +100,7 @@ window.SLING_CATALOG = {
         { id: 'undercarriage', label: 'Undercarriage Kit',  desc: 'Komplettes Fahrwerk: Haupt- und Bugfahrwerk, Frontaufhängung, Lager und Anbauteile, Achsen, komplettes hydraulisches Bremssystem, 6-Ply Aviation-Reifen und -Schläuche, Hardware und Bauanleitung.', price: 17273 },
         { id: 'finishing',   label: 'Dash, Final Assembly & Finishing Kit', desc: 'Komplettes Dash-Kit (lederbezogen), Lüftungsdüsen, Instrumententafel-Cutout, alles für die finale Montage inkl. Nosecowl, Wheel-Spats (3 Räder), Composite-Closing-Fairings, Pushrod-Baugruppen, Hardware und Bauanleitung.', price: 10771 }
       ],
-      compatibleEngines: ['rotax916is'],
+      compatibleEngines: ['rotax916is', 'own-engine'],
       compatibleAvionics: ['standard', 'advanced', 'premium'],
       image: 'assets/models/highwing/SlingHW-InFlight.jpg',
       gallery: [
@@ -124,11 +124,13 @@ window.SLING_CATALOG = {
 
   engines: [
     { id: 'rotax912is',  label: 'Rotax 912 iSc Sport', desc: '100 PS · Einspritzung · Standard-Motor für Sling 2.', price: 33500,
-      models: ['sling2'],
+      approxPrice: true, models: ['sling2'],
       image: 'assets/engines/rotax912is/main.jpg',  infoUrl: 'https://www.flyrotax.com/products/912-is-sport-isc-sport' },
     { id: 'rotax916is',  label: 'Rotax 916 iS C',    desc: '160 PS · neueste Generation · Standard-Motor für Sling TSi und Sling High Wing.', price: 54500,
-      models: ['tsi', 'highwing'],
-      image: 'assets/engines/rotax916is/main.jpg',  infoUrl: 'https://www.flyrotax.com/products/916-is-c' }
+      approxPrice: true, models: ['tsi', 'highwing'],
+      image: 'assets/engines/rotax916is/main.jpg',  infoUrl: 'https://www.flyrotax.com/products/916-is-c' },
+    { id: 'own-engine',  label: 'Eigener Motor (Kunde besorgt selbst)', desc: 'Sie organisieren den Motor (und FF/Fuel-Kit) direkt beim Hersteller oder einem Drittanbieter. Kein Motor im Sling-Kit-Preis enthalten.', price: 0,
+      models: ['sling2', 'tsi', 'highwing'] }
   ],
 
   propellers: [
@@ -147,13 +149,13 @@ window.SLING_CATALOG = {
   ],
 
   avionics: [
-    { id: 'vfr',      label: 'VFR Basic',          desc: 'Garmin G5 (PFD), Funkgerät GTR 200B, Transponder GTX 45R Mode S.',         price: 14500,
+    { id: 'vfr',      label: 'VFR Basic',          desc: 'Garmin G5 (PFD), Funkgerät GTR 200B, Transponder GTX 45R Mode S.',         price: 14500, approxPrice: true,
       image: 'assets/avionics/vfr/main.jpg',      infoUrl: 'https://www.garmin.com/aviation/' },
-    { id: 'standard', label: 'Garmin Standard',    desc: 'Single G3X Touch 10", GTR 200B, GTX 45R, Audio Panel.',                    price: 26500,
+    { id: 'standard', label: 'Garmin Standard',    desc: 'Single G3X Touch 10", GTR 200B, GTX 45R, Audio Panel.',                    price: 26500, approxPrice: true,
       image: 'assets/avionics/standard/main.jpg', infoUrl: 'https://www.garmin.com/aviation/' },
-    { id: 'advanced', label: 'Garmin Advanced',    desc: 'Dual G3X Touch 10", GTN 650Xi, GFC 500 Autopilot.',                        price: 42500,
+    { id: 'advanced', label: 'Garmin Advanced',    desc: 'Dual G3X Touch 10", GTN 650Xi, GFC 500 Autopilot.',                        price: 42500, approxPrice: true,
       image: 'assets/avionics/advanced/main.jpg', infoUrl: 'https://www.garmin.com/aviation/' },
-    { id: 'premium',  label: 'Garmin Premium IFR', desc: 'Triple G3X Touch, GTN 750Xi, GFC 500, ADS-B In/Out, FlightStream, Wetter.', price: 58500,
+    { id: 'premium',  label: 'Garmin Premium IFR', desc: 'Triple G3X Touch, GTN 750Xi, GFC 500, ADS-B In/Out, FlightStream, Wetter.', price: 58500, approxPrice: true,
       image: 'assets/avionics/premium/main.jpg',  infoUrl: 'https://www.garmin.com/aviation/' }
   ],
 
@@ -256,6 +258,77 @@ window.SLING_CATALOG = {
       desc: 'Sling-empfohlenes Werkzeug-Set für den Bau – einmaliger Kauf.',
       prices: { sling2: 2457, tsi: 2656, highwing: 2774 },
       image: 'assets/extras/builder-tools/main.jpg'
+    },
+
+    /* ----- BRS Ballistic Recovery System ----- */
+    {
+      id: 'brs-magnum-901',
+      label: 'BRS Magnum 901 Parachute (Rettungssystem)',
+      desc: 'Ballistisches Rettungs-Fallschirmsystem von Magnum für das gesamte Flugzeug.',
+      info: 'Bei Auswahl wird automatisch auch die Parachute-Vorbereitung (Kabel + Mounts) mitbestellt – ist Voraussetzung für den Einbau.',
+      details: 'Komplett-System inkl. ballistischer Rakete, Fallschirm, Auslöse-Mechanismus und Verkabelung. Wird vom Hersteller mit dem Flugzeug aktiviert.\n\nAchtung: Wartungs-/Inspektionsintervalle beachten (Re-Pack alle 6-10 Jahre je nach System).',
+      approxPrice: true,
+      requires: ['parachute-prep'],
+      prices: { sling2: 19500, tsi: 23500, highwing: 25500 },
+      image: 'assets/extras/brs-magnum-901/main.jpg',
+      infoUrl: 'https://brsaerospace.com/'
+    },
+
+    /* ----- Aithre Sauerstoff-Systeme ----- */
+    {
+      id: 'aithre-o2-single',
+      label: 'Aithre Altus Meso – Sauerstoff-System (1 Maker)',
+      desc: 'Portables Sauerstoff-System für ein Crew-Mitglied, mit Smart-App-Anbindung.',
+      info: 'Smallest unit, ideal für Sling 2 oder als Backup.',
+      approxPrice: true,
+      group: 'o2',
+      prices: { sling2: 2500, tsi: 2500, highwing: 2500 },
+      image: 'assets/extras/aithre-o2-single/main.jpg',
+      infoUrl: 'https://aithre.com/products/altus-meso-personal-portable-oxygen'
+    },
+    {
+      id: 'aithre-o2-dual',
+      label: 'Aithre Altus Mini Twin – Sauerstoff-System (2 Maker)',
+      desc: 'Dual-Outlet-Sauerstoff-System für zwei Crew-Mitglieder (Pilot + Copilot).',
+      approxPrice: true,
+      group: 'o2',
+      prices: { sling2: 5800, tsi: 5800, highwing: 5800 },
+      image: 'assets/extras/aithre-o2-dual/main.jpg',
+      infoUrl: 'https://aithre.com/products/altus-mini-twin-portable-oxygen-for-2'
+    },
+    {
+      id: 'aithre-o2-reserve',
+      label: 'Aithre – Reserve-Sauerstoffflasche',
+      desc: 'Zusätzliche Reserveflasche (kleinste Grösse) als Backup für längere Flüge.',
+      info: 'Empfohlen in Kombination mit Altus Meso oder Mini Twin.',
+      approxPrice: true,
+      prices: { sling2: 900, tsi: 900, highwing: 900 },
+      image: 'assets/extras/aithre-o2-reserve/main.jpg',
+      infoUrl: 'https://aithre.com/'
+    },
+
+    /* ----- IntelliKey von Midwest Panel ----- */
+    {
+      id: 'intellikey',
+      label: 'IntelliKey – Schlüsselloses Zünd-System',
+      desc: 'Elektronisches Schlüssel-System mit Anti-Diebstahl-Schutz und Code-Eingabe statt mechanischem Magnet-Schalter.',
+      details: 'Modernisiert das veraltete mechanische Magnet-Switch-System mit einem elektronischen Zugang per Code/Tag. Erhöht den Diebstahl-Schutz und vereinfacht die Bedienung.',
+      approxPrice: true,
+      prices: { sling2: 1800, tsi: 1800, highwing: 1800 },
+      image: 'assets/extras/intellikey/main.jpg',
+      infoUrl: 'https://www.intellikey.us/'
+    },
+
+    /* ----- AirAvionics AT-1 (FLARM + ADS-B Out) ----- */
+    {
+      id: 'airavionics-at-1',
+      label: 'AirAvionics AT-1 – FLARM + ADS-B Out',
+      desc: 'Kombiniertes Collision-Avoidance- und ADS-B-Out-System – in der Schweiz/Europa für die meisten Lufträume empfohlen.',
+      details: 'FLARM ist in der Schweiz Standard im Sport- und Segelflugverkehr. ADS-B Out wird in zunehmend mehr europäischen Lufträumen verlangt. Der AT-1 vereint beides in einem Gerät und reduziert Panel-Aufwand sowie Stromverbrauch.',
+      approxPrice: true,
+      prices: { sling2: 4200, tsi: 4200, highwing: 4200 },
+      image: 'assets/extras/airavionics-at-1/main.jpg',
+      infoUrl: 'https://www.air-avionics.com/'
     }
   ],
 
