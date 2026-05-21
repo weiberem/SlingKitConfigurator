@@ -372,9 +372,9 @@
     const m = models[idx];
     if (!m) return;
 
-    document.getElementById('msName').textContent = m.name;
-    document.getElementById('msTag').textContent = m.tag;
-    document.getElementById('msFrom').innerHTML = `ab <strong>${format(m.partsBaseSum)}</strong>`;
+    document.getElementById('msName').textContent = '';
+    document.getElementById('msTag').textContent = '';
+    document.getElementById('msFrom').innerHTML = `Kit ab <strong>${format(m.partsBaseSum)}</strong>`;
 
     const dots = document.getElementById('msDots');
     dots.innerHTML = models.map((mm, i) => `<button class="ms-dot ${i === idx ? 'active' : ''}" data-i="${i}" type="button" aria-label="${mm.name}"></button>`).join('');
