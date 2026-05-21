@@ -405,6 +405,23 @@
     }
   }
 
+  const STEP_ICONS = {
+    // 1 – Hangar (Aufbau): geschlossenes Hallengebäude mit Tor
+    parts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M3 21V10l9-5 9 5v11"/><path d="M8 21v-7h8v7"/><path d="M3 21h18"/></svg>',
+    // 2 – Motor: Flugzeug in Seitenansicht (Triebwerk sichtbar)
+    engine: '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M22 12c0-.6-.45-1-1.4-1H17l-3.5-6.5c-.3-.5-.8-.5-1.3-.5h-.7l2.4 7H9.5l-2-3H6l1 4H4c-1 0-1.5.4-1.5 1s.5 1 1.5 1h3l-1 4h1.5l2-3h4.4l-2.4 7h.7c.5 0 1 0 1.3-.5L17 13h3.6c.95 0 1.4-.4 1.4-1z"/></svg>',
+    // 3 – Propeller (Spinner)
+    propeller: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="2" fill="currentColor"/><path d="M12 10V3M12 14v7M10 12H3M14 12h7"/></svg>',
+    // 4 – Avionik: Cockpit-Instrumente
+    avionics: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="8.5" cy="12" r="2"/><circle cx="15.5" cy="12" r="2"/></svg>',
+    // 5 – Extras / Take-off: Flugzeug abhebend
+    extras: '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>',
+    // 6 – Bestellen / Flugzeug in der Luft mit Spur
+    summary: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M3 17c2 0 2-1.5 4-1.5s2 1.5 4 1.5"/><path d="M21 4l-9.5 9.5L8 12 4 13l5 3 1 4 1.5-3.5L21 4z"/></svg>'
+  };
+
+  const STEP_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>';
+
   const STEPS = [
     { id: 'parts',     label: 'Kit-Teile' },
     { id: 'engine',    label: 'Motor' },
@@ -422,9 +439,10 @@
     parts.push('<div class="steps-inner">');
     STEPS.forEach((s, i) => {
       const cls = i === activeIdx ? 'active' : (i < activeIdx ? 'done' : '');
+      const inner = (i < activeIdx) ? STEP_CHECK : (STEP_ICONS[s.id] || '');
       parts.push(`
         <button type="button" class="step ${cls}" data-section="${s.id}" aria-current="${i === activeIdx}">
-          <span class="step-num"><span class="step-num-label">${i + 1}</span></span>
+          <span class="step-num">${inner}</span>
           <span class="step-label">${s.label}</span>
         </button>
       `);

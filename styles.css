@@ -172,24 +172,25 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 .step:active { transform: scale(0.97); }
 
 .step-num {
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: var(--bg-card);
   border: 1.5px solid var(--line-strong);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.78rem;
-  font-weight: 800;
   color: var(--text-mute);
-  transition: all .25s;
+  transition: all .25s ease;
 }
+.step-num svg { display: block; }
 .step.active { color: var(--text); background: var(--accent-soft-2); }
 .step.active .step-num {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
+  transform: scale(1.08);
+  box-shadow: 0 4px 14px rgba(220, 31, 38, 0.32);
 }
 .step.done { color: var(--text-dim); }
 .step.done .step-num {
@@ -197,8 +198,6 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   border-color: var(--accent);
   color: var(--accent);
 }
-.step.done .step-num::after { content: '✓'; }
-.step.done .step-num-label { display: none; }
 
 .step-sep {
   flex: 0 0 24px;
