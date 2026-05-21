@@ -187,29 +187,45 @@ window.SLING_CATALOG = {
       id: 'matco-dual-toe',
       label: 'Matco Dual Toe Brake Kit',
       desc: 'Komplettes Dual-Toe-Brake-Kit statt Standard-T-Pedale mit Mittel-Bremse.',
-      prices: { sling2: 2063, tsi: 1976 },
-      image: 'assets/extras/matco-dual-toe/main.jpg'
+      details: 'Standard ab Werk: T-förmige Steuerpedale mit einer zentralen Bremse (Pilot bremst beide Räder gleichzeitig).\n\nMit dem Matco-Kit erhält jede Pilotenseite (links + rechts) eine eigene Toe-Brake auf jedem Pedal – wie im Auto. Vorteil: präzises Differential-Bremsen beim Rollen und Ausrichten, beidseitig vom Cockpit aus bedienbar.',
+      gallery: [
+        'assets/extras/matco-dual-toe/main.jpg',
+        'assets/extras/matco-dual-toe/detail-1.jpg',
+        'assets/extras/matco-dual-toe/detail-2.jpg'
+      ],
+      prices: { sling2: 2063, tsi: 1976 }
     },
     {
       id: 'beringer-hand-brake-tri',
       label: 'Beringer Hand Brake Upgrade (TRI)',
       desc: 'Hand-Brems-System-Upgrade von Beringer – TRI-Konfiguration.',
-      prices: { tsi: 4361, highwing: 4555 },
-      image: 'assets/extras/beringer-hand-brake/main.jpg'
+      details: 'Hochwertiges Hand-Brake-System von Beringer (Frankreich) – ersetzt die Standard-Bremse.\nHandgriff am Mittelholm/Powerquadrant, bedient die Hauptfahrwerks-Bremsen zentral. Ideal für Parking-Brake und kontrolliertes Anrollen.',
+      gallery: [
+        'assets/extras/beringer-hand-brake/main.jpg',
+        'assets/extras/beringer-hand-brake/detail-1.jpg'
+      ],
+      prices: { tsi: 4361, highwing: 4555 }
     },
     {
       id: 'beringer-dual-toe-tri',
       label: 'Beringer Dual Toe Hydraulic Brakes (TRI)',
       desc: 'Hydraulische Dual-Toe-Brakes statt hand-betätigte Bremse – TRI-Konfiguration.',
-      prices: { tsi: 6001, highwing: 6268 },
-      image: 'assets/extras/beringer-dual-toe/main.jpg'
+      details: 'Premium-Bremsanlage von Beringer mit hydraulischen Dual-Toe-Bremsen auf beiden Pilotenseiten.\n\nUnterschied zur Hand-Brake-Variante: differential bremsbar pro Rad ohne Hand vom Stick zu nehmen – sicherer bei Crosswind-Landungen und engen Rollvorgängen.',
+      gallery: [
+        'assets/extras/beringer-dual-toe/main.jpg',
+        'assets/extras/beringer-dual-toe/detail-1.jpg'
+      ],
+      prices: { tsi: 6001, highwing: 6268 }
     },
     {
       id: 'beringer-dual-toe-tdr',
       label: 'Beringer Dual Toe Hydraulic Brakes (TDR)',
       desc: 'Hydraulische Dual-Toe-Brakes – TDR-Konfiguration (Sling High Wing).',
-      prices: { highwing: 9375 },
-      image: 'assets/extras/beringer-dual-toe-tdr/main.jpg'
+      details: 'TDR-Variante der Beringer-Dual-Toe-Brakes – verstärkt für den schweren High-Wing-Einsatz (Backcountry, Bush-Strips). Erweiterte hydraulische Komponenten, robuster für unbefestigte Pisten.',
+      gallery: [
+        'assets/extras/beringer-dual-toe-tdr/main.jpg'
+      ],
+      prices: { highwing: 9375 }
     },
     {
       id: 'parachute-prep',

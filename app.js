@@ -747,6 +747,49 @@
     bindOptionLinks(host);
   }
 
+  function hasExtraDetails(x) {
+    return !!(x && (x.details || (Array.isArray(x.gallery) && x.gallery.length) || x.image));
+  }
+
+  function renderExtraDetails(x) {
+    const gallery = (Array.isArray(x.gallery) && x.gallery.length) ? x.gallery.slice() : (x.image ? [x.image] : []);
+    const multi = gallery.length > 1;
+    const galleryHtml = gallery.length ? `
+      <div class="opt-gallery" data-gallery-of="${x.id}">
+        ${multi ? `<button class="og-arrow og-prev" type="button" aria-label="Vorheriges Bild">‹</button>` : ''}
+        <div class="og-stage"><img class="og-img" alt="${x.label}" /><span class="og-fallback">📷 Bild noch nicht vorhanden</span></div>
+        ${multi ? `<button class="og-arrow og-next" type="button" aria-label="Nächstes Bild">›</button>` : ''}
+      </div>
+      ${multi ? `<div class="og-dots"></div>` : ''}
+    ` : '';
+    const textHtml = x.details ? `<div class="opt-details-text">${x.details}</div>` : '';
+    return galleryHtml + textHtml;
+  }
+
+  function initOptionGallery(panel, x) {
+    const gallery = (Array.isArray(x.gallery) && x.gallery.length) ? x.gallery.slice() : (x.image ? [x.image] : []);
+    if (!gallery.length) return;
+    const img = panel.querySelector('.og-img');
+    const fallback = panel.querySelector('.og-fallback');
+    const dots = panel.querySelector('.og-dots');
+    let idx = 0;
+    const show = i => {
+      idx = (i + gallery.length) % gallery.length;
+      img.onload = () => { img.style.display = 'block'; fallback.style.display = 'none'; };
+      img.onerror = () => { img.style.display = 'none'; fallback.style.display = 'flex'; };
+      img.style.display = 'none'; fallback.style.display = 'flex';
+      img.src = gallery[idx];
+      if (dots) dots.querySelectorAll('button').forEach((d, di) => d.classList.toggle('active', di === idx));
+    };
+    if (dots && gallery.length > 1) {
+      dots.innerHTML = gallery.map((_, i) => `<button class="og-dot ${i === 0 ? 'active' : ''}" type="button" data-i="${i}" aria-label="Bild ${i + 1}"></button>`).join('');
+      dots.querySelectorAll('button').forEach(d => d.addEventListener('click', e => { e.stopPropagation(); show(+d.dataset.i); }));
+    }
+    panel.querySelector('.og-prev')?.addEventListener('click', e => { e.stopPropagation(); show(idx - 1); });
+    panel.querySelector('.og-next')?.addEventListener('click', e => { e.stopPropagation(); show(idx + 1); });
+    show(0);
+  }
+
   function renderExtras() {
     const host = document.getElementById('extrasList');
     const m = state.config.modelId;
@@ -755,29 +798,62 @@
       const price = extraPrice(x, m);
       const selected = state.config.extras.includes(x.id);
       const noteHtml = (compatible && x.info) ? `<div class="opt-note">${x.info}</div>` : '';
+      const showDetails = compatible && hasExtraDetails(x);
       return `
-        <label class="option ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-extra="${x.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
-          <span class="opt-check">${checkSvg()}</span>
-          <span class="opt-body">
-            <span class="opt-title">${x.label}</span>
-            <span class="opt-desc">${x.desc || ''}${compatible ? '' : ' <em>(nicht für gewähltes Modell)</em>'}</span>
-            <div class="opt-price">${compatible ? format(price) : '—'}</div>
-            ${noteHtml}
-            ${infoLinkHtml(x, 'Hersteller')}
-          </span>
-        </label>
+        <div class="option-wrap">
+          <label class="option ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-extra="${x.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
+            <span class="opt-check">${checkSvg()}</span>
+            <span class="opt-body">
+              <span class="opt-title">${x.label}</span>
+              <span class="opt-desc">${x.desc || ''}${compatible ? '' : ' <em>(nicht für gewähltes Modell)</em>'}</span>
+              <div class="opt-price">${compatible ? format(price) : '—'}</div>
+              ${noteHtml}
+              <div class="opt-action-row">
+                ${showDetails ? `<button class="opt-details-btn" type="button" data-details="${x.id}" aria-expanded="false">Details &amp; Bilder ▾</button>` : ''}
+                ${infoLinkHtml(x, 'Hersteller')}
+              </div>
+            </span>
+          </label>
+          ${showDetails ? `<div class="opt-details" id="opt-details-${x.id}" hidden>${renderExtraDetails(x)}</div>` : ''}
+        </div>
       `;
     }).join('');
-    host.querySelectorAll('.option:not(.disabled)').forEach(opt => {
+
+    host.querySelectorAll('.option:not(.disabled)').forEach(label => {
+      const id = label.dataset.extra;
       const toggle = () => {
-        const id = opt.dataset.extra;
         if (state.config.extras.includes(id)) state.config.extras = state.config.extras.filter(x => x !== id);
         else state.config.extras.push(id);
         update();
       };
-      opt.addEventListener('click', e => { if (e.target.closest('.opt-link')) return; e.preventDefault(); toggle(); });
-      opt.addEventListener('keydown', e => { if (e.target.closest('.opt-link')) return; if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
+      label.addEventListener('click', e => {
+        if (e.target.closest('.opt-link, .opt-details-btn')) return;
+        e.preventDefault(); toggle();
+      });
+      label.addEventListener('keydown', e => {
+        if (e.target.closest('.opt-link, .opt-details-btn')) return;
+        if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); }
+      });
     });
+
+    host.querySelectorAll('[data-details]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation(); e.preventDefault();
+        const id = btn.dataset.details;
+        const panel = host.querySelector(`#opt-details-${id}`);
+        if (!panel) return;
+        const willOpen = panel.hidden;
+        panel.hidden = !willOpen;
+        btn.setAttribute('aria-expanded', String(willOpen));
+        btn.innerHTML = willOpen ? 'Details &amp; Bilder ▴' : 'Details &amp; Bilder ▾';
+        if (willOpen && !panel.dataset.inited) {
+          const x = findExtra(id);
+          if (x) initOptionGallery(panel, x);
+          panel.dataset.inited = '1';
+        }
+      });
+    });
+
     bindOptionLinks(host);
   }
 
