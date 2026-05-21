@@ -973,25 +973,6 @@
     });
   }
 
-  function renderPackingBanner() {
-    const txt = document.getElementById('packingText');
-    if (!txt) return;
-    const packPct = ((CATALOG.shipping || {}).packing && CATALOG.shipping.packing.percent || {})[state.config.modelId];
-    if (typeof packPct !== 'number') {
-      txt.textContent = 'Wird automatisch eingerechnet – für den Export ab Werk Johannesburg.';
-      return;
-    }
-    const m = findModel(state.config.modelId);
-    const selectedSum = m ? m.parts.filter(p => state.config.parts.includes(p.id)).reduce((s, p) => s + p.price, 0) : 0;
-    const pctText = (packPct * 100).toFixed(2);
-    if (selectedSum > 0) {
-      const val = Math.round(selectedSum * packPct);
-      txt.innerHTML = `<strong>${pctText} %</strong> auf jedes Kit-Teil – aktuell <strong>${format(val)}</strong> für die ausgewählten Kit-Teile. Ab Werk Johannesburg.`;
-    } else {
-      txt.innerHTML = `<strong>${pctText} %</strong> auf jedes gewählte Kit-Teil – ab Werk Johannesburg.`;
-    }
-  }
-
   function renderServices() {
     const host = document.getElementById('servicesList');
     if (!host) return;
@@ -1727,7 +1708,6 @@
     renderExtras();
     renderServices();
     renderQuickbuild();
-    renderPackingBanner();
     renderPanelNav();
     renderSummaryCard();
     if (state.activeSection === 'summary') renderFullSummaryPanel();
