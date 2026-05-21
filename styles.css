@@ -519,6 +519,28 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   margin-top: 8px;
 }
 
+.opt-link {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  padding: 3px 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  background: rgba(255,255,255,0.02);
+  transition: color .15s, border-color .15s, background .15s;
+}
+.opt-link:hover,
+.opt-link:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(220,31,38,0.08);
+  outline: none;
+}
+
 /* Radio variant of option */
 .option.is-radio .opt-check { border-radius: 50%; }
 .option.is-radio.selected .opt-check::after {

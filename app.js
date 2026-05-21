@@ -429,12 +429,25 @@
     return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
   }
 
+  function infoLinkHtml(item, brand) {
+    if (!item.infoUrl) return '';
+    return `<a class="opt-link" href="${item.infoUrl}" target="_blank" rel="noopener noreferrer">${brand} ↗</a>`;
+  }
+
+  function bindOptionLinks(host) {
+    host.querySelectorAll('.opt-link').forEach(a => {
+      a.addEventListener('click', e => e.stopPropagation());
+      a.addEventListener('keydown', e => e.stopPropagation());
+    });
+  }
+
   function renderEngines() {
     const m = findModel(state.config.modelId);
     const host = document.getElementById('engineList');
     host.innerHTML = CATALOG.engines.map(e => {
       const compatible = !m || m.compatibleEngines.includes(e.id);
       const selected = state.config.engineId === e.id;
+      const brand = e.id.startsWith('rotax') ? 'Rotax' : 'Hersteller';
       return `
         <label class="option is-radio ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-engine="${e.id}" tabindex="0" role="radio" aria-checked="${selected}">
           <span class="opt-check">${checkSvg()}</span>
@@ -442,19 +455,22 @@
             <span class="opt-title">${e.label}</span>
             <span class="opt-desc">${e.desc}${compatible ? '' : ' <em>(nicht freigegeben für gewähltes Modell)</em>'}</span>
             <div class="opt-price">${format(e.price)}${state.config.includeFFwd && CATALOG.firewallForward.perEngine[e.id] ? ` <span style="color:var(--text-mute);font-weight:400">+ ${format(CATALOG.firewallForward.perEngine[e.id])} FF-Kit</span>` : ''}</div>
+            ${infoLinkHtml(e, brand)}
           </span>
         </label>
       `;
     }).join('');
     host.querySelectorAll('.option:not(.disabled)').forEach(opt => {
       const pick = () => { state.config.engineId = opt.dataset.engine; update(); };
-      opt.addEventListener('click', e => { e.preventDefault(); pick(); });
-      opt.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pick(); } });
+      opt.addEventListener('click', e => { if (e.target.closest('.opt-link')) return; e.preventDefault(); pick(); });
+      opt.addEventListener('keydown', e => { if (e.target.closest('.opt-link')) return; if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pick(); } });
     });
+    bindOptionLinks(host);
   }
 
   function renderPropellers() {
     const host = document.getElementById('propellerList');
+    const brandMap = { 'sensenich': 'Sensenich', 'airmaster-3': 'Airmaster', 'duc-flashback-3r': 'Duc Hélices', 'mt-3blade': 'MT-Propeller' };
     host.innerHTML = CATALOG.propellers.map(p => {
       const selected = state.config.propellerId === p.id;
       return `
@@ -464,15 +480,17 @@
             <span class="opt-title">${p.label}</span>
             <span class="opt-desc">${p.desc}</span>
             <div class="opt-price">${format(p.price)}</div>
+            ${infoLinkHtml(p, brandMap[p.id] || 'Hersteller')}
           </span>
         </label>
       `;
     }).join('');
     host.querySelectorAll('.option').forEach(opt => {
       const pick = () => { state.config.propellerId = opt.dataset.prop; update(); };
-      opt.addEventListener('click', e => { e.preventDefault(); pick(); });
-      opt.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pick(); } });
+      opt.addEventListener('click', e => { if (e.target.closest('.opt-link')) return; e.preventDefault(); pick(); });
+      opt.addEventListener('keydown', e => { if (e.target.closest('.opt-link')) return; if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pick(); } });
     });
+    bindOptionLinks(host);
   }
 
   function renderAvionics() {
@@ -488,15 +506,17 @@
             <span class="opt-title">${a.label}</span>
             <span class="opt-desc">${a.desc}${compatible ? '' : ' <em>(nicht freigegeben)</em>'}</span>
             <div class="opt-price">${format(a.price)}</div>
+            ${infoLinkHtml(a, 'Garmin')}
           </span>
         </label>
       `;
     }).join('');
     host.querySelectorAll('.option:not(.disabled)').forEach(opt => {
       const pick = () => { state.config.avionicsId = opt.dataset.av; update(); };
-      opt.addEventListener('click', e => { e.preventDefault(); pick(); });
-      opt.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pick(); } });
+      opt.addEventListener('click', e => { if (e.target.closest('.opt-link')) return; e.preventDefault(); pick(); });
+      opt.addEventListener('keydown', e => { if (e.target.closest('.opt-link')) return; if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pick(); } });
     });
+    bindOptionLinks(host);
   }
 
   function renderExtras() {
@@ -512,6 +532,7 @@
             <span class="opt-title">${x.label}</span>
             <span class="opt-desc">${x.desc}${compatible ? '' : ' <em>(nicht für gewähltes Modell)</em>'}</span>
             <div class="opt-price">${format(x.price)}</div>
+            ${infoLinkHtml(x, 'Hersteller')}
           </span>
         </label>
       `;
@@ -523,9 +544,10 @@
         else state.config.extras.push(id);
         update();
       };
-      opt.addEventListener('click', e => { e.preventDefault(); toggle(); });
-      opt.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
+      opt.addEventListener('click', e => { if (e.target.closest('.opt-link')) return; e.preventDefault(); toggle(); });
+      opt.addEventListener('keydown', e => { if (e.target.closest('.opt-link')) return; if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
     });
+    bindOptionLinks(host);
   }
 
   function renderSummaryCard() {

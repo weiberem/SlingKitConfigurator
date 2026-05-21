@@ -42,7 +42,14 @@ window.SLING_CATALOG = {
         { id: 'finishing',   label: 'Finishing Kit',        desc: 'Verkleidungen, Interieur-Panels, Türmechanismen, Hardware-Kits, Bauanleitungs-Set, Decals.', price: 2700 }
       ],
       compatibleEngines: ['rotax912uls', 'rotax912is', 'rotax915is'],
-      compatibleAvionics: ['vfr', 'standard', 'advanced', 'premium']
+      compatibleAvionics: ['vfr', 'standard', 'advanced', 'premium'],
+      image: 'assets/models/sling2/main.jpg',
+      gallery: [
+        'assets/models/sling2/detail-1.jpg',
+        'assets/models/sling2/detail-2.jpg',
+        'assets/models/sling2/detail-3.jpg'
+      ],
+      infoUrl: 'https://airplanefactory.com/aircraft/sling-2/'
     },
     {
       id: 'tsi',
@@ -60,7 +67,14 @@ window.SLING_CATALOG = {
         { id: 'finishing',   label: 'Finishing Kit',        desc: 'Verkleidungen, Interieur-Panels, Türmechanismen, Hardware-Kits, Bauanleitungs-Set, Decals.', price: 17279 }
       ],
       compatibleEngines: ['rotax915is', 'rotax916is'],
-      compatibleAvionics: ['standard', 'advanced', 'premium']
+      compatibleAvionics: ['standard', 'advanced', 'premium'],
+      image: 'assets/models/tsi/main.jpg',
+      gallery: [
+        'assets/models/tsi/detail-1.jpg',
+        'assets/models/tsi/detail-2.jpg',
+        'assets/models/tsi/detail-3.jpg'
+      ],
+      infoUrl: 'https://airplanefactory.com/aircraft/sling-tsi/'
     },
     {
       id: 'highwing',
@@ -78,7 +92,14 @@ window.SLING_CATALOG = {
         { id: 'finishing',   label: 'Finishing Kit',        desc: 'Cockpit-Verkleidungen, Bodenplatten, Cargo-Bereich, Hardware-Kit, Decals, Bauanleitung.', price: 15800 }
       ],
       compatibleEngines: ['rotax915is', 'rotax916is'],
-      compatibleAvionics: ['standard', 'advanced', 'premium']
+      compatibleAvionics: ['standard', 'advanced', 'premium'],
+      image: 'assets/models/highwing/main.jpg',
+      gallery: [
+        'assets/models/highwing/detail-1.jpg',
+        'assets/models/highwing/detail-2.jpg',
+        'assets/models/highwing/detail-3.jpg'
+      ],
+      infoUrl: 'https://airplanefactory.com/aircraft/sling-high-wing/'
     }
   ],
 
@@ -95,35 +116,56 @@ window.SLING_CATALOG = {
   },
 
   engines: [
-    { id: 'rotax912uls', label: 'Rotax 912 ULS',       desc: '100 PS · Vergaser · zuverlässiger Klassiker.',          price: 28500 },
-    { id: 'rotax912is',  label: 'Rotax 912iS Sport',   desc: '100 PS · Einspritzung · sparsam und effizient.',        price: 33500 },
-    { id: 'rotax915is',  label: 'Rotax 915iS',         desc: '141 PS · Turbo + Einspritzung · 4-Sitzer-Performance.', price: 49500 },
-    { id: 'rotax916is',  label: 'Rotax 916iS',         desc: '160 PS · neueste Generation · Top-Performance.',        price: 54500 }
+    { id: 'rotax912uls', label: 'Rotax 912 ULS',     desc: '100 PS · Vergaser · zuverlässiger Klassiker.',          price: 28500,
+      image: 'assets/engines/rotax912uls/main.jpg', infoUrl: 'https://www.flyrotax.com/produkte/details/rotax-912-uls-s-2.html' },
+    { id: 'rotax912is',  label: 'Rotax 912iS Sport', desc: '100 PS · Einspritzung · sparsam und effizient.',        price: 33500,
+      image: 'assets/engines/rotax912is/main.jpg',  infoUrl: 'https://www.flyrotax.com/produkte/details/rotax-912-is-sport.html' },
+    { id: 'rotax915is',  label: 'Rotax 915iS',       desc: '141 PS · Turbo + Einspritzung · 4-Sitzer-Performance.', price: 49500,
+      image: 'assets/engines/rotax915is/main.jpg',  infoUrl: 'https://www.flyrotax.com/produkte/details/rotax-915-i-s-c-a.html' },
+    { id: 'rotax916is',  label: 'Rotax 916iS',       desc: '160 PS · neueste Generation · Top-Performance.',        price: 54500,
+      image: 'assets/engines/rotax916is/main.jpg',  infoUrl: 'https://www.flyrotax.com/produkte/details/rotax-916-i-s-c-a.html' }
   ],
 
   propellers: [
-    { id: 'sensenich',         label: 'Sensenich 2-Blatt Fixed',     desc: 'Bewährter Festpropeller, 2-Blatt Composite.',     price: 4250 },
-    { id: 'airmaster-3',       label: 'Airmaster AP430 3-Blatt CS',  desc: 'Hydraulischer Verstellpropeller, 3-Blatt.',       price: 11200 },
-    { id: 'duc-flashback-3r',  label: 'Duc Flashback-3 R 4-Blatt',   desc: 'Premium 4-Blatt Composite mit Hub-Cap und Spinner.', price: 13755 },
-    { id: 'mt-3blade',         label: 'MT-Propeller 3-Blatt CS',     desc: 'Constant-Speed Holz-Composite, 3-Blatt.',         price: 12450 }
+    { id: 'sensenich',        label: 'Sensenich 2-Blatt Fixed',    desc: 'Bewährter Festpropeller, 2-Blatt Composite.',         price: 4250,
+      image: 'assets/propellers/sensenich/main.jpg',        infoUrl: 'https://sensenich.com/' },
+    { id: 'airmaster-3',      label: 'Airmaster AP430 3-Blatt CS', desc: 'Hydraulischer Verstellpropeller, 3-Blatt.',           price: 11200,
+      image: 'assets/propellers/airmaster-3/main.jpg',      infoUrl: 'https://propellor.com/' },
+    { id: 'duc-flashback-3r', label: 'Duc Flashback-3 R 4-Blatt',  desc: 'Premium 4-Blatt Composite mit Hub-Cap und Spinner.',  price: 13755,
+      image: 'assets/propellers/duc-flashback-3r/main.jpg', infoUrl: 'https://www.duc-helices.com/' },
+    { id: 'mt-3blade',        label: 'MT-Propeller 3-Blatt CS',    desc: 'Constant-Speed Holz-Composite, 3-Blatt.',             price: 12450,
+      image: 'assets/propellers/mt-3blade/main.jpg',        infoUrl: 'https://www.mt-propeller.com/' }
   ],
 
   avionics: [
-    { id: 'vfr',      label: 'VFR Basic',         desc: 'Garmin G5 (PFD), Funkgerät GTR 200B, Transponder GTX 45R Mode S.',                 price: 14500 },
-    { id: 'standard', label: 'Garmin Standard',   desc: 'Single G3X Touch 10", GTR 200B, GTX 45R, Audio Panel.',                              price: 26500 },
-    { id: 'advanced', label: 'Garmin Advanced',   desc: 'Dual G3X Touch 10", GTN 650Xi, GFC 500 Autopilot.',                                  price: 42500 },
-    { id: 'premium',  label: 'Garmin Premium IFR',desc: 'Triple G3X Touch, GTN 750Xi, GFC 500, ADS-B In/Out, FlightStream, Wetter.',         price: 58500 }
+    { id: 'vfr',      label: 'VFR Basic',          desc: 'Garmin G5 (PFD), Funkgerät GTR 200B, Transponder GTX 45R Mode S.',         price: 14500,
+      image: 'assets/avionics/vfr/main.jpg',      infoUrl: 'https://www.garmin.com/aviation/' },
+    { id: 'standard', label: 'Garmin Standard',    desc: 'Single G3X Touch 10", GTR 200B, GTX 45R, Audio Panel.',                    price: 26500,
+      image: 'assets/avionics/standard/main.jpg', infoUrl: 'https://www.garmin.com/aviation/' },
+    { id: 'advanced', label: 'Garmin Advanced',    desc: 'Dual G3X Touch 10", GTN 650Xi, GFC 500 Autopilot.',                        price: 42500,
+      image: 'assets/avionics/advanced/main.jpg', infoUrl: 'https://www.garmin.com/aviation/' },
+    { id: 'premium',  label: 'Garmin Premium IFR', desc: 'Triple G3X Touch, GTN 750Xi, GFC 500, ADS-B In/Out, FlightStream, Wetter.', price: 58500,
+      image: 'assets/avionics/premium/main.jpg',  infoUrl: 'https://www.garmin.com/aviation/' }
   ],
 
   extras: [
-    { id: 'brs',         label: 'BRS Ballistic Parachute',       desc: 'Gesamtrettungs-Fallschirmsystem.',                                     price: 19500 },
-    { id: 'ac',          label: 'Klimaanlage',                   desc: 'Cockpit-Klimatisierung.',                                              price: 7500, models: ['tsi', 'highwing'] },
-    { id: 'heatedseats', label: 'Sitzheizung',                   desc: 'Elektrisch beheizte Vordersitze.',                                     price: 1200 },
-    { id: 'leather',     label: 'Leder-Interieur',               desc: 'Premium-Lederausstattung in Wunschfarbe.',                             price: 4800 },
-    { id: 'paint',       label: 'Custom Paint Scheme',           desc: 'Individuelle Lackierung nach Design-Vorgabe.',                         price: 9500 },
-    { id: 'wheelpants',  label: 'Wheel Pants',                   desc: 'Aerodynamische Radverkleidungen.',                                     price: 1800, models: ['sling2', 'tsi'] },
-    { id: 'longrange',   label: 'Long-Range Tanks',              desc: 'Zusatztanks für erweiterte Reichweite.',                               price: 3200, models: ['tsi', 'highwing'] },
-    { id: 'glidertow',   label: 'Schleppkupplung',               desc: 'Für Segelflugzeug-Schlepp zugelassen.',                                price: 2800, models: ['sling2'] },
-    { id: 'tundra',      label: 'Tundra-Bereifung',              desc: 'Grobstollige Reifen für unbefestigte Pisten.',                         price: 2100, models: ['highwing'] }
+    { id: 'brs',         label: 'BRS Ballistic Parachute', desc: 'Gesamtrettungs-Fallschirmsystem.',                price: 19500,
+      image: 'assets/extras/brs/main.jpg',         infoUrl: 'https://brsaerospace.com/' },
+    { id: 'ac',          label: 'Klimaanlage',             desc: 'Cockpit-Klimatisierung.',                         price: 7500, models: ['tsi', 'highwing'],
+      image: 'assets/extras/ac/main.jpg' },
+    { id: 'heatedseats', label: 'Sitzheizung',             desc: 'Elektrisch beheizte Vordersitze.',                price: 1200,
+      image: 'assets/extras/heatedseats/main.jpg' },
+    { id: 'leather',     label: 'Leder-Interieur',         desc: 'Premium-Lederausstattung in Wunschfarbe.',        price: 4800,
+      image: 'assets/extras/leather/main.jpg' },
+    { id: 'paint',       label: 'Custom Paint Scheme',     desc: 'Individuelle Lackierung nach Design-Vorgabe.',    price: 9500,
+      image: 'assets/extras/paint/main.jpg' },
+    { id: 'wheelpants',  label: 'Wheel Pants',             desc: 'Aerodynamische Radverkleidungen.',                price: 1800, models: ['sling2', 'tsi'],
+      image: 'assets/extras/wheelpants/main.jpg' },
+    { id: 'longrange',   label: 'Long-Range Tanks',        desc: 'Zusatztanks für erweiterte Reichweite.',          price: 3200, models: ['tsi', 'highwing'],
+      image: 'assets/extras/longrange/main.jpg' },
+    { id: 'glidertow',   label: 'Schleppkupplung',         desc: 'Für Segelflugzeug-Schlepp zugelassen.',           price: 2800, models: ['sling2'],
+      image: 'assets/extras/glidertow/main.jpg' },
+    { id: 'tundra',      label: 'Tundra-Bereifung',        desc: 'Grobstollige Reifen für unbefestigte Pisten.',    price: 2100, models: ['highwing'],
+      image: 'assets/extras/tundra/main.jpg' }
   ]
 };
