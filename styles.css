@@ -918,14 +918,234 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   flex-wrap: wrap;
 }
 
-/* ---------- Print ---------- */
+/* ---------- Print view (PDF export) ---------- */
+
+.print-view { display: none; }
 
 @media print {
-  .site-header, .model-selector, .sidebar, .summary-actions,
-  .inquiry-form, .currency-pills, .panel-actions, .site-footer,
-  .fx-mini, .modal { display: none !important; }
-  body { background: #fff; color: #000; }
-  .panel, .summary-card, .full-summary { background: #fff; color: #000; border-color: #ccc; }
-  .layout { grid-template-columns: 1fr 1fr; }
-  .summary-card { position: static; }
+  @page { size: A4; margin: 14mm 12mm; }
+
+  body { background: #fff !important; color: #111 !important; font-size: 11px; }
+
+  .site-header, .model-selector, .page-header, .layout,
+  .site-footer, .modal { display: none !important; }
+
+  .print-view {
+    display: block !important;
+    color: #111;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .pv-head {
+    border-bottom: 3px solid #dc1f26;
+    padding-bottom: 10mm;
+    margin-bottom: 8mm;
+  }
+
+  .pv-brand {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8mm;
+  }
+
+  .pv-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid #dc1f26;
+    border-radius: 6px;
+    padding: 6px 10px;
+    background: #fff;
+  }
+
+  .pv-logo-name {
+    font-family: 'Brush Script MT', cursive;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 18px;
+    color: #111;
+    line-height: 1;
+  }
+
+  .pv-logo-sub {
+    font-size: 6px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    line-height: 1.1;
+    border-left: 1px solid #111;
+    padding-left: 6px;
+    color: #111;
+  }
+
+  .pv-meta {
+    text-align: right;
+    font-size: 10px;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  .pv-meta strong { color: #111; font-size: 11px; }
+
+  .pv-head h1 {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0 0 4px;
+    color: #111;
+    letter-spacing: -0.01em;
+  }
+
+  .pv-sub {
+    font-size: 11px;
+    color: #666;
+    font-style: italic;
+  }
+
+  .pv-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 8mm;
+    font-size: 10.5px;
+  }
+
+  .pv-table th {
+    text-align: left;
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #888;
+    padding: 4px 6px 8px;
+    border-bottom: 1px solid #ccc;
+    font-weight: 700;
+  }
+
+  .pv-table td {
+    padding: 7px 6px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+  }
+
+  .pv-table td:last-child {
+    text-align: right;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  .pv-table td.pv-group {
+    font-weight: 700;
+    color: #111;
+    background: #fafafa;
+    text-transform: uppercase;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 8px 6px 4px;
+  }
+
+  .pv-table td.pv-savings { color: #2e7d32; font-style: italic; font-size: 9.5px; }
+
+  .pv-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #111;
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin-bottom: 8mm;
+  }
+
+  .pv-total-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    opacity: 0.7;
+  }
+
+  .pv-total-note {
+    font-size: 8.5px;
+    opacity: 0.6;
+    margin-top: 2px;
+  }
+
+  .pv-total-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ff5a4a;
+  }
+
+  .pv-share {
+    display: flex;
+    gap: 8mm;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 6mm;
+    background: #fafafa;
+    margin-bottom: 8mm;
+  }
+
+  .pv-qr {
+    flex-shrink: 0;
+    background: #fff;
+    padding: 4px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    width: 28mm;
+    height: 28mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pv-qr img { max-width: 100%; max-height: 100%; }
+
+  .pv-share-body { flex-grow: 1; min-width: 0; font-size: 9.5px; line-height: 1.5; color: #444; }
+
+  .pv-share-label {
+    font-weight: 700;
+    font-size: 11px;
+    color: #111;
+    margin-bottom: 2mm;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .pv-share-text { margin-bottom: 3mm; }
+
+  .pv-share-keylabel {
+    font-size: 7.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #888;
+    margin-bottom: 1mm;
+    font-weight: 700;
+  }
+
+  .pv-share-key, .pv-share-url { margin-bottom: 2.5mm; }
+
+  .pv-share code {
+    display: block;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 4px 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 8px;
+    word-break: break-all;
+    color: #222;
+    line-height: 1.4;
+    max-height: 14mm;
+    overflow: hidden;
+  }
+
+  .pv-foot {
+    border-top: 1px solid #ccc;
+    padding-top: 4mm;
+    display: flex;
+    justify-content: space-between;
+    font-size: 8px;
+    color: #777;
+  }
 }

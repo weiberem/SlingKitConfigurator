@@ -670,6 +670,131 @@
 
   function openShareModal() { openShareModalFor(state.config); }
 
+  /* -------- PDF Export -------- */
+
+  function configKey(cfg) {
+    return btoa(unescape(encodeURIComponent(JSON.stringify(cfg))));
+  }
+
+  function buildShareUrl(cfg) {
+    return location.origin + location.pathname + '#c=' + configKey(cfg);
+  }
+
+  async function exportPDF() {
+    const cfg = state.config;
+    const t = totals();
+    const m = findModel(cfg.modelId);
+    if (!m) { alert('Bitte zuerst ein Modell wählen.'); return; }
+
+    document.getElementById('pvTitle').textContent = m.name;
+    document.getElementById('pvSub').textContent = `Konfiguration ${m.name} · ${m.tag}`;
+    document.getElementById('pvDate').textContent = new Date().toLocaleDateString('de-CH', { day: '2-digit', month: 'long', year: 'numeric' });
+    document.getElementById('pvConfigName').textContent = `Währung: ${state.currency} · Kurs: ${state.currency === 'USD' ? '1.0000 (Basis)' : (state.rates[state.currency] || 1).toFixed(4)}`;
+    document.getElementById('pvYear').textContent = new Date().getFullYear();
+    document.getElementById('pvNote').textContent = state.currency === 'USD'
+      ? 'Alle Preise in USD, ab Werk Sling Switzerland'
+      : `Umgerechnet zu 1 USD = ${(state.rates[state.currency] || 1).toFixed(4)} ${state.currency}`;
+
+    // Tabellen-Rows
+    const rows = [];
+    rows.push({ group: 'Kit-Teile' });
+    const selectedParts = m.parts.filter(p => cfg.parts.includes(p.id));
+    selectedParts.forEach(p => rows.push({ label: p.label, value: format(p.price) }));
+    if (t.discount) rows.push({ label: 'Komplett-Paket – Sie sparen', value: `−${format(t.discount)}`, savings: true });
+
+    const e = findEngine(cfg.engineId);
+    if (e || cfg.propellerId || cfg.avionicsId) rows.push({ group: 'Antrieb & Avionik' });
+    if (e) rows.push({ label: `Motor: ${e.label}`, value: format(e.price) });
+    if (cfg.includeFFwd && e && CATALOG.firewallForward.perEngine[e.id]) {
+      rows.push({ label: `Firewall Forward + Fuel Kit (${e.label})`, value: format(CATALOG.firewallForward.perEngine[e.id]) });
+    }
+    const pr = findProp(cfg.propellerId);
+    if (pr) rows.push({ label: `Propeller: ${pr.label}`, value: format(pr.price) });
+    const av = findAvionics(cfg.avionicsId);
+    if (av) rows.push({ label: `Avionik: ${av.label}`, value: format(av.price) });
+
+    if (cfg.extras.length) {
+      rows.push({ group: 'Extras' });
+      cfg.extras.forEach(eid => {
+        const x = findExtra(eid);
+        if (x) rows.push({ label: x.label, value: format(x.price) });
+      });
+    }
+
+    document.getElementById('pvTable').innerHTML = `
+      <thead><tr><th>Komponente</th><th style="text-align:right">Preis</th></tr></thead>
+      <tbody>
+        ${rows.map(r => r.group
+          ? `<tr><td class="pv-group" colspan="2">${r.group}</td></tr>`
+          : `<tr><td${r.savings ? ' class="pv-savings"' : ''}>${r.label}</td><td${r.savings ? ' class="pv-savings"' : ''}>${r.value}</td></tr>`
+        ).join('')}
+      </tbody>
+    `;
+    document.getElementById('pvTotal').textContent = format(t.total);
+
+    const key = configKey(cfg);
+    const url = buildShareUrl(cfg);
+    document.getElementById('pvKey').textContent = key;
+    document.getElementById('pvUrl').textContent = url;
+
+    // QR laden und auf Bild-Load warten, damit Print das QR enthält
+    const qrImg = document.getElementById('pvQr');
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=${encodeURIComponent(url)}`;
+    await new Promise(resolve => {
+      qrImg.onload = resolve;
+      qrImg.onerror = resolve;
+      qrImg.src = qrUrl;
+    });
+
+    window.print();
+  }
+
+  /* -------- Load by key / URL -------- */
+
+  function openLoadModal() {
+    document.getElementById('loadKeyInput').value = '';
+    document.getElementById('loadKeyStatus').textContent = '';
+    document.getElementById('loadKeyStatus').classList.remove('error');
+    showModal('loadModal');
+  }
+
+  function applyLoadKey() {
+    const status = document.getElementById('loadKeyStatus');
+    status.classList.remove('error');
+    let input = document.getElementById('loadKeyInput').value.trim();
+    if (!input) {
+      status.textContent = 'Bitte Schlüssel oder Link eingeben.';
+      status.classList.add('error');
+      return;
+    }
+    // Falls volle URL: Hash extrahieren
+    const hashMatch = input.match(/#c=([^&\s]+)/);
+    if (hashMatch) input = hashMatch[1];
+    // Falls Prefix "c=" mitkopiert
+    if (input.startsWith('c=')) input = input.slice(2);
+
+    try {
+      const json = decodeURIComponent(escape(atob(input)));
+      const cfg = JSON.parse(json);
+      if (!cfg.modelId || !findModel(cfg.modelId)) throw new Error('Ungültiges Modell');
+      state.config = {
+        modelId: cfg.modelId,
+        parts: Array.isArray(cfg.parts) ? cfg.parts : [],
+        engineId: cfg.engineId || null,
+        includeFFwd: cfg.includeFFwd !== false,
+        propellerId: cfg.propellerId || null,
+        avionicsId: cfg.avionicsId || null,
+        extras: Array.isArray(cfg.extras) ? cfg.extras : []
+      };
+      hideModal('loadModal');
+      setSection('parts');
+      update();
+    } catch (err) {
+      status.textContent = 'Schlüssel konnte nicht gelesen werden. Bitte vollständigen Wert einfügen.';
+      status.classList.add('error');
+    }
+  }
+
   function openShareModalFor(cfg, label) {
     const hash = encodeConfigToHash(cfg);
     const url = location.origin + location.pathname + hash;
@@ -789,7 +914,9 @@
       update();
     });
     document.getElementById('shareBtn').addEventListener('click', openShareModal);
-    document.getElementById('printBtn').addEventListener('click', () => window.print());
+    document.getElementById('printBtn').addEventListener('click', exportPDF);
+    document.getElementById('loadBtn').addEventListener('click', openLoadModal);
+    document.getElementById('loadKeyBtn').addEventListener('click', applyLoadKey);
     document.getElementById('goSummaryBtn').addEventListener('click', () => setSection('summary'));
     document.getElementById('resetBtn').addEventListener('click', () => {
       if (!confirm('Aktuelle Konfiguration zurücksetzen?')) return;
