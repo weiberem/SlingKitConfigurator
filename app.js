@@ -554,6 +554,25 @@
     EUR: [0.85, 0.88, 0.90, 0.92, 0.94, 0.96]
   };
 
+  const PANEL_TITLES = {
+    parts:     'Kit Komponenten',
+    engine:    'Motor',
+    propeller: 'Propeller',
+    avionics:  'Avionik',
+    extras:    'Extras &amp; Optionen',
+    services:  'Services',
+    summary:   'Zusammenfassung &amp; Bestellung'
+  };
+
+  function renderPanelTitles() {
+    const m = findModel(state.config.modelId);
+    const suffix = m ? ` für meine <strong>${m.name}</strong>` : '';
+    Object.keys(PANEL_TITLES).forEach(id => {
+      const el = document.getElementById('title-' + id);
+      if (el) el.innerHTML = PANEL_TITLES[id] + suffix;
+    });
+  }
+
   function renderCurrencyMenu() {
     const menu = document.getElementById('curMenu');
     if (!menu) return;
@@ -622,6 +641,7 @@
     document.getElementById('curLabel').textContent = state.currency;
     renderCurrencyMenu();
     renderRateDropdown();
+    renderPanelTitles();
     document.getElementById('summaryNote').textContent =
       state.currency === 'USD'
         ? 'Alle Preise in USD, ohne MwSt, ab Werk Johannesburg'
