@@ -68,7 +68,7 @@ window.SLING_CATALOG = {
       ],
       compatibleEngines: ['rotax915is', 'rotax916is'],
       compatibleAvionics: ['standard', 'advanced', 'premium'],
-      image: 'assets/models/tsi/main.jpg',
+      image: 'assets/models/tsi/main.png',
       gallery: [
         'assets/models/tsi/detail-1.jpg',
         'assets/models/tsi/detail-2.jpg',

@@ -327,15 +327,33 @@
     const fb = document.getElementById('mpFallback');
     fb.innerHTML = ICONS[m.icon] || ICONS['plane-low'];
     if (m.image) {
-      img.onload = () => { img.style.display = 'block'; };
-      img.onerror = () => { img.style.display = 'none'; };
-      img.style.display = 'none';
-      img.src = m.image;
-      img.alt = m.name;
+      tryImage(img, candidatePaths(m.image), m.name);
     } else {
       img.style.display = 'none';
       img.removeAttribute('src');
     }
+  }
+
+  function candidatePaths(p) {
+    const m = p.match(/^(.*?)(\.(jpg|jpeg|png|webp))$/i);
+    const base = m ? m[1] : p;
+    const ext = m ? m[2] : '.jpg';
+    const others = ['.jpg', '.png', '.webp', '.jpeg'].filter(e => e.toLowerCase() !== ext.toLowerCase());
+    return [p, ...others.map(e => base + e)];
+  }
+
+  function tryImage(img, paths, alt) {
+    let i = 0;
+    img.style.display = 'none';
+    img.alt = alt || '';
+    function next() {
+      if (i >= paths.length) { img.style.display = 'none'; img.onerror = null; img.onload = null; return; }
+      const p = paths[i++];
+      img.onload = () => { img.style.display = 'block'; };
+      img.onerror = next;
+      img.src = p;
+    }
+    next();
   }
 
   function stepIndex(id) {
