@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sling Aircraft Kit Configurator</title>
+  <meta name="description" content="Konfiguriere dein Sling Aircraft Kit – Modell, Motor, Avionik und Optionen. Preise in USD, CHF oder EUR." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#top" class="brand">
+        <span class="brand-mark">SLING</span>
+        <span class="brand-sub">AIRCRAFT · KIT CONFIGURATOR</span>
+      </a>
+      <nav class="site-nav">
+        <a href="#models">Modelle</a>
+        <a href="#configurator">Konfigurieren</a>
+        <a href="#summary">Zusammenfassung</a>
+        <a href="#contact">Anfrage</a>
+      </nav>
+      <div class="currency-switcher" id="currencySwitcher" aria-label="Währung wählen">
+        <button class="cur-btn" data-currency="USD" aria-pressed="true">USD</button>
+        <button class="cur-btn" data-currency="CHF" aria-pressed="false">CHF</button>
+        <button class="cur-btn" data-currency="EUR" aria-pressed="false">EUR</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <section class="hero">
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="container hero-inner">
+        <p class="eyebrow">Built by you. Engineered by Sling.</p>
+        <h1>Konfiguriere dein <span class="accent">Sling Kit</span>.</h1>
+        <p class="lede">
+          Wähle Modell, Quick-Build oder Self-Build, Motor, Avionik und Optionen.
+          Alle Basispreise in <strong>USD</strong> – live umgerechnet in CHF oder EUR mit
+          einem Wechselkurs, den du selbst anpassen kannst.
+        </p>
+        <div class="hero-cta">
+          <a href="#configurator" class="btn btn-primary">Jetzt konfigurieren</a>
+          <a href="#models" class="btn btn-ghost">Modelle ansehen</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="fxbar" class="fxbar">
+      <div class="container fxbar-inner">
+        <div class="fx-label">
+          <strong>Wechselkurs aktiv:</strong>
+          <span id="fxActive">USD (Basis)</span>
+        </div>
+        <div class="fx-controls">
+          <label>
+            USD → CHF
+            <input type="number" id="rateCHF" step="0.0001" min="0" />
+          </label>
+          <label>
+            USD → EUR
+            <input type="number" id="rateEUR" step="0.0001" min="0" />
+          </label>
+          <button id="resetRates" class="btn btn-link">Standard zurücksetzen</button>
+        </div>
+        <p class="fx-note">
+          Kurse sind Richtwerte. Bitte vor Bestellung mit deinem Sling-Dealer bestätigen.
+        </p>
+      </div>
+    </section>
+
+    <section id="models" class="section">
+      <div class="container">
+        <h2 class="section-title">Wähle dein Modell</h2>
+        <p class="section-sub">Alle Modelle als Self-Build oder Quick-Build Kit erhältlich.</p>
+        <div class="model-grid" id="modelGrid"></div>
+      </div>
+    </section>
+
+    <section id="configurator" class="section section-alt">
+      <div class="container configurator-grid">
+        <div class="configurator-main">
+
+          <div class="config-card">
+            <h3>1. Kit-Variante</h3>
+            <p class="muted">Self-Build oder Quick-Build (49 % vormontiert).</p>
+            <div class="option-row" id="kitVariant"></div>
+          </div>
+
+          <div class="config-card">
+            <h3>2. Kit-Sektionen</h3>
+            <p class="muted">Bestelle dein Kit in Etappen, passend zu Werkstatt und Budget.</p>
+            <div class="option-list" id="kitSections"></div>
+          </div>
+
+          <div class="config-card">
+            <h3>3. Triebwerk</h3>
+            <p class="muted">Rotax-Triebwerke, geprüft und freigegeben für das gewählte Modell.</p>
+            <div class="option-list" id="engineOptions"></div>
+          </div>
+
+          <div class="config-card">
+            <h3>4. Avionik-Paket</h3>
+            <p class="muted">Garmin Glass Cockpit – von VFR bis Full-IFR.</p>
+            <div class="option-list" id="avionicsOptions"></div>
+          </div>
+
+          <div class="config-card">
+            <h3>5. Optionale Ausstattung</h3>
+            <p class="muted">Mehrfachauswahl – beliebig kombinierbar.</p>
+            <div class="option-list" id="extrasOptions"></div>
+          </div>
+
+        </div>
+
+        <aside class="summary-card" id="summary">
+          <div class="summary-sticky">
+            <h3>Deine Konfiguration</h3>
+            <div class="summary-model">
+              <div class="summary-model-name" id="sumModel">— Modell wählen —</div>
+              <div class="summary-model-variant muted" id="sumVariant"></div>
+            </div>
+            <ul class="summary-list" id="summaryList"></ul>
+            <div class="summary-totals">
+              <div class="row">
+                <span>Zwischensumme (USD)</span>
+                <span id="sumSubtotalUSD">$0</span>
+              </div>
+              <div class="row total">
+                <span>Gesamt <span id="sumCurLabel">USD</span></span>
+                <span id="sumTotal">$0</span>
+              </div>
+              <div class="row muted small">
+                <span>Wechselkurs</span>
+                <span id="sumRate">1.0000</span>
+              </div>
+            </div>
+            <a href="#contact" class="btn btn-primary btn-block">Unverbindlich anfragen</a>
+            <button class="btn btn-ghost btn-block" id="printBtn">Konfiguration drucken / PDF</button>
+            <button class="btn btn-link btn-block" id="resetBtn">Konfiguration zurücksetzen</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="contact" class="section">
+      <div class="container">
+        <h2 class="section-title">Anfrage senden</h2>
+        <p class="section-sub">Dein Sling-Dealer meldet sich mit einem unverbindlichen Angebot.</p>
+        <form class="contact-form" id="contactForm" novalidate>
+          <div class="form-row">
+            <label>Vorname<input type="text" name="firstName" required /></label>
+            <label>Nachname<input type="text" name="lastName" required /></label>
+          </div>
+          <div class="form-row">
+            <label>E-Mail<input type="email" name="email" required /></label>
+            <label>Telefon<input type="tel" name="phone" /></label>
+          </div>
+          <div class="form-row">
+            <label>Land
+              <select name="country">
+                <option>Schweiz</option>
+                <option>Deutschland</option>
+                <option>Österreich</option>
+                <option>Liechtenstein</option>
+                <option>Frankreich</option>
+                <option>Italien</option>
+                <option>Andere</option>
+              </select>
+            </label>
+            <label>Bevorzugte Währung
+              <select name="preferredCurrency" id="formCurrency">
+                <option value="USD">USD</option>
+                <option value="CHF">CHF</option>
+                <option value="EUR">EUR</option>
+              </select>
+            </label>
+          </div>
+          <label>Nachricht<textarea name="message" rows="4" placeholder="Optional: Wann möchtest du starten? Hast du bereits Erfahrung?"></textarea></label>
+          <label class="checkbox">
+            <input type="checkbox" name="consent" required />
+            <span>Ich bin damit einverstanden, dass meine Angaben für die Beantwortung der Anfrage verwendet werden.</span>
+          </label>
+          <input type="hidden" name="configuration" id="configurationPayload" />
+          <button type="submit" class="btn btn-primary">Anfrage absenden</button>
+          <p class="form-status" id="formStatus" role="status"></p>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <div class="brand">
+          <span class="brand-mark">SLING</span>
+          <span class="brand-sub">AIRCRAFT</span>
+        </div>
+        <p class="muted small">
+          Sling Aircraft Kit Configurator. Alle Preise sind Richtwerte ab Werk in USD,
+          ohne Versand, Zoll, Steuern oder Builder-Assist. Verbindliche Angebote nur über
+          autorisierte Sling-Dealer.
+        </p>
+      </div>
+      <div class="footer-links">
+        <a href="#models">Modelle</a>
+        <a href="#configurator">Konfigurator</a>
+        <a href="#contact">Kontakt</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="data/catalog.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
