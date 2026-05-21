@@ -92,12 +92,14 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   font-weight: 800;
   font-size: 2.4rem;
   line-height: 1;
-  color: var(--accent);
+  color: #fff;
   letter-spacing: -0.02em;
   padding-left: 18px;
   border-left: 2px solid rgba(255,255,255,0.18);
-  transition: color .2s, transform .2s;
 }
+.logo-model .ws { color: #fff; }
+.logo-model .rs { color: var(--accent); }
+.logo-model .sm { font-size: 0.6em; }
 
 @media (max-width: 720px) {
   .logo-img { height: 42px; }
@@ -988,11 +990,14 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
     font-family: 'Inter', sans-serif;
     font-weight: 800;
     font-size: 18px;
-    color: #EE202E;
+    color: #fff;
     line-height: 1;
     padding-left: 8px;
     border-left: 1px solid rgba(255,255,255,0.35);
   }
+  .pv-logo-model .ws { color: #fff; }
+  .pv-logo-model .rs { color: #EE202E; }
+  .pv-logo-model .sm { font-size: 0.6em; }
 
   .pv-meta {
     text-align: right;
