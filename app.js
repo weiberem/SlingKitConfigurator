@@ -899,7 +899,7 @@
           <label class="option ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-extra="${x.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
             <span class="opt-check">${checkSvg()}</span>
             <span class="opt-body">
-              <span class="opt-title">${x.label}</span>
+              <span class="opt-title">${x.label}${x.group ? ` <span class="opt-grouptag">1 aus ${x.group === 'brakes' ? 'Bremsen' : x.group}</span>` : ''}</span>
               <span class="opt-desc">${x.desc || ''}${compatible ? '' : ' <em>(nicht für gewähltes Modell)</em>'}</span>
               <div class="opt-price">${compatible ? format(price) : '—'}</div>
               ${noteHtml}
@@ -917,8 +917,19 @@
     host.querySelectorAll('.option:not(.disabled)').forEach(label => {
       const id = label.dataset.extra;
       const toggle = () => {
-        if (state.config.extras.includes(id)) state.config.extras = state.config.extras.filter(x => x !== id);
-        else state.config.extras.push(id);
+        if (state.config.extras.includes(id)) {
+          state.config.extras = state.config.extras.filter(x => x !== id);
+        } else {
+          const x = findExtra(id);
+          if (x && x.group) {
+            // Mutually exclusive: alle anderen aus derselben Gruppe abwählen
+            state.config.extras = state.config.extras.filter(eid => {
+              const other = findExtra(eid);
+              return !other || other.group !== x.group;
+            });
+          }
+          state.config.extras.push(id);
+        }
         update();
       };
       label.addEventListener('click', e => {
