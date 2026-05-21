@@ -375,7 +375,7 @@
       : `1 USD = ${(state.rates[state.currency] || 1).toFixed(4)} ${state.currency}`;
     document.getElementById('summaryNote').textContent =
       state.currency === 'USD'
-        ? 'Alle Preise in USD, ab Werk Sling Switzerland'
+        ? 'Alle Preise in USD, ab Werk Sling Aircraft'
         : `Umgerechnet zu 1 USD = ${(state.rates[state.currency] || 1).toFixed(4)} ${state.currency}`;
   }
 
@@ -841,7 +841,7 @@
     document.getElementById('pvConfigName').textContent = `Währung: ${state.currency} · Kurs: ${state.currency === 'USD' ? '1.0000 (Basis)' : (state.rates[state.currency] || 1).toFixed(4)}`;
     document.getElementById('pvYear').textContent = new Date().getFullYear();
     document.getElementById('pvNote').textContent = state.currency === 'USD'
-      ? 'Alle Preise in USD, ab Werk Sling Switzerland'
+      ? 'Alle Preise in USD, ab Werk Sling Aircraft'
       : `Umgerechnet zu 1 USD = ${(state.rates[state.currency] || 1).toFixed(4)} ${state.currency}`;
 
     // Tabellen-Rows
@@ -1097,7 +1097,7 @@
         url: location.href
       };
       console.log('Sling Anfrage:', payload);
-      status.textContent = 'Danke! Deine Anfrage wurde erfasst. Sling Aircraft Switzerland meldet sich in Kürze.';
+      status.textContent = 'Danke! Deine Anfrage wurde erfasst. Sling Aircraft meldet sich in Kürze.';
       form.reset();
     });
   }
