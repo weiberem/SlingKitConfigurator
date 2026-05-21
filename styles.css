@@ -107,18 +107,18 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 .header-controls {
   margin-left: auto;
   display: flex;
-  gap: 10px;
+  gap: 6px;
   align-items: center;
   flex-shrink: 0;
 }
 
 .icon-btn {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 8px;
-  background: var(--bg-card);
-  border: 1px solid var(--line-strong);
-  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text-mute);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -412,31 +412,33 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 .dropdown { position: relative; }
 
 .dd-btn {
-  background: var(--bg-card);
-  border: 1px solid var(--line-strong);
+  background: transparent;
+  border: 1px solid var(--line);
   color: var(--text);
-  padding: 8px 14px;
+  padding: 6px 10px;
+  height: 34px;
   border-radius: 8px;
-  font: 600 0.9rem 'Inter', sans-serif;
+  font: 600 0.82rem 'Inter', sans-serif;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-width: 78px;
+  gap: 6px;
+  min-width: 0;
   justify-content: space-between;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
+.dd-btn:hover { background: var(--bg-card); }
+#rateDropdown .dd-btn { padding-left: 8px; }
 
 .dd-btn:hover { border-color: var(--accent); }
 .dd-btn[aria-expanded="true"] { border-color: var(--accent); }
 .dd-btn svg { opacity: 0.7; }
 .dd-pre {
-  font-size: 0.72rem;
+  font-size: 0.66rem;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   color: var(--text-mute);
   font-weight: 600;
-  margin-right: 2px;
 }
 
 .dd-menu {
@@ -748,6 +750,27 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   margin: 0 0 16px;
   color: var(--text-dim);
   font-size: 0.9rem;
+}
+
+.saved-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+.saved-actions-info {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+.saved-actions .btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .panel-nav {

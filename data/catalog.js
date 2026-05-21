@@ -53,7 +53,7 @@ window.SLING_CATALOG = {
         { id: 'undercarriage', label: 'Undercarriage Kit',  desc: 'Komplettes Fahrwerk: Haupt- und Bugfahrwerk, Frontaufhängung, Lager und Anbauteile, Achsen, komplettes hydraulisches Bremssystem, 6-Ply Aviation-Reifen und -Schläuche, Hardware und Bauanleitung.', price: 11563 },
         { id: 'finishing',   label: 'Canopy, Dash, Final Assembly & Finishing Kit', desc: 'Komplettes Canopy-Kit inkl. Front- und Hauptcanopyrahmen, Front- und Hauptacrylglas, Closing-Skins und -Panels, lederbezogenes Top-Instrumentenpanel, Lüftungsdüsen, Instrumententafel-Cutout nach Kundenwunsch, individuelles Canopy-Schloss, alles für die finale Montage inkl. Wheel-Spats (3 Räder), Nosecowl, Composite-Closing-Fairings, Pushrod-Baugruppen, Hardware und Bauanleitung.', price: 11425 }
       ],
-      compatibleEngines: ['rotax912uls', 'rotax912is', 'rotax915is'],
+      compatibleEngines: ['rotax912is'],
       compatibleAvionics: ['vfr', 'standard', 'advanced', 'premium'],
       image: 'assets/models/sling2/Sling2-InFlight.jpg',
       gallery: [
@@ -77,7 +77,7 @@ window.SLING_CATALOG = {
         { id: 'undercarriage', label: 'Undercarriage Kit',  desc: 'Komplettes Fahrwerk: Haupt- und Bugfahrwerk, Frontaufhängung, Lager und Anbauteile, Achsen, komplettes hydraulisches Bremssystem, 6-Ply Aviation-Reifen und -Schläuche, Hardware und Bauanleitung.', price: 17273 },
         { id: 'finishing',   label: 'Canopy, Dash, Final Assembly & Finishing Kit', desc: 'Komplettes Canopy-Kit inkl. Canopy-Rahmen, Frontscheibe, Türen und Fenster, lederbezogenes Top-Dashboard, Lüftungsdüsen, Instrumententafel-Cutout, individuelles Canopy-Schloss für beide Türen, alles für die finale Montage inkl. Nosecowl, Wheel-Spats (3 Räder), Composite-Closing-Fairings, Pushrod-Baugruppen, Hardware und Bauanleitung.', price: 22134 }
       ],
-      compatibleEngines: ['rotax915is', 'rotax916is'],
+      compatibleEngines: ['rotax916is'],
       compatibleAvionics: ['standard', 'advanced', 'premium'],
       image: 'assets/models/tsi/SlingTSI-InFlight.jpg',
       gallery: [
@@ -100,7 +100,7 @@ window.SLING_CATALOG = {
         { id: 'undercarriage', label: 'Undercarriage Kit',  desc: 'Komplettes Fahrwerk: Haupt- und Bugfahrwerk, Frontaufhängung, Lager und Anbauteile, Achsen, komplettes hydraulisches Bremssystem, 6-Ply Aviation-Reifen und -Schläuche, Hardware und Bauanleitung.', price: 17273 },
         { id: 'finishing',   label: 'Dash, Final Assembly & Finishing Kit', desc: 'Komplettes Dash-Kit (lederbezogen), Lüftungsdüsen, Instrumententafel-Cutout, alles für die finale Montage inkl. Nosecowl, Wheel-Spats (3 Räder), Composite-Closing-Fairings, Pushrod-Baugruppen, Hardware und Bauanleitung.', price: 10771 }
       ],
-      compatibleEngines: ['rotax915is', 'rotax916is'],
+      compatibleEngines: ['rotax916is'],
       compatibleAvionics: ['standard', 'advanced', 'premium'],
       image: 'assets/models/highwing/SlingHW-InFlight.jpg',
       gallery: [
@@ -117,22 +117,18 @@ window.SLING_CATALOG = {
     label: 'Firewall Forward + Fuel Kit',
     desc: 'Motoraufhängung, Cowling, Auspuff, Kraftstoffsystem ab Brandschott – passend zum gewählten Motor.',
     perEngine: {
-      rotax912uls: 5980,
       rotax912is:  6450,
-      rotax915is:  7350,
       rotax916is:  7711
     }
   },
 
   engines: [
-    { id: 'rotax912uls', label: 'Rotax 912 ULS',     desc: '100 PS · Vergaser · zuverlässiger Klassiker.',          price: 28500,
-      image: 'assets/engines/rotax912uls/main.jpg', infoUrl: 'https://www.flyrotax.com/produkte/details/rotax-912-uls-s-2.html' },
-    { id: 'rotax912is',  label: 'Rotax 912iS Sport', desc: '100 PS · Einspritzung · sparsam und effizient.',        price: 33500,
-      image: 'assets/engines/rotax912is/main.jpg',  infoUrl: 'https://www.flyrotax.com/produkte/details/rotax-912-is-sport.html' },
-    { id: 'rotax915is',  label: 'Rotax 915iS',       desc: '141 PS · Turbo + Einspritzung · 4-Sitzer-Performance.', price: 49500,
-      image: 'assets/engines/rotax915is/main.jpg',  infoUrl: 'https://www.flyrotax.com/produkte/details/rotax-915-i-s-c-a.html' },
-    { id: 'rotax916is',  label: 'Rotax 916iS',       desc: '160 PS · neueste Generation · Top-Performance.',        price: 54500,
-      image: 'assets/engines/rotax916is/main.jpg',  infoUrl: 'https://www.flyrotax.com/produkte/details/rotax-916-i-s-c-a.html' }
+    { id: 'rotax912is',  label: 'Rotax 912 iSc Sport', desc: '100 PS · Einspritzung · Standard-Motor für Sling 2.', price: 33500,
+      models: ['sling2'],
+      image: 'assets/engines/rotax912is/main.jpg',  infoUrl: 'https://www.flyrotax.com/products/912-is-sport-isc-sport' },
+    { id: 'rotax916is',  label: 'Rotax 916 iS C',    desc: '160 PS · neueste Generation · Standard-Motor für Sling TSi und Sling High Wing.', price: 54500,
+      models: ['tsi', 'highwing'],
+      image: 'assets/engines/rotax916is/main.jpg',  infoUrl: 'https://www.flyrotax.com/products/916-is-c' }
   ],
 
   propellers: [
@@ -265,32 +261,32 @@ window.SLING_CATALOG = {
    * ----------------------------------------------------------------*/
   quickbuild: {
     sling2: [
-      { id: 'qb-empennage',      label: 'Empennage',                                                       price: 2600 },
-      { id: 'qb-fuel-standard',  label: 'Fuel tanks – Standard',                                           price: 2406 },
-      { id: 'qb-fuel-longrange', label: 'Fuel tanks – Long Range (Add extra auf Standard)',                price: 2406 },
-      { id: 'qb-wings',          label: 'Wings (Klappen, Querruder und Tanks unmontiert)',                 price: 4827 },
-      { id: 'qb-fuselage',       label: 'Fuselage (ohne Fahrwerk/Steuerung montiert)',                     price: 6335 },
-      { id: 'qb-undercarriage',  label: 'Undercarriage (assembled und am Rumpf angebaut)',                 price: 1155 }
+      { id: 'qb-empennage',      kitPartId: 'empennage',     label: 'Empennage vor-montiert',                                          price: 2600 },
+      { id: 'qb-fuel-standard',  kitPartId: 'wing',          label: 'Fuel Tanks – Standard',                                           price: 2406 },
+      { id: 'qb-fuel-longrange', kitPartId: 'wing',          label: 'Fuel Tanks – Long Range (Add extra)',                             price: 2406 },
+      { id: 'qb-wings',          kitPartId: 'wing',          label: 'Wings vor-montiert (Klappen/Querruder/Tanks unmontiert)',         price: 4827 },
+      { id: 'qb-fuselage',       kitPartId: 'fuselage',      label: 'Fuselage vor-montiert (ohne Fahrwerk/Steuerung)',                 price: 6335 },
+      { id: 'qb-undercarriage',  kitPartId: 'undercarriage', label: 'Undercarriage assembled und am Rumpf montiert',                   price: 1155 }
     ],
     tsi: [
-      { id: 'qb-empennage',      label: 'Empennage',                                                       price: 2771 },
-      { id: 'qb-fuel-standard',  label: 'Fuel tanks – Standard',                                           price: 2268 },
-      { id: 'qb-fuel-longrange', label: 'Fuel tanks – Long Range (Add extra auf Standard)',                price: 2268 },
-      { id: 'qb-wings',          label: 'Wings (Klappen, Querruder und Tanks unmontiert)',                 price: 6105 },
-      { id: 'qb-fuselage',       label: 'Fuselage (ohne Fahrwerk/Steuerung montiert)',                      price: 8664 },
-      { id: 'qb-undercarriage',  label: 'Undercarriage (assembled und am Rumpf angebaut)',                 price: 1184 },
-      { id: 'qb-canopy-glass',   label: 'Canopy mit Türen und Verglasung (ohne Frontscheibe/Dashboard)',   price: 3107 },
-      { id: 'qb-fill-rivets',    label: 'Mittellöcher der Standard-Nieten füllen (empfohlen)',             price: 1659 }
+      { id: 'qb-empennage',      kitPartId: 'empennage',     label: 'Empennage vor-montiert',                                          price: 2771 },
+      { id: 'qb-fuel-standard',  kitPartId: 'wing',          label: 'Fuel Tanks – Standard',                                           price: 2268 },
+      { id: 'qb-fuel-longrange', kitPartId: 'wing',          label: 'Fuel Tanks – Long Range (Add extra)',                             price: 2268 },
+      { id: 'qb-wings',          kitPartId: 'wing',          label: 'Wings vor-montiert (Klappen/Querruder/Tanks unmontiert)',         price: 6105 },
+      { id: 'qb-fuselage',       kitPartId: 'fuselage',      label: 'Fuselage vor-montiert (ohne Fahrwerk/Steuerung)',                 price: 8664 },
+      { id: 'qb-undercarriage',  kitPartId: 'undercarriage', label: 'Undercarriage assembled und am Rumpf montiert',                   price: 1184 },
+      { id: 'qb-canopy-glass',   kitPartId: 'finishing',     label: 'Canopy mit Türen und Verglasung (ohne Frontscheibe/Dashboard)',   price: 3107 },
+      { id: 'qb-fill-rivets',    kitPartId: 'finishing',     label: 'Mittellöcher der Standard-Nieten füllen (empfohlen)',             price: 1659 }
     ],
     highwing: [
-      { id: 'qb-empennage',      label: 'Empennage',                                                       price: 3947 },
-      { id: 'qb-fuel-standard',  label: 'Fuel tanks – Standard',                                           price: 2268 },
-      { id: 'qb-fuel-longrange', label: 'Fuel tanks – Long Range (Add extra auf Standard)',                price: 2268 },
-      { id: 'qb-wings',          label: 'Wings (Klappen, Querruder und Tanks unmontiert)',                 price: 6105 },
-      { id: 'qb-fuselage',       label: 'Fuselage assembled (Rumpfheck am CFK-Mittelteil; ohne Fahrwerk/Steuerung)', price: 4823 },
-      { id: 'qb-undercarriage',  label: 'Undercarriage (assembled und am Rumpf angebaut)',                 price: 1800 },
-      { id: 'qb-doors-glass',    label: 'Türen und Verglasung eingebaut (ohne Frontscheibe/Dashboard)',    price: 2301 },
-      { id: 'qb-fill-rivets',    label: 'Mittellöcher der Standard-Nieten füllen (empfohlen)',             price: 2436 }
+      { id: 'qb-empennage',      kitPartId: 'empennage',     label: 'Empennage vor-montiert',                                          price: 3947 },
+      { id: 'qb-fuel-standard',  kitPartId: 'wing',          label: 'Fuel Tanks – Standard',                                           price: 2268 },
+      { id: 'qb-fuel-longrange', kitPartId: 'wing',          label: 'Fuel Tanks – Long Range (Add extra)',                             price: 2268 },
+      { id: 'qb-wings',          kitPartId: 'wing',          label: 'Wings vor-montiert (Klappen/Querruder/Tanks unmontiert)',         price: 6105 },
+      { id: 'qb-fuselage',       kitPartId: 'fuselage',      label: 'Fuselage vor-montiert (Rumpfheck am CFK-Mittelteil)',             price: 4823 },
+      { id: 'qb-undercarriage',  kitPartId: 'undercarriage', label: 'Undercarriage assembled und am Rumpf montiert',                   price: 1800 },
+      { id: 'qb-doors-glass',    kitPartId: 'finishing',     label: 'Türen und Verglasung eingebaut (ohne Frontscheibe/Dashboard)',    price: 2301 },
+      { id: 'qb-fill-rivets',    kitPartId: 'finishing',     label: 'Mittellöcher der Standard-Nieten füllen (empfohlen)',             price: 2436 }
     ]
   },
 

@@ -442,9 +442,7 @@
 
   function bindHeaderIconButtons() {
     const savedBtn = document.getElementById('savedBtn');
-    const compareBtn = document.getElementById('compareBtn');
     if (savedBtn) savedBtn.addEventListener('click', () => setSection('saved'));
-    if (compareBtn) compareBtn.addEventListener('click', () => setSection('compare'));
   }
 
   function bindModelStage() {
@@ -680,22 +678,31 @@
   function renderEngines() {
     const m = findModel(state.config.modelId);
     const host = document.getElementById('engineList');
-    host.innerHTML = CATALOG.engines.map(e => {
-      const compatible = !m || m.compatibleEngines.includes(e.id);
+    const compatibleEngines = CATALOG.engines.filter(e => !m || m.compatibleEngines.includes(e.id));
+
+    // Wenn nur ein Motor freigegeben ist (z.B. TSi/HW = 916 iS C), automatisch wählen
+    if (compatibleEngines.length === 1 && state.config.engineId !== compatibleEngines[0].id) {
+      state.config.engineId = compatibleEngines[0].id;
+    }
+
+    host.innerHTML = compatibleEngines.map(e => {
       const selected = state.config.engineId === e.id;
-      const brand = e.id.startsWith('rotax') ? 'Rotax' : 'Hersteller';
+      const brand = 'Rotax';
       return `
-        <label class="option is-radio ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-engine="${e.id}" tabindex="0" role="radio" aria-checked="${selected}">
+        <label class="option is-radio ${selected ? 'selected' : ''}" data-engine="${e.id}" tabindex="0" role="radio" aria-checked="${selected}">
           <span class="opt-check">${checkSvg()}</span>
           <span class="opt-body">
             <span class="opt-title">${e.label}</span>
-            <span class="opt-desc">${e.desc}${compatible ? '' : ' <em>(nicht freigegeben für gewähltes Modell)</em>'}</span>
+            <span class="opt-desc">${e.desc}</span>
             <div class="opt-price">${format(e.price)}${state.config.includeFFwd && CATALOG.firewallForward.perEngine[e.id] ? ` <span style="color:var(--text-mute);font-weight:400">+ ${format(CATALOG.firewallForward.perEngine[e.id])} FF-Kit</span>` : ''}</div>
             ${infoLinkHtml(e, brand)}
           </span>
         </label>
       `;
     }).join('');
+    if (compatibleEngines.length === 1) {
+      host.insertAdjacentHTML('beforeend', '<p class="muted" style="margin-top:14px;font-size:0.85rem">ℹ️ Dieses Modell wird ausschliesslich mit dem oben genannten Motor angeboten – die Wahl ist daher fix.</p>');
+    }
     host.querySelectorAll('.option:not(.disabled)').forEach(opt => {
       const pick = () => { state.config.engineId = opt.dataset.engine; update(); };
       opt.addEventListener('click', e => { if (e.target.closest('.opt-link')) return; e.preventDefault(); pick(); });
@@ -1303,7 +1310,16 @@
       panel.innerHTML = '<p class="muted">Noch keine Konfiguration gespeichert. Speichere unter <em>Zusammenfassung → Konfiguration speichern</em>.</p>';
       return;
     }
-    panel.innerHTML = state.saved.map(entry => {
+    const compareCount = state.compareIds.length;
+    const compareBar = `
+      <div class="saved-actions">
+        <span class="saved-actions-info">${state.saved.length} gespeichert · ${compareCount} im Vergleich</span>
+        <button class="btn btn-primary" id="openCompareBtn" ${compareCount < 2 ? 'disabled' : ''}>
+          Vergleich anzeigen ${compareCount >= 2 ? `(${compareCount})` : ''}
+        </button>
+      </div>
+    `;
+    panel.innerHTML = compareBar + state.saved.map(entry => {
       const m = findModel(entry.config.modelId);
       const inCompare = state.compareIds.includes(entry.id);
       return `
@@ -1321,6 +1337,9 @@
         </div>
       `;
     }).join('');
+
+    const openCmpBtn = panel.querySelector('#openCompareBtn');
+    if (openCmpBtn) openCmpBtn.addEventListener('click', () => { if (state.compareIds.length >= 2) setSection('compare'); });
 
     panel.querySelectorAll('[data-saved]').forEach(row => {
       const id = row.dataset.saved;
