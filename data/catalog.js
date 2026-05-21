@@ -6,6 +6,17 @@
  */
 window.SLING_CATALOG = {
 
+  /* --- Google Sheet als Preis-Quelle ---
+   * Leer lassen, um nur die lokalen Preise unten zu verwenden.
+   * Format: publizierte CSV-URL eines Google Sheets.
+   * Erzeugen via: Datei → Freigeben → Im Web veröffentlichen → CSV.
+   * Beispiel: https://docs.google.com/spreadsheets/d/e/2PACX-XXX/pub?gid=0&single=true&output=csv
+   */
+  pricesSheetUrl: '',
+
+  /* Lokal hinterlegter Preisstand – wird angezeigt, wenn das Sheet nicht erreichbar ist. */
+  pricesUpdated: '2026-05-21',
+
   defaultRates: {
     USD: 1.0,
     CHF: 0.88,

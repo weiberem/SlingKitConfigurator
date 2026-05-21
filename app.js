@@ -7,6 +7,8 @@
   const KEY_SAVED = 'sling-configs-saved-v2';
   const KEY_RATES = 'sling-config-rates-v2';
   const KEY_CURRENCY = 'sling-config-currency-v2';
+  const KEY_PRICES_CACHE = 'sling-prices-cache-v1';
+  const PRICES_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
 
   /* -------- State -------- */
 
@@ -73,6 +75,153 @@
   function encodeConfigToHash(cfg) {
     const json = JSON.stringify(cfg);
     return '#c=' + btoa(unescape(encodeURIComponent(json)));
+  }
+
+  /* -------- Google Sheet Preis-Loader -------- */
+
+  function parseCsv(text) {
+    const rows = [];
+    text = text.replace(/^﻿/, '');
+    const lines = text.split(/\r\n|\n|\r/);
+    for (const line of lines) {
+      if (!line) continue;
+      const cells = [];
+      let i = 0, cell = '', inQ = false;
+      while (i < line.length) {
+        const c = line[i];
+        if (inQ) {
+          if (c === '"' && line[i + 1] === '"') { cell += '"'; i += 2; continue; }
+          if (c === '"') { inQ = false; i++; continue; }
+          cell += c; i++;
+        } else {
+          if (c === '"') { inQ = true; i++; continue; }
+          if (c === ',') { cells.push(cell.trim()); cell = ''; i++; continue; }
+          cell += c; i++;
+        }
+      }
+      cells.push(cell.trim());
+      rows.push(cells);
+    }
+    return rows;
+  }
+
+  function rowsToOverrides(rows) {
+    if (!rows.length) return { prices: {}, meta: {} };
+    const header = rows[0].map(h => h.toLowerCase());
+    const colType  = header.indexOf('type');
+    const colId    = header.indexOf('id');
+    const colModel = header.indexOf('model_id');
+    const colPrice = header.indexOf('price_usd');
+    if (colType < 0 || colId < 0 || colPrice < 0) {
+      throw new Error('CSV-Header muss type, id, price_usd enthalten');
+    }
+    const prices = {};
+    const meta = {};
+    for (let r = 1; r < rows.length; r++) {
+      const row = rows[r];
+      const type = (row[colType] || '').toLowerCase();
+      const id   = row[colId] || '';
+      const modelId = colModel >= 0 ? (row[colModel] || '') : '';
+      const priceStr = (row[colPrice] || '').toString().replace(/[\s'’]/g, '').replace(',', '.');
+      if (!type || !id) continue;
+      if (type === 'meta') {
+        meta[id] = priceStr;
+        continue;
+      }
+      const num = parseFloat(priceStr);
+      if (!isFinite(num)) continue;
+      const key = modelId ? `${type}:${modelId}:${id}` : `${type}:${id}`;
+      prices[key] = num;
+    }
+    return { prices, meta };
+  }
+
+  function applyPriceOverrides({ prices, meta }) {
+    let applied = 0;
+    CATALOG.models.forEach(m => {
+      m.parts.forEach(p => {
+        const k = `part:${m.id}:${p.id}`;
+        if (prices[k] != null) { p.price = prices[k]; applied++; }
+      });
+    });
+    CATALOG.engines.forEach(e => {
+      if (prices[`engine:${e.id}`] != null) { e.price = prices[`engine:${e.id}`]; applied++; }
+    });
+    CATALOG.propellers.forEach(p => {
+      if (prices[`propeller:${p.id}`] != null) { p.price = prices[`propeller:${p.id}`]; applied++; }
+    });
+    CATALOG.avionics.forEach(a => {
+      if (prices[`avionics:${a.id}`] != null) { a.price = prices[`avionics:${a.id}`]; applied++; }
+    });
+    CATALOG.extras.forEach(x => {
+      if (prices[`extra:${x.id}`] != null) { x.price = prices[`extra:${x.id}`]; applied++; }
+    });
+    Object.keys(CATALOG.firewallForward.perEngine).forEach(eid => {
+      if (prices[`ffwd:${eid}`] != null) { CATALOG.firewallForward.perEngine[eid] = prices[`ffwd:${eid}`]; applied++; }
+    });
+    if (meta.rate_chf) { const v = parseFloat(meta.rate_chf); if (isFinite(v) && v > 0) CATALOG.defaultRates.CHF = v; }
+    if (meta.rate_eur) { const v = parseFloat(meta.rate_eur); if (isFinite(v) && v > 0) CATALOG.defaultRates.EUR = v; }
+    if (meta.bundle_discount_usd) { const v = parseFloat(meta.bundle_discount_usd); if (isFinite(v)) CATALOG.bundleDiscountUSD = v; }
+    return applied;
+  }
+
+  function loadPricesCache() {
+    try { return JSON.parse(localStorage.getItem(KEY_PRICES_CACHE)); } catch { return null; }
+  }
+  function savePricesCache(payload) {
+    try { localStorage.setItem(KEY_PRICES_CACHE, JSON.stringify(payload)); } catch {}
+  }
+
+  function setPriceStand(date, source) {
+    const el = document.getElementById('priceStand');
+    if (!el) return;
+    const formatted = date ? formatDateStr(date) : '—';
+    const srcLabel = source === 'sheet' ? 'Live aus Google Sheet'
+                    : source === 'cache' ? 'Cache (Sheet offline)'
+                    : 'Lokal';
+    el.textContent = `Preisstand: ${formatted} · ${srcLabel}`;
+  }
+
+  function formatDateStr(s) {
+    if (!s) return '—';
+    const m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (m) return `${m[3]}.${m[2]}.${m[1]}`;
+    return s;
+  }
+
+  async function fetchSheetPrices() {
+    const url = CATALOG.pricesSheetUrl;
+    if (!url) {
+      setPriceStand(CATALOG.pricesUpdated, 'local');
+      return false;
+    }
+    const cache = loadPricesCache();
+    // Cache zuerst rendern (Schnellstart), Sheet im Hintergrund
+    if (cache && cache.payload) {
+      try {
+        const n = applyPriceOverrides(cache.payload);
+        setPriceStand(cache.payload.meta.last_updated || CATALOG.pricesUpdated, 'cache');
+        if (typeof update === 'function') update();
+        console.log(`[Sheet] ${n} Preise aus Cache geladen`);
+      } catch (e) { console.warn('Cache fehlerhaft', e); }
+    }
+    try {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      const rows = parseCsv(text);
+      const payload = rowsToOverrides(rows);
+      const n = applyPriceOverrides(payload);
+      savePricesCache({ payload, fetchedAt: Date.now() });
+      setPriceStand(payload.meta.last_updated || CATALOG.pricesUpdated, 'sheet');
+      if (typeof update === 'function') update();
+      console.log(`[Sheet] ${n} Preise aus Google Sheet geladen`);
+      return true;
+    } catch (e) {
+      console.warn('[Sheet] Konnte Preise nicht laden:', e.message);
+      if (!cache) setPriceStand(CATALOG.pricesUpdated, 'local');
+      return false;
+    }
   }
 
   /* -------- Lookups (function decls so they're hoisted) -------- */
@@ -966,6 +1115,8 @@
     renderSidebar();
     update();
     setSection('parts');
+    setPriceStand(CATALOG.pricesUpdated, 'local');
+    fetchSheetPrices();
 
     wireDropdown('langDropdown', val => {
       document.getElementById('langLabel').textContent = val;

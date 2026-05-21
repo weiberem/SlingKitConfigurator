@@ -62,11 +62,102 @@ Oder als direkter Link/Button auf der Hauptseite.
 
 ## Preise / Wechselkurse anpassen
 
-- **Komponenten-Preise**: `data/catalog.js` — alle Werte in **USD**
+### Schnelle Preisaktualisierung (alle 3-4 Monate) — via Google Sheet
+
+Der Configurator kann Preise aus einem Google Sheet ziehen. Du editierst
+Preise direkt im Sheet, der Configurator zieht sie beim nächsten Laden.
+
+**Setup einmalig:**
+
+1. **Google Sheet anlegen** mit dieser Spaltenstruktur (erste Zeile = Header):
+
+   ```
+   type      | id                | model_id | price_usd | notes
+   ----------|-------------------|----------|-----------|------------------
+   part      | empennage         | sling2   | 3260      |
+   part      | wing              | sling2   | 12640     |
+   part      | fuselage          | sling2   | 13180     |
+   part      | undercarriage     | sling2   | 6720      |
+   part      | finishing         | sling2   | 2700      |
+   part      | empennage         | tsi      | 5318      |
+   part      | wing              | tsi      | 20801     |
+   part      | fuselage          | tsi      | 22198     |
+   part      | undercarriage     | tsi      | 13840     |
+   part      | finishing         | tsi      | 17279     |
+   part      | empennage         | highwing | 5510      |
+   part      | wing              | highwing | 22980     |
+   part      | fuselage          | highwing | 23260     |
+   part      | undercarriage     | highwing | 13900     |
+   part      | finishing         | highwing | 15800     |
+   engine    | rotax912uls       |          | 28500     |
+   engine    | rotax912is        |          | 33500     |
+   engine    | rotax915is        |          | 49500     |
+   engine    | rotax916is        |          | 54500     |
+   ffwd      | rotax912uls       |          | 5980      |
+   ffwd      | rotax912is        |          | 6450      |
+   ffwd      | rotax915is        |          | 7350      |
+   ffwd      | rotax916is        |          | 7711      |
+   propeller | sensenich         |          | 4250      |
+   propeller | airmaster-3       |          | 11200     |
+   propeller | duc-flashback-3r  |          | 13755     |
+   propeller | mt-3blade         |          | 12450     |
+   avionics  | vfr               |          | 14500     |
+   avionics  | standard          |          | 26500     |
+   avionics  | advanced          |          | 42500     |
+   avionics  | premium           |          | 58500     |
+   extra     | brs               |          | 19500     |
+   extra     | ac                |          | 7500      |
+   extra     | heatedseats       |          | 1200      |
+   extra     | leather           |          | 4800      |
+   extra     | paint             |          | 9500      |
+   extra     | wheelpants        |          | 1800      |
+   extra     | longrange         |          | 3200      |
+   extra     | glidertow         |          | 2800      |
+   extra     | tundra            |          | 2100      |
+   meta      | last_updated      |          | 2026-05-21|
+   meta      | rate_chf          |          | 0.88      |
+   meta      | rate_eur          |          | 0.92      |
+   meta      | bundle_discount_usd |        | 200       |
+   ```
+
+2. **Sheet veröffentlichen**: `Datei → Freigeben → Im Web veröffentlichen`
+   → Bereich: ganzes Dokument → Format: **CSV** → URL kopieren.
+   URL sieht so aus:
+   `https://docs.google.com/spreadsheets/d/e/2PACX-XXX/pub?gid=0&single=true&output=csv`
+
+3. **URL in `data/catalog.js`** eintragen:
+   ```js
+   pricesSheetUrl: 'https://docs.google.com/spreadsheets/d/e/.../pub?...&output=csv',
+   ```
+
+4. **Commit + Deploy**. Ab jetzt zieht der Configurator bei jedem Laden
+   die Preise aus dem Sheet.
+
+**Was du danach machst** (alle 3-4 Monate):
+- Sheet öffnen, Preise in `price_usd` aktualisieren
+- `last_updated` auf das aktuelle Datum setzen
+- Speichern. Fertig — der Configurator zeigt beim nächsten Aufruf die neuen Preise.
+  Im Footer steht der aktuelle Stand (z. B. *Preisstand: 21.05.2026 · Live aus Google Sheet*).
+
+**Verhalten bei Sheet-Offline**:
+- Letzte erfolgreich geladenen Preise werden aus dem localStorage genutzt
+  (Footer zeigt *Cache (Sheet offline)*).
+- Wenn auch kein Cache da ist, fallen die im Code hinterlegten Preise ein
+  (Footer zeigt *Lokal*).
+
+**Wichtig**: Die `id`s im Sheet müssen exakt mit den `id`s in
+`data/catalog.js` übereinstimmen (z. B. `tsi`, `rotax916is`,
+`duc-flashback-3r`). Das Sheet überschreibt **nur Preise** —
+neue Modelle, neue Engines, neue Extras müssen weiterhin in
+`data/catalog.js` ergänzt werden (1× pro Jahr Aufwand).
+
+### Struktur ändern (Modelle, Optionen) — via Code
+
+- **Komponenten-Struktur** (Modelle, Kit-Teile-Liste, Engine-Optionen,
+  Propeller, Avionik, Extras): `data/catalog.js` direkt editieren.
 - **Default-Wechselkurse**: `defaultRates` in `data/catalog.js`
-  (`USD: 1.0`, `CHF: 0.88`, `EUR: 0.92`)
 - Endkunden können den Kurs jederzeit über den Edit-Button (Bleistift)
-  in der Page-Header-Leiste überschreiben
+  in der Page-Header-Leiste überschreiben.
 
 ## Deployment
 
