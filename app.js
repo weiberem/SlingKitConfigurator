@@ -1044,12 +1044,203 @@
           <button class="btn btn-primary" id="saveCfgBtn">Konfiguration speichern</button>
           <button class="btn btn-ghost" id="shareCfgBtn">Link / QR teilen</button>
           <button class="btn btn-ghost" id="addCompareBtn">Zum Vergleich hinzufügen</button>
+          <button class="btn btn-ghost" id="salesListBtn">📋 Werks-Auftrags-Liste (Sling JNB)</button>
         </div>
       </div>
     `;
     document.getElementById('saveCfgBtn').addEventListener('click', saveCurrentConfig);
     document.getElementById('shareCfgBtn').addEventListener('click', openShareModal);
     document.getElementById('addCompareBtn').addEventListener('click', addCurrentToCompare);
+    document.getElementById('salesListBtn').addEventListener('click', openSalesModal);
+  }
+
+  /* -------- Sales-Team Werks-Auftrags-Liste -------- */
+
+  function buildSalesList() {
+    const m = findModel(state.config.modelId);
+    const t = totals();
+    const lines = [];
+    const W = 76;
+    const pad = (l, r) => {
+      const s = String(l);
+      const v = String(r);
+      const space = Math.max(2, W - s.length - v.length);
+      return s + ' '.repeat(space) + v;
+    };
+    const sep = '-'.repeat(W);
+    const dblsep = '='.repeat(W);
+
+    lines.push(dblsep);
+    lines.push('  SLING AIRCRAFT — KIT WORKS ORDER LIST');
+    lines.push('  ' + (m ? m.name : '—') + (m ? `   (${m.tag})` : ''));
+    lines.push('  Datum: ' + new Date().toLocaleDateString('de-CH', { day: '2-digit', month: 'long', year: 'numeric' }));
+    lines.push(dblsep);
+    lines.push('');
+
+    // Kunden-Kontakt (aus Inquiry-Form falls ausgefüllt)
+    const form = document.getElementById('inquiryForm');
+    if (form) {
+      const data = new FormData(form);
+      const cust = [];
+      const name = [data.get('firstName'), data.get('lastName')].filter(Boolean).join(' ').trim();
+      if (name)             cust.push(['Kunde',     name]);
+      if (data.get('email')) cust.push(['E-Mail',    data.get('email')]);
+      if (data.get('phone')) cust.push(['Telefon',   data.get('phone')]);
+      if (data.get('country')) cust.push(['Land',    data.get('country')]);
+      if (cust.length) {
+        lines.push('-- KUNDE --');
+        cust.forEach(([l, v]) => lines.push(`  ${l.padEnd(10)}: ${v}`));
+        lines.push('');
+      }
+    }
+
+    // Kit-Teile
+    const sel = m ? m.parts.filter(p => state.config.parts.includes(p.id)) : [];
+    if (sel.length) {
+      lines.push('-- KIT PARTS --');
+      sel.forEach(p => lines.push('  ' + pad(`[ ${p.id.padEnd(14)} ]  ${p.label}`, formatUSD(p.price))));
+      lines.push(sep);
+      lines.push('  ' + pad('Kit Parts Subtotal', formatUSD(sel.reduce((s, p) => s + p.price, 0))));
+      const allSel = sel.length === (m ? m.parts.length : 0);
+      if (allSel) lines.push('  >> KOMPLETT-KIT (alle Teile gewählt) — ' + ((CATALOG.bundleDiscountPct || 0) * 100).toFixed(0) + ' % Rabatt auf Gesamtsumme');
+      lines.push('');
+    }
+
+    // Motor + Propeller + Avionik
+    const eng  = findEngine(state.config.engineId);
+    const prop = findProp(state.config.propellerId);
+    const av   = findAvionics(state.config.avionicsId);
+    if (eng || prop || av) {
+      lines.push('-- POWERPLANT & AVIONIK --');
+      if (eng)  lines.push('  ' + pad(`[ ${eng.id.padEnd(14)} ]  Engine: ${eng.label}`,   formatUSD(eng.price)));
+      if (eng && state.config.includeFFwd && CATALOG.firewallForward.perEngine[eng.id]) {
+        lines.push('  ' + pad(`                     FF + Fuel Kit (${eng.label})`, formatUSD(CATALOG.firewallForward.perEngine[eng.id])));
+      }
+      if (prop) lines.push('  ' + pad(`[ ${prop.id.padEnd(14)} ]  Propeller: ${prop.label}`, formatUSD(prop.price)));
+      if (av)   lines.push('  ' + pad(`[ ${av.id.padEnd(14)} ]  Avionics: ${av.label}`, formatUSD(av.price)));
+      lines.push('');
+    }
+
+    // Extras
+    const xs = state.config.extras
+      .map(eid => ({ x: findExtra(eid), p: extraPrice(findExtra(eid), state.config.modelId) }))
+      .filter(o => o.x && typeof o.p === 'number');
+    if (xs.length) {
+      lines.push('-- KIT EXTRAS --');
+      xs.forEach(({ x, p }) => {
+        lines.push('  ' + pad(`[ ${x.id.padEnd(22)} ]  ${x.label}`, formatUSD(p)));
+        if (x.info) lines.push('       ↳ ' + x.info);
+      });
+      lines.push('');
+    }
+
+    // Quickbuild
+    const qbList = (CATALOG.quickbuild || {})[state.config.modelId] || [];
+    const qbSel = (state.config.quickbuild || []).map(id => qbList.find(q => q.id === id)).filter(Boolean);
+    if (qbSel.length) {
+      lines.push('-- QUICKBUILD --');
+      qbSel.forEach(q => lines.push('  ' + pad(`[ ${q.id.padEnd(22)} ]  ${q.label}`, formatUSD(q.price))));
+      const crate = (CATALOG.shipping && CATALOG.shipping.quickbuildCrating && CATALOG.shipping.quickbuildCrating.prices || {})[state.config.modelId];
+      if (typeof crate === 'number') lines.push('  ' + pad('  + Wooden Crating & Container-Loading (Quickbuild)', formatUSD(crate)));
+      lines.push('');
+    }
+
+    // Services
+    const svs = (state.config.services || []).map(id => findService(id)).filter(Boolean);
+    if (svs.length) {
+      lines.push('-- SERVICES --');
+      svs.forEach(s => {
+        const v = s.quoteOnly ? '(auf Anfrage)' : formatUSD(s.price);
+        lines.push('  ' + pad(`[ ${s.id.padEnd(22)} ]  ${s.label}`, v));
+        if (s.priceNote) lines.push('       ↳ ' + s.priceNote);
+        if (s.info)      lines.push('       ↳ ' + s.info);
+      });
+      lines.push('');
+    }
+
+    // Packing (Pflicht)
+    const pack = (CATALOG.shipping && CATALOG.shipping.packing && CATALOG.shipping.packing.prices || {})[state.config.modelId];
+    if (typeof pack === 'number') {
+      lines.push('-- PACKING (PFLICHT, AUTOMATISCH) --');
+      lines.push('  ' + pad('Packing & Container-Vorbereitung', formatUSD(pack)));
+      lines.push('');
+    }
+
+    // Totals
+    lines.push(dblsep);
+    if (t.discount > 0) {
+      lines.push('  ' + pad('Subtotal',                       formatUSD(t.subtotal)));
+      lines.push('  ' + pad(`Komplett-Kit-Rabatt (${(t.discountPct * 100).toFixed(0)}%)`, '-' + formatUSD(t.discount)));
+    }
+    lines.push('  ' + pad('GESAMT (USD, ohne MwSt, ab Werk JNB)', formatUSD(t.total)));
+    lines.push(dblsep);
+    lines.push('');
+    lines.push('Hinweise:');
+    lines.push('• Alle Preise in USD, ohne MwSt, ab Werk Johannesburg.');
+    lines.push('• Versand- und Importkosten werden separat in Rechnung gestellt.');
+    if (state.config.extras.includes('leather')) {
+      lines.push('• 🎨 LEDER-INTERIEUR: Farbwahl muss separat mit dem Kunden abgestimmt werden!');
+    }
+    if ((state.config.modelId === 'tsi' || state.config.modelId === 'highwing')
+        && state.config.propellerId && state.config.propellerId !== 'mt-3blade') {
+      lines.push('• ⚠️  PROPELLER-WARNUNG: Das gewählte Modell darf in der Schweiz mit diesem Propeller nur als 2-Sitzer betrieben werden (MT-Propeller wäre 4-Sitzer-zertifiziert).');
+    }
+
+    lines.push('');
+    lines.push(`Konfigurations-Link: ${location.origin}${location.pathname}${location.hash}`);
+
+    return lines.join('\n');
+  }
+
+  function formatUSD(n) {
+    if (typeof n !== 'number') return '—';
+    return 'USD ' + Math.round(n).toLocaleString('en-US');
+  }
+
+  function openSalesModal() {
+    const text = buildSalesList();
+    document.getElementById('salesList').textContent = text;
+    document.getElementById('salesStatus').textContent = '';
+    showModal('salesModal');
+  }
+
+  function wireSalesModal() {
+    const copyBtn = document.getElementById('salesCopyBtn');
+    const dlBtn   = document.getElementById('salesDownloadBtn');
+    const mailBtn = document.getElementById('salesMailBtn');
+    if (!copyBtn) return;
+    copyBtn.addEventListener('click', () => {
+      const text = document.getElementById('salesList').textContent;
+      const status = document.getElementById('salesStatus');
+      navigator.clipboard.writeText(text).then(
+        () => { status.textContent = '✓ In Zwischenablage kopiert.'; },
+        () => { status.textContent = 'Konnte nicht kopieren – bitte manuell markieren und Strg/Cmd+C drücken.'; }
+      );
+    });
+    dlBtn.addEventListener('click', () => {
+      const text = document.getElementById('salesList').textContent;
+      const m = findModel(state.config.modelId);
+      const fname = `sling-order-${m ? m.id : 'config'}-${new Date().toISOString().slice(0, 10)}.txt`;
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = fname;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      document.getElementById('salesStatus').textContent = `✓ ${fname} heruntergeladen.`;
+    });
+    mailBtn.addEventListener('click', () => {
+      const text = document.getElementById('salesList').textContent;
+      const m = findModel(state.config.modelId);
+      const sc = CATALOG.salesContact || {};
+      const subject = `Sling Kit Works Order — ${m ? m.name : 'Konfiguration'}`;
+      const params = new URLSearchParams();
+      params.set('subject', subject);
+      params.set('body', text);
+      const cc = sc.cc ? `?cc=${encodeURIComponent(sc.cc)}&` : '?';
+      const url = `mailto:${encodeURIComponent(sc.email || '')}${cc}${params.toString().slice(1)}`;
+      location.href = url;
+    });
   }
 
   /* -------- Save / Compare -------- */
@@ -1595,6 +1786,7 @@
     wireRateDropdown();
     wireModalsClose();
     wireToolbar();
+    wireSalesModal();
 
     window.addEventListener('hashchange', () => {
       const cfg = initFromURL();

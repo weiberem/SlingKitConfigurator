@@ -6,6 +6,18 @@
  */
 window.SLING_CATALOG = {
 
+  /* ------------------------------------------------------------------
+   * Sales-Kontakt für die Werks-Auftrags-Liste (E-Mail-Empfänger der
+   * "Sales-Team Export"-Funktion). Hier können mehrere Empfänger als
+   * Komma-Liste eingetragen werden, z.B. greg@airplanefactory.com.
+   * ----------------------------------------------------------------*/
+  salesContact: {
+    name: 'Sling Aircraft Factory (JNB)',
+    email: 'sales@airplanefactory.com',
+    cc: ''
+  },
+
+
   /* --- Google Sheet als Preis-Quelle ---
    * Leer lassen, um nur die lokalen Preise unten zu verwenden.
    * Format: publizierte CSV-URL eines Google Sheets.
@@ -70,9 +82,8 @@ window.SLING_CATALOG = {
       compatibleAvionics: ['standard', 'advanced', 'premium'],
       image: 'assets/models/tsi/main.png',
       gallery: [
-        'assets/models/tsi/detail-1.jpg',
-        'assets/models/tsi/detail-2.jpg',
-        'assets/models/tsi/detail-3.jpg'
+        'assets/models/tsi/main.png',
+        'assets/models/tsi/SlingTSI-InFlight.jpg'
       ],
       infoUrl: 'https://airplanefactory.com/aircraft/sling-tsi/'
     },

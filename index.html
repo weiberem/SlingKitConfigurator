@@ -303,6 +303,22 @@
     </div>
   </div>
 
+  <div class="modal" id="salesModal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card modal-card-wide">
+      <button class="modal-close" data-close aria-label="Schliessen">×</button>
+      <h3>Werks-Auftrags-Liste für Sling Johannesburg</h3>
+      <p class="muted">Diese Liste enthält alle gewählten Optionen in einem für das Sales- und Lager-Team aufbereiteten Format. Kann kopiert oder direkt per Mail versendet werden.</p>
+      <pre class="sales-list" id="salesList"></pre>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="salesCopyBtn" type="button">In Zwischenablage kopieren</button>
+        <button class="btn btn-ghost" id="salesDownloadBtn" type="button">Als .txt herunterladen</button>
+        <button class="btn btn-primary" id="salesMailBtn" type="button">Per Mail an Sling JNB</button>
+      </div>
+      <p class="form-status" id="salesStatus" role="status"></p>
+    </div>
+  </div>
+
   <script src="data/catalog.js"></script>
   <script src="app.js"></script>
 </body>

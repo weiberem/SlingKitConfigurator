@@ -1206,6 +1206,23 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 }
 
 .modal-card h3 { margin-top: 0; }
+.modal-card-wide { max-width: 760px; }
+
+.sales-list {
+  background: #0a0a0c;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 14px 0 18px;
+  max-height: 60vh;
+  overflow-y: auto;
+  font-family: 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--text);
+  white-space: pre;
+  user-select: text;
+}
 
 .modal-close {
   position: absolute;
