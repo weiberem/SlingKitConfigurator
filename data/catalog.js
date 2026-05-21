@@ -79,9 +79,8 @@ window.SLING_CATALOG = {
       ],
       compatibleEngines: ['rotax915is', 'rotax916is'],
       compatibleAvionics: ['standard', 'advanced', 'premium'],
-      image: 'assets/models/tsi/main.png',
+      image: 'assets/models/tsi/SlingTSI-InFlight.jpg',
       gallery: [
-        'assets/models/tsi/main.png',
         'assets/models/tsi/SlingTSI-InFlight.jpg'
       ],
       infoUrl: 'https://airplanefactory.com/aircraft/sling-tsi/'

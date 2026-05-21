@@ -93,7 +93,7 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 .logo-model {
   font-family: 'Inter', sans-serif;
   font-style: italic;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 3rem;
   line-height: 1;
   color: #fff;
@@ -103,7 +103,6 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 }
 .logo-model .ws { color: #fff; }
 .logo-model .rs { color: var(--accent); }
-.logo-model .sm { font-size: 0.65em; }
 
 .header-controls {
   margin-left: auto;
@@ -317,10 +316,10 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 
 .model-photo {
   flex-shrink: 0;
-  width: 200px;
-  height: 108px;
+  width: 260px;
+  height: 140px;
   border-radius: var(--radius-lg);
-  background: var(--bg-card);
+  background: #0a0a0c;
   border: 1px solid var(--line);
   overflow: hidden;
   position: relative;
@@ -331,10 +330,11 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 .mp-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
   position: absolute;
   inset: 0;
+  padding: 6px;
   transition: opacity .35s ease;
 }
 .mp-img[data-loaded="false"] { display: none; }
@@ -359,7 +359,7 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 @media (max-width: 980px) {
   .model-bay-inner { flex-wrap: wrap; }
   .model-stage { flex-basis: 100%; }
-  .model-photo { width: 100%; height: 160px; }
+  .model-photo { width: 100%; height: 200px; }
 }
 
 @media (max-width: 720px) {
@@ -398,16 +398,7 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   .ms-tag { font-size: 0.62rem; }
   .ms-from { font-size: 0.78rem; }
 
-  .model-photo { width: 100%; height: 180px; }
-
-  .page-header { padding: 14px 0; }
-  .page-header-inner {
-    padding: 0 14px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  .fx-mini { width: 100%; }
+  .model-photo { width: 100%; height: 200px; }
 
   .layout { padding: 16px 14px 40px; gap: 16px; }
   .panel { padding: 18px; }

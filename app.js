@@ -583,7 +583,7 @@
 
   const LOGO_MODEL_SUFFIX = {
     sling2:   '<span class="ws">2</span>',
-    tsi:      '<span class="ws">TS</span><span class="rs sm">i</span>',
+    tsi:      '<span class="ws">TS</span><span class="rs">i</span>',
     highwing: '<span class="ws">H</span><span class="rs">W</span>'
   };
 
