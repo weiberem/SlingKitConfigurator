@@ -622,17 +622,48 @@
     const m = findModel(state.config.modelId);
     if (!m) return;
     const host = document.getElementById('partsList');
+    const qbAll = (CATALOG.quickbuild || {})[state.config.modelId] || [];
+    state.config.quickbuild = state.config.quickbuild || [];
+
     host.innerHTML = m.parts.map(p => {
       const selected = state.config.parts.includes(p.id);
+      const qbForPart = qbAll.filter(q => q.kitPartId === p.id);
+      const qbSelectedForPart = qbForPart.filter(q => state.config.quickbuild.includes(q.id));
+      const qbHasSelection = qbSelectedForPart.length > 0;
+      const qbToggleLabel = qbHasSelection
+        ? `Quickbuild: ${qbSelectedForPart.length} gewählt ▾`
+        : `+ Quickbuild für ${p.label.replace(/\s*Kit$/i, '')} ▾`;
+      const qbBlock = qbForPart.length ? `
+        <div class="qb-inline" data-qb-part="${p.id}">
+          <button type="button" class="qb-toggle ${qbHasSelection ? 'has-sel' : ''}" data-qb-toggle="${p.id}" aria-expanded="false">
+            ${qbToggleLabel}
+          </button>
+          <div class="qb-list" hidden>
+            ${qbForPart.map(q => {
+              const sel = state.config.quickbuild.includes(q.id);
+              return `
+                <label class="qb-item ${sel ? 'selected' : ''}" data-qb-id="${q.id}">
+                  <span class="qb-check">${sel ? checkSvg() : ''}</span>
+                  <span class="qb-label">${q.label}</span>
+                  <span class="qb-price">+ ${format(q.price)}</span>
+                </label>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      ` : '';
       return `
-        <label class="option ${selected ? 'selected' : ''}" data-part="${p.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
-          <span class="opt-check">${checkSvg()}</span>
-          <span class="opt-body">
-            <span class="opt-title">${p.label}</span>
-            <span class="opt-desc">${p.desc}</span>
-            <div class="opt-price">${format(p.price)}</div>
-          </span>
-        </label>
+        <div class="part-wrap">
+          <label class="option ${selected ? 'selected' : ''}" data-part="${p.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
+            <span class="opt-check">${checkSvg()}</span>
+            <span class="opt-body">
+              <span class="opt-title">${p.label}</span>
+              <span class="opt-desc">${p.desc}</span>
+              <div class="opt-price">${format(p.price)}</div>
+            </span>
+          </label>
+          ${qbBlock}
+        </div>
       `;
     }).join('');
 
@@ -651,7 +682,7 @@
       badge.hidden = true;
     }
 
-    host.querySelectorAll('.option').forEach(opt => {
+    host.querySelectorAll('.option[data-part]').forEach(opt => {
       const toggle = () => {
         const id = opt.dataset.part;
         if (state.config.parts.includes(id)) state.config.parts = state.config.parts.filter(x => x !== id);
@@ -661,6 +692,46 @@
       opt.addEventListener('click', e => { e.preventDefault(); toggle(); });
       opt.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
     });
+
+    host.querySelectorAll('[data-qb-toggle]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation(); e.preventDefault();
+        const list = btn.parentElement.querySelector('.qb-list');
+        const open = list.hidden;
+        list.hidden = !open;
+        btn.setAttribute('aria-expanded', String(open));
+      });
+    });
+
+    host.querySelectorAll('.qb-item').forEach(item => {
+      item.addEventListener('click', e => {
+        e.stopPropagation(); e.preventDefault();
+        const id = item.dataset.qbId;
+        const arr = state.config.quickbuild;
+        const i = arr.indexOf(id);
+        if (i >= 0) arr.splice(i, 1); else arr.push(id);
+        update();
+      });
+    });
+
+    renderQbWarning();
+  }
+
+  function renderQbWarning() {
+    const m = findModel(state.config.modelId);
+    if (!m) return;
+    const qbCount = (state.config.quickbuild || []).length;
+    const host = document.getElementById('qbWarning');
+    if (!host) return;
+    if (qbCount === 0) { host.hidden = true; host.innerHTML = ''; return; }
+    host.hidden = false;
+    if (qbCount >= 3) {
+      host.className = 'qb-warning qb-warning-danger';
+      host.innerHTML = `<strong>⚠️ ${qbCount} Quickbuild-Optionen gewählt</strong> – Die <strong>51 %-Regel</strong> (Builder's Rule) wird in der Schweiz mit grosser Wahrscheinlichkeit <strong>nicht eingehalten</strong>. Vor Bestellung zwingend mit der EAS (Experimental Aviation of Switzerland) abklären.`;
+    } else {
+      host.className = 'qb-warning qb-warning-info';
+      host.innerHTML = `ℹ️ <strong>51 %-Regel (Builder's Rule)</strong>: Wird in der Schweiz task-basiert geprüft – jede Quickbuild-Option muss individuell mit der EAS geklärt werden.`;
+    }
   }
 
   function checkSvg() {
@@ -879,38 +950,6 @@
     });
 
     bindOptionLinks(host);
-  }
-
-  function renderQuickbuild() {
-    const section = document.getElementById('quickbuildSection');
-    const host = document.getElementById('quickbuildList');
-    if (!section || !host) return;
-    const list = (CATALOG.quickbuild || {})[state.config.modelId];
-    if (!list || !list.length) { section.hidden = true; host.innerHTML = ''; return; }
-    section.hidden = false;
-    host.innerHTML = list.map(q => {
-      const selected = (state.config.quickbuild || []).includes(q.id);
-      return `
-        <label class="option ${selected ? 'selected' : ''}" data-qb="${q.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
-          <span class="opt-check">${checkSvg()}</span>
-          <span class="opt-body">
-            <span class="opt-title">${q.label}</span>
-            <div class="opt-price">${format(q.price)}</div>
-          </span>
-        </label>
-      `;
-    }).join('');
-    host.querySelectorAll('.option').forEach(opt => {
-      const toggle = () => {
-        const id = opt.dataset.qb;
-        const arr = state.config.quickbuild || (state.config.quickbuild = []);
-        const i = arr.indexOf(id);
-        if (i >= 0) arr.splice(i, 1); else arr.push(id);
-        update();
-      };
-      opt.addEventListener('click', e => { e.preventDefault(); toggle(); });
-      opt.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
-    });
   }
 
   function renderPanelNav() {
@@ -1671,7 +1710,6 @@
     renderAvionics();
     renderExtras();
     renderServices();
-    renderQuickbuild();
     renderPanelNav();
     renderSummaryCard();
     if (state.activeSection === 'summary') renderFullSummaryPanel();
