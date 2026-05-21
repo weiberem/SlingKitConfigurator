@@ -538,6 +538,40 @@
     }
   }
 
+  const RATE_PRESETS = {
+    CHF: [0.82, 0.85, 0.88, 0.90, 0.92, 0.95],
+    EUR: [0.85, 0.88, 0.90, 0.92, 0.94, 0.96]
+  };
+
+  function renderRateDropdown() {
+    const dd = document.getElementById('rateDropdown');
+    if (!dd) return;
+    if (state.currency === 'USD') { dd.hidden = true; return; }
+    dd.hidden = false;
+
+    const presets = RATE_PRESETS[state.currency] || [];
+    const current = +(state.rates[state.currency] || 1);
+    document.getElementById('rateLabel').textContent = current.toFixed(4);
+
+    const menu = document.getElementById('rateMenu');
+    const items = presets.slice();
+    if (!items.some(v => Math.abs(v - current) < 0.0001)) items.push(current);
+    items.sort((a, b) => a - b);
+    menu.innerHTML = items.map(v => {
+      const active = Math.abs(v - current) < 0.0001 ? 'active' : '';
+      return `<li role="option" data-rate="${v}" class="${active}">1 USD = ${v.toFixed(4)} ${state.currency}</li>`;
+    }).join('');
+    menu.querySelectorAll('li').forEach(li => {
+      li.addEventListener('click', () => {
+        state.rates[state.currency] = parseFloat(li.dataset.rate);
+        try { localStorage.setItem(KEY_RATES, JSON.stringify(state.rates)); } catch {}
+        dd.classList.remove('open');
+        dd.querySelector('.dd-btn').setAttribute('aria-expanded', 'false');
+        update();
+      });
+    });
+  }
+
   const LOGO_MODEL_SUFFIX = {
     sling2:   '<span class="ws">2</span>',
     tsi:      '<span class="ws">TS</span><span class="rs sm">i</span>',
@@ -546,8 +580,8 @@
 
   function renderHeader() {
     const m = findModel(state.config.modelId);
-    document.getElementById('modelTitle').textContent = m ? m.name : '—';
-    document.getElementById('modelSubtitle').textContent = m ? `Konfigurieren Sie Ihre ${m.name}` : '';
+    const titleEl = document.getElementById('modelTitle');
+    if (titleEl) titleEl.textContent = m ? m.name : '—';
     document.getElementById('summaryModelName').textContent = m ? m.name : '—';
     document.getElementById('summaryImage').innerHTML = m ? `<div style="color:#dc1f26">${ICONS[m.icon] || ICONS['plane-low']}</div>` : '';
     const suffix = LOGO_MODEL_SUFFIX[state.config.modelId] || '';
@@ -556,9 +590,7 @@
     const pvLogoModel = document.getElementById('pvLogoModel');
     if (pvLogoModel) pvLogoModel.innerHTML = suffix;
     document.getElementById('curLabel').textContent = state.currency;
-    document.getElementById('fxMiniValue').textContent = state.currency === 'USD'
-      ? '1 USD = 1.00 USD (Basis)'
-      : `1 USD = ${(state.rates[state.currency] || 1).toFixed(4)} ${state.currency}`;
+    renderRateDropdown();
     document.getElementById('summaryNote').textContent =
       state.currency === 'USD'
         ? 'Alle Preise in USD, ohne MwSt, ab Werk Johannesburg'
@@ -1356,27 +1388,17 @@
     });
   }
 
-  function wireFXModal() {
-    document.getElementById('fxMiniEdit').addEventListener('click', () => {
-      document.getElementById('rateCHF').value = state.rates.CHF.toFixed(4);
-      document.getElementById('rateEUR').value = state.rates.EUR.toFixed(4);
-      showModal('fxModal');
+  function wireRateDropdown() {
+    const dd = document.getElementById('rateDropdown');
+    if (!dd) return;
+    const btn = dd.querySelector('.dd-btn');
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const open = dd.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.querySelectorAll('.dropdown.open').forEach(d => { if (d !== dd) d.classList.remove('open'); });
     });
-    ['rateCHF', 'rateEUR'].forEach(id => {
-      document.getElementById(id).addEventListener('input', e => {
-        const v = parseFloat(e.target.value);
-        if (isFinite(v) && v > 0) {
-          state.rates[id === 'rateCHF' ? 'CHF' : 'EUR'] = v;
-          update();
-        }
-      });
-    });
-    document.getElementById('resetRatesBtn').addEventListener('click', () => {
-      state.rates = { ...CATALOG.defaultRates };
-      document.getElementById('rateCHF').value = state.rates.CHF.toFixed(4);
-      document.getElementById('rateEUR').value = state.rates.EUR.toFixed(4);
-      update();
-    });
+    document.addEventListener('click', () => { dd.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); });
   }
 
   function wireModalsClose() {
@@ -1469,7 +1491,7 @@
     });
     wireDropdown('curDropdown', val => { state.currency = val; update(); });
     wireCurrencyPills();
-    wireFXModal();
+    wireRateDropdown();
     wireModalsClose();
     wireToolbar();
 
