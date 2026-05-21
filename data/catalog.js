@@ -55,11 +55,10 @@ window.SLING_CATALOG = {
       ],
       compatibleEngines: ['rotax912uls', 'rotax912is', 'rotax915is'],
       compatibleAvionics: ['vfr', 'standard', 'advanced', 'premium'],
-      image: 'assets/models/sling2/main.jpg',
+      image: 'assets/models/sling2/Sling2-InFlight.jpg',
       gallery: [
-        'assets/models/sling2/detail-1.jpg',
-        'assets/models/sling2/detail-2.jpg',
-        'assets/models/sling2/detail-3.jpg'
+        'assets/models/sling2/Sling2-InFlight.jpg',
+        'assets/models/sling2/Sling2-InFlightTD.jpg'
       ],
       infoUrl: 'https://airplanefactory.com/aircraft/sling-2/'
     },
