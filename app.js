@@ -20,7 +20,8 @@
       includeFFwd: true,
       propellerId: null,
       avionicsId: null,
-      extras: []
+      extras: [],
+      services: []
     };
   }
 
@@ -41,7 +42,11 @@
   }
 
   function loadCurrent() {
-    try { return JSON.parse(localStorage.getItem(KEY_CURRENT)); } catch { return null; }
+    try {
+      const c = JSON.parse(localStorage.getItem(KEY_CURRENT));
+      if (c && !Array.isArray(c.services)) c.services = [];
+      return c;
+    } catch { return null; }
   }
   function loadSaved() {
     try { return JSON.parse(localStorage.getItem(KEY_SAVED)) || []; } catch { return []; }
@@ -231,6 +236,7 @@
   function findProp(id)     { return CATALOG.propellers.find(p => p.id === id) || null; }
   function findAvionics(id) { return CATALOG.avionics.find(a => a.id === id) || null; }
   function findExtra(id)    { return CATALOG.extras.find(x => x.id === id) || null; }
+  function findService(id)  { return (CATALOG.services || []).find(s => s.id === id) || null; }
 
   /* -------- Formatting -------- */
 
@@ -279,6 +285,16 @@
     cfg.extras.forEach(eid => {
       const x = findExtra(eid);
       if (x) lines.push({ type: 'add', label: x.label, value: x.price });
+    });
+
+    (cfg.services || []).forEach(sid => {
+      const s = findService(sid);
+      if (!s) return;
+      if (s.quoteOnly) {
+        lines.push({ type: 'add', label: `${s.label} (auf Anfrage)`, value: 0, quoteOnly: true });
+      } else {
+        lines.push({ type: 'add', label: s.label, value: s.price });
+      }
     });
 
     const subtotal = lines.reduce((s, l) => s + l.value, 0);
@@ -416,7 +432,9 @@
     avionics: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="8.5" cy="12" r="2"/><circle cx="15.5" cy="12" r="2"/></svg>',
     // 5 – Extras / Take-off: Flugzeug abhebend
     extras: '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>',
-    // 6 – Bestellen / Flugzeug in der Luft mit Spur
+    // 6 – Services / Im Flug, Container/Welt – Versand & Bauhilfe
+    services: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>',
+    // 7 – Bestellen / Flugzeug in der Luft mit Spur
     summary: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M3 17c2 0 2-1.5 4-1.5s2 1.5 4 1.5"/><path d="M21 4l-9.5 9.5L8 12 4 13l5 3 1 4 1.5-3.5L21 4z"/></svg>'
   };
 
@@ -428,6 +446,7 @@
     { id: 'propeller', label: 'Propeller' },
     { id: 'avionics',  label: 'Avionik' },
     { id: 'extras',    label: 'Extras' },
+    { id: 'services',  label: 'Services' },
     { id: 'summary',   label: 'Bestellen' }
   ];
 
@@ -482,7 +501,7 @@
 
   const LOGO_MODEL_SUFFIX = {
     sling2:   '<span class="ws">2</span>',
-    tsi:      '<span class="ws">TS</span><span class="rs">i</span>',
+    tsi:      '<span class="ws">TS</span><span class="rs sm">i</span>',
     highwing: '<span class="ws">H</span><span class="rs">W</span>'
   };
 
@@ -503,7 +522,7 @@
       : `1 USD = ${(state.rates[state.currency] || 1).toFixed(4)} ${state.currency}`;
     document.getElementById('summaryNote').textContent =
       state.currency === 'USD'
-        ? 'Alle Preise in USD, ab Werk Sling Aircraft'
+        ? 'Alle Preise in USD, ohne MwSt, ab Werk Johannesburg'
         : `Umgerechnet zu 1 USD = ${(state.rates[state.currency] || 1).toFixed(4)} ${state.currency}`;
   }
 
@@ -683,6 +702,44 @@
     bindOptionLinks(host);
   }
 
+  function renderServices() {
+    const host = document.getElementById('servicesList');
+    if (!host) return;
+    const list = CATALOG.services || [];
+    if (!list.length) { host.innerHTML = '<p class="muted">Aktuell keine Services hinterlegt.</p>'; return; }
+    host.innerHTML = list.map(s => {
+      const selected = (state.config.services || []).includes(s.id);
+      const priceHtml = s.quoteOnly
+        ? `<div class="opt-price opt-price-quote">Auf Anfrage</div>`
+        : `<div class="opt-price">${format(s.price)}</div>`;
+      const noteHtml = s.priceNote ? `<div class="opt-pricenote">${s.priceNote}</div>` : '';
+      const infoHtml = s.info ? `<div class="opt-note">${s.info}</div>` : '';
+      return `
+        <label class="option ${selected ? 'selected' : ''}" data-service="${s.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
+          <span class="opt-check">${checkSvg()}</span>
+          <span class="opt-body">
+            <span class="opt-title">${s.label}</span>
+            <span class="opt-desc">${s.desc || ''}</span>
+            ${priceHtml}
+            ${noteHtml}
+            ${infoHtml}
+          </span>
+        </label>
+      `;
+    }).join('');
+    host.querySelectorAll('.option').forEach(opt => {
+      const toggle = () => {
+        const id = opt.dataset.service;
+        const arr = state.config.services || (state.config.services = []);
+        const i = arr.indexOf(id);
+        if (i >= 0) arr.splice(i, 1); else arr.push(id);
+        update();
+      };
+      opt.addEventListener('click', e => { e.preventDefault(); toggle(); });
+      opt.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
+    });
+  }
+
   function renderSummaryCard() {
     const t = totals();
     const linesHost = document.getElementById('summaryLines');
@@ -692,7 +749,7 @@
 
     t.lines.filter(l => l.type === 'add').forEach(l => {
       const cleaned = l.label.length > 38 ? l.label.slice(0, 36) + '…' : l.label;
-      showLines.push({ label: cleaned, value: l.value, add: true });
+      showLines.push({ label: cleaned, value: l.value, add: true, quoteOnly: !!l.quoteOnly });
     });
 
     if (t.discount > 0) {
@@ -706,7 +763,8 @@
       linesHost.innerHTML = showLines.map(l => {
         const cls = l.discount ? 'is-discount' : l.add ? 'is-add' : '';
         const sign = l.discount ? '− ' : (l.add ? '+ ' : '');
-        return `<li class="${cls}"><span class="sum-name">${l.label}</span><span class="sum-val">${sign}${format(Math.abs(l.value))}</span></li>`;
+        const val = l.quoteOnly ? '<em style="opacity:0.75">Auf Anfrage</em>' : `${sign}${format(Math.abs(l.value))}`;
+        return `<li class="${cls}"><span class="sum-name">${l.label}</span><span class="sum-val">${val}</span></li>`;
       }).join('');
     }
     document.getElementById('summaryTotal').textContent = format(t.total);
@@ -740,6 +798,12 @@
     state.config.extras.forEach(eid => {
       const x = findExtra(eid);
       if (x) rows.push([x.label, format(x.price)]);
+    });
+    (state.config.services || []).forEach(sid => {
+      const s = findService(sid);
+      if (!s) return;
+      const val = s.quoteOnly ? '<em style="color:var(--text-mute)">Auf Anfrage</em>' : format(s.price);
+      rows.push([s.label + (s.priceNote ? ` <span class="muted" style="font-size:0.78rem">(${s.priceNote})</span>` : ''), val]);
     });
 
     const host = document.getElementById('fullSummary');
@@ -1007,7 +1071,7 @@
     document.getElementById('pvConfigName').textContent = `Währung: ${state.currency} · Kurs: ${state.currency === 'USD' ? '1.0000 (Basis)' : (state.rates[state.currency] || 1).toFixed(4)}`;
     document.getElementById('pvYear').textContent = new Date().getFullYear();
     document.getElementById('pvNote').textContent = state.currency === 'USD'
-      ? 'Alle Preise in USD, ab Werk Sling Aircraft'
+      ? 'Alle Preise in USD, ohne MwSt, ab Werk Johannesburg'
       : `Umgerechnet zu 1 USD = ${(state.rates[state.currency] || 1).toFixed(4)} ${state.currency}`;
 
     // Tabellen-Rows
@@ -1033,6 +1097,17 @@
       cfg.extras.forEach(eid => {
         const x = findExtra(eid);
         if (x) rows.push({ label: x.label, value: format(x.price) });
+      });
+    }
+
+    if ((cfg.services || []).length) {
+      rows.push({ group: 'Services (ohne MwSt, ab Werk Johannesburg)' });
+      cfg.services.forEach(sid => {
+        const s = findService(sid);
+        if (!s) return;
+        const val = s.quoteOnly ? 'Auf Anfrage' : format(s.price);
+        const label = s.label + (s.priceNote ? ` — ${s.priceNote}` : '');
+        rows.push({ label, value: val });
       });
     }
 
@@ -1099,7 +1174,8 @@
         includeFFwd: cfg.includeFFwd !== false,
         propellerId: cfg.propellerId || null,
         avionicsId: cfg.avionicsId || null,
-        extras: Array.isArray(cfg.extras) ? cfg.extras : []
+        extras: Array.isArray(cfg.extras) ? cfg.extras : [],
+        services: Array.isArray(cfg.services) ? cfg.services : []
       };
       hideModal('loadModal');
       setSection('parts');
@@ -1149,6 +1225,7 @@
     renderPropellers();
     renderAvionics();
     renderExtras();
+    renderServices();
     renderSummaryCard();
     if (state.activeSection === 'summary') renderFullSummaryPanel();
     if (state.activeSection === 'saved') renderSavedPanel();
@@ -1264,7 +1341,7 @@
         url: location.href
       };
       console.log('Sling Anfrage:', payload);
-      status.textContent = 'Danke! Deine Anfrage wurde erfasst. Sling Aircraft meldet sich in Kürze.';
+      status.textContent = 'Danke! Deine Anfrage wurde erfasst. Wir melden uns in Kürze.';
       form.reset();
     });
   }

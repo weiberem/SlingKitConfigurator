@@ -98,7 +98,7 @@
       <div class="panel" id="panel-parts">
         <header class="panel-head">
           <h2>Kit-Teile wählen</h2>
-          <p>Wählen Sie einzelne Kit-Teile oder das Komplett-Paket. Preise in USD ab Werk.</p>
+          <p>Wählen Sie einzelne Kit-Teile oder das Komplett-Paket. Preise in USD, ohne MwSt, ab Werk Johannesburg.</p>
           <div class="currency-pills" id="currencyPills">
             <button class="cur-pill" data-currency="USD" aria-pressed="true">USD</button>
             <button class="cur-pill" data-currency="CHF" aria-pressed="false">CHF</button>
@@ -142,6 +142,14 @@
           <p>Beliebig kombinierbare Sonderausstattung.</p>
         </header>
         <div class="option-grid" id="extrasList"></div>
+      </div>
+
+      <div class="panel" id="panel-services" hidden>
+        <header class="panel-head">
+          <h2>Services</h2>
+          <p>Versand, Import-Abwicklung und Bauhilfe – alle Preise ohne MwSt, ab Werk Johannesburg.</p>
+        </header>
+        <div class="option-grid" id="servicesList"></div>
       </div>
 
       <div class="panel" id="panel-saved" hidden></div>
@@ -191,7 +199,7 @@
         <span>Gesamtpreis</span>
         <strong id="summaryTotal">USD 0</strong>
       </div>
-      <div class="summary-note" id="summaryNote">Alle Preise in USD, ab Werk Sling Aircraft</div>
+      <div class="summary-note" id="summaryNote">Alle Preise in USD, ohne MwSt, ab Werk Johannesburg</div>
 
       <div class="summary-actions">
         <button class="btn btn-primary btn-block" id="shareBtn">QR / Link teilen</button>
@@ -227,7 +235,7 @@
     <div class="pv-total">
       <div>
         <div class="pv-total-label">Gesamtpreis</div>
-        <div class="pv-total-note" id="pvNote">Alle Preise ab Werk Sling Aircraft</div>
+        <div class="pv-total-note" id="pvNote">Alle Preise ohne MwSt, ab Werk Johannesburg</div>
       </div>
       <div class="pv-total-value" id="pvTotal">USD 0</div>
     </div>

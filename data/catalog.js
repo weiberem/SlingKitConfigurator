@@ -167,5 +167,28 @@ window.SLING_CATALOG = {
       image: 'assets/extras/glidertow/main.jpg' },
     { id: 'tundra',      label: 'Tundra-Bereifung',        desc: 'Grobstollige Reifen für unbefestigte Pisten.',    price: 2100, models: ['highwing'],
       image: 'assets/extras/tundra/main.jpg' }
+  ],
+
+  /* ------------------------------------------------------------------
+   * Services – Dienstleistungen rund um Import, Lieferung und Bauhilfe.
+   * Preise verstehen sich ohne MwSt; ab Johannesburg. Versand und
+   * Einfuhrabgaben werden individuell offeriert.
+   * ----------------------------------------------------------------*/
+  services: [
+    {
+      id: 'door2door-ch',
+      label: 'Tür-zu-Tür Service Schweiz',
+      desc: 'Komplette Abwicklung: Versand-Organisation ab Johannesburg, Zoll, Mehrwertsteuer-Import und Lieferung an die Wunschadresse in der Schweiz.',
+      price: 1022,
+      priceNote: '+ Versandkosten ca. CHF 6\'000 und MwSt – beides individuell nach Lieferadresse',
+      info: 'Pauschale für die Service-Leistung (Organisation und Abwicklung). Effektive Versand- und Importkosten werden separat in Rechnung gestellt.'
+    },
+    {
+      id: 'build-help',
+      label: 'Bauhilfe (Pakete oder Stundensatz)',
+      desc: 'Individuelle Bauunterstützung durch erfahrene Techniker – buchbar als Paket oder zum Stundensatz.',
+      info: '⚠️ Wichtig: Die 51 %-Regel für Experimental-Builders muss eingehalten werden. Umfang und Buchung immer in Absprache mit der EAS (Experimental Aviation of Switzerland).',
+      quoteOnly: true
+    }
   ]
 };

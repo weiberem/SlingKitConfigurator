@@ -78,8 +78,8 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 
 .logo {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  align-items: baseline;
+  gap: 18px;
   text-decoration: none;
   flex-shrink: 0;
 }
@@ -92,15 +92,18 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 
 .logo-model {
   font-family: 'Inter', sans-serif;
-  font-weight: 800;
-  font-size: 4.2rem;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 3rem;
   line-height: 1;
   color: #fff;
-  letter-spacing: -0.03em;
-  margin-left: -4px;
+  letter-spacing: -0.01em;
+  position: relative;
+  top: -10px;             /* optisch an der Sling-Grundlinie ausrichten */
 }
 .logo-model .ws { color: #fff; }
 .logo-model .rs { color: var(--accent); }
+.logo-model .sm { font-size: 0.65em; }
 
 .header-controls {
   margin-left: auto;
@@ -349,7 +352,7 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   .model-photo { width: 220px; height: 140px; }
   .ms-name { font-size: 1.6rem; }
   .logo-img { height: 84px; }
-  .logo-model { font-size: 3.6rem; }
+  .logo-model { font-size: 2.6rem; top: -8px; }
 }
 
 @media (max-width: 980px) {
@@ -364,9 +367,9 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
     gap: 8px;
     flex-wrap: nowrap;
   }
-  .logo { gap: 2px; min-width: 0; flex: 0 1 auto; }
+  .logo { gap: 10px; min-width: 0; flex: 0 1 auto; }
   .logo-img { height: 44px; }
-  .logo-model { font-size: 1.9rem; margin-left: -2px; }
+  .logo-model { font-size: 1.5rem; top: -4px; }
 
   .header-controls { gap: 6px; }
   .icon-btn { display: none; }                    /* Saved/Compare auf Mobil ausgeblendet */
@@ -684,6 +687,27 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   font-size: 1rem;
   color: var(--accent);
   margin-top: 8px;
+}
+.opt-price-quote {
+  color: var(--text-dim);
+  font-style: italic;
+  font-weight: 600;
+}
+.opt-pricenote {
+  font-size: 0.78rem;
+  color: var(--text-mute);
+  margin-top: 4px;
+  font-style: italic;
+}
+.opt-note {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-left: 2px solid var(--accent);
+  background: rgba(220, 31, 38, 0.06);
+  border-radius: 4px;
+  line-height: 1.45;
 }
 
 .opt-link {
