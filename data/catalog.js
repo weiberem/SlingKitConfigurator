@@ -104,11 +104,11 @@ window.SLING_CATALOG = {
       ],
       compatibleEngines: ['rotax915is', 'rotax916is'],
       compatibleAvionics: ['standard', 'advanced', 'premium'],
-      image: 'assets/models/highwing/main.jpg',
+      image: 'assets/models/highwing/SlingHW-InFlight.jpg',
       gallery: [
-        'assets/models/highwing/detail-1.jpg',
-        'assets/models/highwing/detail-2.jpg',
-        'assets/models/highwing/detail-3.jpg'
+        'assets/models/highwing/SlingHW-InFlight.jpg',
+        'assets/models/highwing/SlingHW-InFlight2.jpg',
+        'assets/models/highwing/SlingHW-InFlightTD.jpg'
       ],
       infoUrl: 'https://airplanefactory.com/aircraft/sling-high-wing/'
     }

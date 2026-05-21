@@ -381,8 +381,17 @@
     const img = document.getElementById('mpImg');
     const fb = document.getElementById('mpFallback');
     fb.innerHTML = ICONS[m.icon] || ICONS['plane-low'];
-    if (m.image) {
-      tryImage(img, candidatePaths(m.image), m.name);
+
+    // Galerie aus m.gallery (Fallback auf m.image); auto-rotate alle 5s
+    const photos = (Array.isArray(m.gallery) && m.gallery.length) ? m.gallery : (m.image ? [m.image] : []);
+    if (window.__mpTimer) { clearInterval(window.__mpTimer); window.__mpTimer = null; }
+    if (photos.length) {
+      let pi = 0;
+      const show = () => { tryImage(img, candidatePaths(photos[pi]), m.name); };
+      show();
+      if (photos.length > 1) {
+        window.__mpTimer = setInterval(() => { pi = (pi + 1) % photos.length; show(); }, 5000);
+      }
     } else {
       img.style.display = 'none';
       img.removeAttribute('src');

@@ -335,6 +335,7 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   display: block;
   position: absolute;
   inset: 0;
+  transition: opacity .35s ease;
 }
 .mp-img[data-loaded="false"] { display: none; }
 .mp-fallback {
