@@ -128,13 +128,17 @@ window.SLING_CATALOG = {
 
   propellers: [
     { id: 'sensenich',        label: 'Sensenich 2-Blatt Fixed',    desc: 'Bewährter Festpropeller, 2-Blatt Composite.',         price: 4250,
-      image: 'assets/propellers/sensenich/main.jpg',        infoUrl: 'https://sensenich.com/' },
+      image: 'assets/propellers/sensenich/main.jpg',        infoUrl: 'https://sensenich.com/',
+      chNote: { type: 'warn', text: 'Aktuell in der Schweiz nicht für 4-Sitzer-Betrieb zertifiziert – Sling TSi / High Wing dürfen mit diesem Propeller nur als 2-Sitzer betrieben werden.' } },
     { id: 'airmaster-3',      label: 'Airmaster AP430 3-Blatt CS', desc: 'Hydraulischer Verstellpropeller, 3-Blatt.',           price: 11200,
-      image: 'assets/propellers/airmaster-3/main.jpg',      infoUrl: 'https://propellor.com/' },
+      image: 'assets/propellers/airmaster-3/main.jpg',      infoUrl: 'https://propellor.com/',
+      chNote: { type: 'warn', text: 'Aktuell in der Schweiz nicht für 4-Sitzer-Betrieb zertifiziert – Sling TSi / High Wing dürfen mit diesem Propeller nur als 2-Sitzer betrieben werden.' } },
     { id: 'duc-flashback-3r', label: 'Duc Flashback-3 R 4-Blatt',  desc: 'Premium 4-Blatt Composite mit Hub-Cap und Spinner.',  price: 13755,
-      image: 'assets/propellers/duc-flashback-3r/main.jpg', infoUrl: 'https://www.duc-helices.com/' },
+      image: 'assets/propellers/duc-flashback-3r/main.jpg', infoUrl: 'https://www.duc-helices.com/',
+      chNote: { type: 'warn', text: 'Aktuell in der Schweiz nicht für 4-Sitzer-Betrieb zertifiziert – Sling TSi / High Wing dürfen mit diesem Propeller nur als 2-Sitzer betrieben werden.' } },
     { id: 'mt-3blade',        label: 'MT-Propeller 3-Blatt CS',    desc: 'Constant-Speed Holz-Composite, 3-Blatt.',             price: 12450,
-      image: 'assets/propellers/mt-3blade/main.jpg',        infoUrl: 'https://www.mt-propeller.com/' }
+      image: 'assets/propellers/mt-3blade/main.jpg',        infoUrl: 'https://www.mt-propeller.com/',
+      chNote: { type: 'ok',   text: 'In der Schweiz für 4-Sitzer-Betrieb zugelassen – einzige aktuell für Sling TSi / High Wing zertifizierte Propeller-Option.' } }
   ],
 
   avionics: [
@@ -148,26 +152,135 @@ window.SLING_CATALOG = {
       image: 'assets/avionics/premium/main.jpg',  infoUrl: 'https://www.garmin.com/aviation/' }
   ],
 
+  /* ------------------------------------------------------------------
+   * Extras – offizielle Sling Kit-Extras-Liste (Stand: Werks-Preisliste).
+   * Preise in USD, ohne MwSt, ab Werk Johannesburg.
+   * "prices" ist ein Objekt mit Preis pro Modell-ID. Modelle ohne Eintrag
+   * gelten als nicht-kompatibel und werden ausgeblendet.
+   * Propeller-Optionen sind hier NICHT enthalten – die werden im
+   * eigenen Propeller-Step ausgewählt.
+   * ----------------------------------------------------------------*/
   extras: [
-    { id: 'brs',         label: 'BRS Ballistic Parachute', desc: 'Gesamtrettungs-Fallschirmsystem.',                price: 19500,
-      image: 'assets/extras/brs/main.jpg',         infoUrl: 'https://brsaerospace.com/' },
-    { id: 'ac',          label: 'Klimaanlage',             desc: 'Cockpit-Klimatisierung.',                         price: 7500, models: ['tsi', 'highwing'],
-      image: 'assets/extras/ac/main.jpg' },
-    { id: 'heatedseats', label: 'Sitzheizung',             desc: 'Elektrisch beheizte Vordersitze.',                price: 1200,
-      image: 'assets/extras/heatedseats/main.jpg' },
-    { id: 'leather',     label: 'Leder-Interieur',         desc: 'Premium-Lederausstattung in Wunschfarbe.',        price: 4800,
-      image: 'assets/extras/leather/main.jpg' },
-    { id: 'paint',       label: 'Custom Paint Scheme',     desc: 'Individuelle Lackierung nach Design-Vorgabe.',    price: 9500,
-      image: 'assets/extras/paint/main.jpg' },
-    { id: 'wheelpants',  label: 'Wheel Pants',             desc: 'Aerodynamische Radverkleidungen.',                price: 1800, models: ['sling2', 'tsi'],
-      image: 'assets/extras/wheelpants/main.jpg' },
-    { id: 'longrange',   label: 'Long-Range Tanks',        desc: 'Zusatztanks für erweiterte Reichweite.',          price: 3200, models: ['tsi', 'highwing'],
-      image: 'assets/extras/longrange/main.jpg' },
-    { id: 'glidertow',   label: 'Schleppkupplung',         desc: 'Für Segelflugzeug-Schlepp zugelassen.',           price: 2800, models: ['sling2'],
-      image: 'assets/extras/glidertow/main.jpg' },
-    { id: 'tundra',      label: 'Tundra-Bereifung',        desc: 'Grobstollige Reifen für unbefestigte Pisten.',    price: 2100, models: ['highwing'],
-      image: 'assets/extras/tundra/main.jpg' }
+    {
+      id: 'ffwd-kit',
+      label: 'Firewall Forward & Fuel System Kit',
+      desc: 'Komplettes Firewall-Forward- und Fuel-System-Kit, abgestimmt auf den jeweiligen Standard-Motor (912iS für Sling 2, 916iS für TSi und High Wing).',
+      prices: { sling2: 10325, tsi: 10461, highwing: 10461 },
+      image: 'assets/extras/ffwd-kit/main.jpg'
+    },
+    {
+      id: 'leather',
+      label: 'Leder-Interieur (Sitze, Seitenpanels, Teppich)',
+      desc: 'Komplettes Leder-Interieur-Kit inkl. Seitenverkleidung und Bodenteppich.',
+      info: '🎨 Farbwahl erforderlich – die Farbe wird separat mit dem Dealer oder direkt mit Sling abgestimmt.',
+      prices: { sling2: 4575, tsi: 10456, highwing: 11707 },
+      image: 'assets/extras/leather/main.jpg'
+    },
+    {
+      id: 'led-strobe-nav',
+      label: 'LED Strobe & NAV Light System',
+      desc: 'LED-Strobe-System mit Tail- und Wingtip-Strobes sowie integrierten Navigationslichtern.',
+      prices: { sling2: 905, tsi: 950, highwing: 950 },
+      image: 'assets/extras/led-strobe-nav/main.jpg'
+    },
+    {
+      id: 'matco-dual-toe',
+      label: 'Matco Dual Toe Brake Kit',
+      desc: 'Komplettes Dual-Toe-Brake-Kit statt Standard-T-Pedale mit Mittel-Bremse.',
+      prices: { sling2: 2063, tsi: 1976 },
+      image: 'assets/extras/matco-dual-toe/main.jpg'
+    },
+    {
+      id: 'beringer-hand-brake-tri',
+      label: 'Beringer Hand Brake Upgrade (TRI)',
+      desc: 'Hand-Brems-System-Upgrade von Beringer – TRI-Konfiguration.',
+      prices: { tsi: 4361, highwing: 4555 },
+      image: 'assets/extras/beringer-hand-brake/main.jpg'
+    },
+    {
+      id: 'beringer-dual-toe-tri',
+      label: 'Beringer Dual Toe Hydraulic Brakes (TRI)',
+      desc: 'Hydraulische Dual-Toe-Brakes statt hand-betätigte Bremse – TRI-Konfiguration.',
+      prices: { tsi: 6001, highwing: 6268 },
+      image: 'assets/extras/beringer-dual-toe/main.jpg'
+    },
+    {
+      id: 'beringer-dual-toe-tdr',
+      label: 'Beringer Dual Toe Hydraulic Brakes (TDR)',
+      desc: 'Hydraulische Dual-Toe-Brakes – TDR-Konfiguration (Sling High Wing).',
+      prices: { highwing: 9375 },
+      image: 'assets/extras/beringer-dual-toe-tdr/main.jpg'
+    },
+    {
+      id: 'parachute-prep',
+      label: 'Parachute-Vorbereitung',
+      desc: 'Parachute-Kabel, Halterungen und Skin-Verstärkungen für die spätere Fallschirm-Installation.',
+      prices: { sling2: 1496, tsi: 2252, highwing: 2903 },
+      image: 'assets/extras/parachute-prep/main.jpg'
+    },
+    {
+      id: 'longrange-tanks',
+      label: 'Long-Range Fuel Tanks (Parts swap out)',
+      desc: 'Long-Range-Tanks – Parts werden statt der Standard-Tanks geliefert.',
+      prices: { sling2: 3624, tsi: 3639, highwing: 3800 },
+      image: 'assets/extras/longrange-tanks/main.jpg'
+    },
+    {
+      id: 'builder-tools',
+      label: 'Sling Builder Tools (empfohlen)',
+      desc: 'Sling-empfohlenes Werkzeug-Set für den Bau – einmaliger Kauf.',
+      prices: { sling2: 2457, tsi: 2656, highwing: 2774 },
+      image: 'assets/extras/builder-tools/main.jpg'
+    }
   ],
+
+  /* ------------------------------------------------------------------
+   * Quickbuild – optionale Vor-Montagen ab Werk (verkürzen die Bauzeit).
+   * Aktuell nur für Sling High Wing in der offiziellen Preisliste.
+   * ----------------------------------------------------------------*/
+  quickbuild: {
+    tsi: [
+      { id: 'qb-empennage',      label: 'Empennage',                                                       price: 2771 },
+      { id: 'qb-fuel-standard',  label: 'Fuel tanks – Standard',                                           price: 2268 },
+      { id: 'qb-fuel-longrange', label: 'Fuel tanks – Long Range (Add extra auf Standard)',                price: 2268 },
+      { id: 'qb-wings',          label: 'Wings (Klappen, Querruder und Tanks unmontiert)',                 price: 6105 },
+      { id: 'qb-fuselage',       label: 'Fuselage (ohne Fahrwerk/Steuerung montiert)',                      price: 8664 },
+      { id: 'qb-undercarriage',  label: 'Undercarriage (assembled und am Rumpf angebaut)',                 price: 1184 },
+      { id: 'qb-canopy-glass',   label: 'Canopy mit Türen und Verglasung (ohne Frontscheibe/Dashboard)',   price: 3107 },
+      { id: 'qb-fill-rivets',    label: 'Mittellöcher der Standard-Nieten füllen (empfohlen)',             price: 1659 }
+    ],
+    highwing: [
+      { id: 'qb-empennage',      label: 'Empennage',                                                       price: 3947 },
+      { id: 'qb-fuel-standard',  label: 'Fuel tanks – Standard',                                           price: 2268 },
+      { id: 'qb-fuel-longrange', label: 'Fuel tanks – Long Range (Add extra auf Standard)',                price: 2268 },
+      { id: 'qb-wings',          label: 'Wings (Klappen, Querruder und Tanks unmontiert)',                 price: 6105 },
+      { id: 'qb-fuselage',       label: 'Fuselage assembled (Rumpfheck am CFK-Mittelteil; ohne Fahrwerk/Steuerung)', price: 4823 },
+      { id: 'qb-undercarriage',  label: 'Undercarriage (assembled und am Rumpf angebaut)',                 price: 1800 },
+      { id: 'qb-doors-glass',    label: 'Türen und Verglasung eingebaut (ohne Frontscheibe/Dashboard)',    price: 2301 },
+      { id: 'qb-fill-rivets',    label: 'Mittellöcher der Standard-Nieten füllen (empfohlen)',             price: 2436 }
+    ]
+  },
+
+  /* ------------------------------------------------------------------
+   * Shipping / Packing – Pflicht-Position für den Versand ab Werk
+   * Johannesburg. Wird automatisch in den Gesamtpreis eingerechnet.
+   * "crating" ist ein Aufschlag bei Quickbuild-Auswahl.
+   * ----------------------------------------------------------------*/
+  shipping: {
+    packing: {
+      id: 'packing',
+      label: 'Packing & Container-Vorbereitung (Pflicht)',
+      desc: 'Verpackung des Kits in den Container für den Export ab Werk Johannesburg.',
+      info: 'Pflicht-Position – wird für den Export benötigt und kann nicht abgewählt werden.',
+      prices: { sling2: 2494, tsi: 2810, highwing: 2494 }
+    },
+    quickbuildCrating: {
+      id: 'crating-quickbuild',
+      label: 'Wooden Crating & Container-Loading (Quickbuild)',
+      desc: 'Holzverschlag und Container-Beladung – wird automatisch ergänzt sobald mindestens eine Quickbuild-Option gewählt ist.',
+      prices: { tsi: 4522, highwing: 3919 }
+    }
+  },
 
   /* ------------------------------------------------------------------
    * Services – Dienstleistungen rund um Import, Lieferung und Bauhilfe.

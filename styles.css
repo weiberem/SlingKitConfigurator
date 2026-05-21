@@ -709,6 +709,43 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   border-radius: 4px;
   line-height: 1.45;
 }
+.opt-note-ok {
+  border-left-color: #1eb966;
+  background: rgba(30, 185, 102, 0.08);
+}
+.opt-note-warn {
+  border-left-color: #f0a020;
+  background: rgba(240, 160, 32, 0.08);
+}
+
+.info-banner {
+  background: rgba(220, 31, 38, 0.08);
+  border: 1px solid rgba(220, 31, 38, 0.35);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin: 0 0 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  align-items: baseline;
+  font-size: 0.9rem;
+}
+.info-banner strong { color: var(--accent); }
+
+.panel-subsection {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+.panel-subsection .ps-title {
+  margin: 0 0 4px;
+  font-size: 1.15rem;
+}
+.panel-subsection .ps-sub {
+  margin: 0 0 16px;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
 
 .opt-link {
   display: inline-block;

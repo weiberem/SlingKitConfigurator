@@ -21,7 +21,8 @@
       propellerId: null,
       avionicsId: null,
       extras: [],
-      services: []
+      services: [],
+      quickbuild: []
     };
   }
 
@@ -44,7 +45,10 @@
   function loadCurrent() {
     try {
       const c = JSON.parse(localStorage.getItem(KEY_CURRENT));
-      if (c && !Array.isArray(c.services)) c.services = [];
+      if (c) {
+        if (!Array.isArray(c.services))   c.services = [];
+        if (!Array.isArray(c.quickbuild)) c.quickbuild = [];
+      }
       return c;
     } catch { return null; }
   }
@@ -238,6 +242,18 @@
   function findExtra(id)    { return CATALOG.extras.find(x => x.id === id) || null; }
   function findService(id)  { return (CATALOG.services || []).find(s => s.id === id) || null; }
 
+  /* Preis eines Extras für ein gegebenes Modell (unterstützt sowohl die
+     neue prices-Objekt-Form als auch das alte price+models-Schema). */
+  function extraPrice(x, modelId) {
+    if (x && x.prices && typeof x.prices === 'object') return x.prices[modelId];
+    if (x && typeof x.price === 'number') {
+      if (Array.isArray(x.models) && !x.models.includes(modelId)) return undefined;
+      return x.price;
+    }
+    return undefined;
+  }
+  function extraCompatible(x, modelId) { return typeof extraPrice(x, modelId) === 'number'; }
+
   /* -------- Formatting -------- */
 
   function format(usd, currencyOverride) {
@@ -284,7 +300,9 @@
 
     cfg.extras.forEach(eid => {
       const x = findExtra(eid);
-      if (x) lines.push({ type: 'add', label: x.label, value: x.price });
+      if (!x) return;
+      const p = extraPrice(x, cfg.modelId);
+      if (typeof p === 'number') lines.push({ type: 'add', label: x.label, value: p });
     });
 
     (cfg.services || []).forEach(sid => {
@@ -296,6 +314,27 @@
         lines.push({ type: 'add', label: s.label, value: s.price });
       }
     });
+
+    // Quickbuild – ausgewählte Items
+    const qbList = (CATALOG.quickbuild && CATALOG.quickbuild[cfg.modelId]) || [];
+    const qbSelected = (cfg.quickbuild || []).map(id => qbList.find(q => q.id === id)).filter(Boolean);
+    qbSelected.forEach(q => lines.push({ type: 'add', label: `Quickbuild: ${q.label}`, value: q.price }));
+
+    // Crating (nur wenn Quickbuild-Items gewählt) – per-Modell
+    if (qbSelected.length > 0 && CATALOG.shipping && CATALOG.shipping.quickbuildCrating) {
+      const crateP = (CATALOG.shipping.quickbuildCrating.prices || {})[cfg.modelId];
+      if (typeof crateP === 'number') {
+        lines.push({ type: 'add', label: CATALOG.shipping.quickbuildCrating.label, value: crateP });
+      }
+    }
+
+    // Packing – Pflicht, immer auto-inkludiert
+    if (CATALOG.shipping && CATALOG.shipping.packing) {
+      const packP = (CATALOG.shipping.packing.prices || {})[cfg.modelId];
+      if (typeof packP === 'number') {
+        lines.push({ type: 'add', label: CATALOG.shipping.packing.label, value: packP, required: true });
+      }
+    }
 
     const subtotal = lines.reduce((s, l) => s + l.value, 0);
     const pct = CATALOG.bundleDiscountPct || 0;
@@ -623,8 +662,12 @@
   function renderPropellers() {
     const host = document.getElementById('propellerList');
     const brandMap = { 'sensenich': 'Sensenich', 'airmaster-3': 'Airmaster', 'duc-flashback-3r': 'Duc Hélices', 'mt-3blade': 'MT-Propeller' };
+    const isFourSeater = state.config.modelId === 'tsi' || state.config.modelId === 'highwing';
     host.innerHTML = CATALOG.propellers.map(p => {
       const selected = state.config.propellerId === p.id;
+      const chHtml = (isFourSeater && p.chNote)
+        ? `<div class="opt-note opt-note-${p.chNote.type}"><strong>🇨🇭</strong> ${p.chNote.text}</div>`
+        : '';
       return `
         <label class="option is-radio ${selected ? 'selected' : ''}" data-prop="${p.id}" tabindex="0" role="radio" aria-checked="${selected}">
           <span class="opt-check"></span>
@@ -632,6 +675,7 @@
             <span class="opt-title">${p.label}</span>
             <span class="opt-desc">${p.desc}</span>
             <div class="opt-price">${format(p.price)}</div>
+            ${chHtml}
             ${infoLinkHtml(p, brandMap[p.id] || 'Hersteller')}
           </span>
         </label>
@@ -675,15 +719,18 @@
     const host = document.getElementById('extrasList');
     const m = state.config.modelId;
     host.innerHTML = CATALOG.extras.map(x => {
-      const compatible = !x.models || x.models.includes(m);
+      const compatible = extraCompatible(x, m);
+      const price = extraPrice(x, m);
       const selected = state.config.extras.includes(x.id);
+      const noteHtml = (compatible && x.info) ? `<div class="opt-note">${x.info}</div>` : '';
       return `
         <label class="option ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-extra="${x.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
           <span class="opt-check">${checkSvg()}</span>
           <span class="opt-body">
             <span class="opt-title">${x.label}</span>
-            <span class="opt-desc">${x.desc}${compatible ? '' : ' <em>(nicht für gewähltes Modell)</em>'}</span>
-            <div class="opt-price">${format(x.price)}</div>
+            <span class="opt-desc">${x.desc || ''}${compatible ? '' : ' <em>(nicht für gewähltes Modell)</em>'}</span>
+            <div class="opt-price">${compatible ? format(price) : '—'}</div>
+            ${noteHtml}
             ${infoLinkHtml(x, 'Hersteller')}
           </span>
         </label>
@@ -700,6 +747,49 @@
       opt.addEventListener('keydown', e => { if (e.target.closest('.opt-link')) return; if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
     });
     bindOptionLinks(host);
+  }
+
+  function renderQuickbuild() {
+    const section = document.getElementById('quickbuildSection');
+    const host = document.getElementById('quickbuildList');
+    if (!section || !host) return;
+    const list = (CATALOG.quickbuild || {})[state.config.modelId];
+    if (!list || !list.length) { section.hidden = true; host.innerHTML = ''; return; }
+    section.hidden = false;
+    host.innerHTML = list.map(q => {
+      const selected = (state.config.quickbuild || []).includes(q.id);
+      return `
+        <label class="option ${selected ? 'selected' : ''}" data-qb="${q.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
+          <span class="opt-check">${checkSvg()}</span>
+          <span class="opt-body">
+            <span class="opt-title">${q.label}</span>
+            <div class="opt-price">${format(q.price)}</div>
+          </span>
+        </label>
+      `;
+    }).join('');
+    host.querySelectorAll('.option').forEach(opt => {
+      const toggle = () => {
+        const id = opt.dataset.qb;
+        const arr = state.config.quickbuild || (state.config.quickbuild = []);
+        const i = arr.indexOf(id);
+        if (i >= 0) arr.splice(i, 1); else arr.push(id);
+        update();
+      };
+      opt.addEventListener('click', e => { e.preventDefault(); toggle(); });
+      opt.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
+    });
+  }
+
+  function renderPackingBanner() {
+    const txt = document.getElementById('packingText');
+    if (!txt) return;
+    const packP = ((CATALOG.shipping || {}).packing && CATALOG.shipping.packing.prices || {})[state.config.modelId];
+    if (typeof packP === 'number') {
+      txt.innerHTML = `Wird automatisch eingerechnet – für den Export ab Werk Johannesburg. <strong>${format(packP)}</strong>`;
+    } else {
+      txt.textContent = 'Wird automatisch eingerechnet – für den Export ab Werk Johannesburg.';
+    }
   }
 
   function renderServices() {
@@ -797,7 +887,9 @@
     if (a) rows.push([`Avionik: ${a.label}`, format(a.price)]);
     state.config.extras.forEach(eid => {
       const x = findExtra(eid);
-      if (x) rows.push([x.label, format(x.price)]);
+      if (!x) return;
+      const p = extraPrice(x, state.config.modelId);
+      if (typeof p === 'number') rows.push([x.label, format(p)]);
     });
     (state.config.services || []).forEach(sid => {
       const s = findService(sid);
@@ -1096,7 +1188,9 @@
       rows.push({ group: 'Extras' });
       cfg.extras.forEach(eid => {
         const x = findExtra(eid);
-        if (x) rows.push({ label: x.label, value: format(x.price) });
+        if (!x) return;
+        const p = extraPrice(x, cfg.modelId);
+        if (typeof p === 'number') rows.push({ label: x.label, value: format(p) });
       });
     }
 
@@ -1226,6 +1320,8 @@
     renderAvionics();
     renderExtras();
     renderServices();
+    renderQuickbuild();
+    renderPackingBanner();
     renderSummaryCard();
     if (state.activeSection === 'summary') renderFullSummaryPanel();
     if (state.activeSection === 'saved') renderSavedPanel();
