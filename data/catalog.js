@@ -275,8 +275,7 @@ window.SLING_CATALOG = {
       { id: 'qb-wings',          kitPartId: 'wing',          label: 'Wings vor-montiert (Klappen/Querruder/Tanks unmontiert)',         price: 6105 },
       { id: 'qb-fuselage',       kitPartId: 'fuselage',      label: 'Fuselage vor-montiert (ohne Fahrwerk/Steuerung)',                 price: 8664 },
       { id: 'qb-undercarriage',  kitPartId: 'undercarriage', label: 'Undercarriage assembled und am Rumpf montiert',                   price: 1184 },
-      { id: 'qb-canopy-glass',   kitPartId: 'finishing',     label: 'Canopy mit Türen und Verglasung (ohne Frontscheibe/Dashboard)',   price: 3107 },
-      { id: 'qb-fill-rivets',    kitPartId: 'finishing',     label: 'Mittellöcher der Standard-Nieten füllen (empfohlen)',             price: 1659 }
+      { id: 'qb-canopy-glass',   kitPartId: 'finishing',     label: 'Canopy mit Türen und Verglasung (ohne Frontscheibe/Dashboard)',   price: 3107 }
     ],
     highwing: [
       { id: 'qb-empennage',      kitPartId: 'empennage',     label: 'Empennage vor-montiert',                                          price: 3947 },
@@ -285,8 +284,7 @@ window.SLING_CATALOG = {
       { id: 'qb-wings',          kitPartId: 'wing',          label: 'Wings vor-montiert (Klappen/Querruder/Tanks unmontiert)',         price: 6105 },
       { id: 'qb-fuselage',       kitPartId: 'fuselage',      label: 'Fuselage vor-montiert (Rumpfheck am CFK-Mittelteil)',             price: 4823 },
       { id: 'qb-undercarriage',  kitPartId: 'undercarriage', label: 'Undercarriage assembled und am Rumpf montiert',                   price: 1800 },
-      { id: 'qb-doors-glass',    kitPartId: 'finishing',     label: 'Türen und Verglasung eingebaut (ohne Frontscheibe/Dashboard)',    price: 2301 },
-      { id: 'qb-fill-rivets',    kitPartId: 'finishing',     label: 'Mittellöcher der Standard-Nieten füllen (empfohlen)',             price: 2436 }
+      { id: 'qb-doors-glass',    kitPartId: 'finishing',     label: 'Türen und Verglasung eingebaut (ohne Frontscheibe/Dashboard)',    price: 2301 }
     ]
   },
 
