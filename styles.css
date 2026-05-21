@@ -755,6 +755,19 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   font-size: 0.9rem;
 }
 
+.panel-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.panel-nav .btn { min-height: 44px; }
+.panel-nav .btn-primary { margin-left: auto; }
+
 .opt-link {
   display: inline-block;
   margin-top: 8px;

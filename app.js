@@ -813,6 +813,30 @@
     });
   }
 
+  function renderPanelNav() {
+    const idx = STEPS.findIndex(s => s.id === state.activeSection);
+    if (idx < 0) return;
+    const prev = idx > 0 ? STEPS[idx - 1] : null;
+    const next = idx < STEPS.length - 1 ? STEPS[idx + 1] : null;
+    const html = `
+      <footer class="panel-nav">
+        ${prev ? `<button type="button" class="btn btn-ghost" data-go-step="${prev.id}">← Zurück: ${prev.label}</button>` : '<span></span>'}
+        ${next ? `<button type="button" class="btn btn-primary" data-go-step="${next.id}">Weiter: ${next.label} →</button>` : ''}
+      </footer>
+    `;
+    document.querySelectorAll('.main-panel .panel').forEach(p => {
+      const old = p.querySelector(':scope > .panel-nav');
+      if (old) old.remove();
+      if (!p.id) return;
+      const stepId = p.id.replace(/^panel-/, '');
+      if (!STEPS.some(s => s.id === stepId)) return;     // saved/compare/etc. ohne Nav
+      p.insertAdjacentHTML('beforeend', html);
+    });
+    document.querySelectorAll('.panel-nav [data-go-step]').forEach(btn => {
+      btn.addEventListener('click', () => setSection(btn.dataset.goStep));
+    });
+  }
+
   function renderPackingBanner() {
     const txt = document.getElementById('packingText');
     if (!txt) return;
@@ -1354,6 +1378,7 @@
     renderServices();
     renderQuickbuild();
     renderPackingBanner();
+    renderPanelNav();
     renderSummaryCard();
     if (state.activeSection === 'summary') renderFullSummaryPanel();
     if (state.activeSection === 'saved') renderSavedPanel();
