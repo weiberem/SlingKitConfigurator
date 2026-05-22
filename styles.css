@@ -910,6 +910,19 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   font-style: italic;
 }
 
+.part-extras {
+  margin-top: 6px;
+  padding: 8px;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.part-extra-item { outline: none; }
+.part-extra-item:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
+
 /* ---------- Quickbuild Warnhinweise (51 %-Regel) ---------- */
 
 .qb-warning {

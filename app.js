@@ -646,11 +646,14 @@
     const qbAll = (CATALOG.quickbuild || {})[state.config.modelId] || [];
     state.config.quickbuild = state.config.quickbuild || [];
 
+    const extrasForParts = (CATALOG.extras || []).filter(x => x.kitPartId && extraCompatible(x, state.config.modelId));
+
     host.innerHTML = m.parts.map(p => {
       const selected = state.config.parts.includes(p.id);
       const qbForPart = qbAll.filter(q => q.kitPartId === p.id);
       const qbSelectedForPart = qbForPart.filter(q => state.config.quickbuild.includes(q.id));
       const qbHasSelection = qbSelectedForPart.length > 0;
+      const extrasForPart = extrasForParts.filter(x => x.kitPartId === p.id);
       const qbToggleLabel = qbHasSelection
         ? `Quickbuild: ${qbSelectedForPart.length} gewählt ▾`
         : `+ Quickbuild für ${p.label.replace(/\s*Kit$/i, '')} ▾`;
@@ -679,6 +682,21 @@
           </div>
         </div>
       ` : '';
+      const partExtrasBlock = extrasForPart.length ? `
+        <div class="part-extras" data-part-extras="${p.id}">
+          ${extrasForPart.map(x => {
+            const sel = state.config.extras.includes(x.id);
+            const price = extraPrice(x, state.config.modelId);
+            return `
+              <label class="qb-item part-extra-item ${sel ? 'selected' : ''}" data-part-extra-id="${x.id}" tabindex="0" role="checkbox" aria-checked="${sel}">
+                <span class="qb-check">${sel ? checkSvg() : ''}</span>
+                <span class="qb-label">${x.label}<div class="qb-req">${x.desc || ''}</div></span>
+                <span class="qb-price">+ ${x.approxPrice ? formatApprox(price) : format(price)}</span>
+              </label>
+            `;
+          }).join('')}
+        </div>
+      ` : '';
       return `
         <div class="part-wrap">
           <label class="option ${selected ? 'selected' : ''}" data-part="${p.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
@@ -690,6 +708,7 @@
             </span>
           </label>
           ${qbBlock}
+          ${partExtrasBlock}
         </div>
       `;
     }).join('');
@@ -730,7 +749,36 @@
       });
     });
 
-    host.querySelectorAll('.qb-item').forEach(item => {
+    host.querySelectorAll('[data-part-extra-id]').forEach(item => {
+      const toggle = () => {
+        const id = item.dataset.partExtraId;
+        const x = findExtra(id);
+        if (!x) return;
+        if (state.config.extras.includes(id)) {
+          state.config.extras = state.config.extras.filter(e => e !== id);
+        } else {
+          if (x.group) {
+            state.config.extras = state.config.extras.filter(eid => {
+              const other = findExtra(eid);
+              return !other || other.group !== x.group;
+            });
+          }
+          state.config.extras.push(id);
+          if (Array.isArray(x.requires)) {
+            x.requires.forEach(reqId => {
+              if (!state.config.extras.includes(reqId)) state.config.extras.push(reqId);
+            });
+          }
+        }
+        update();
+      };
+      item.addEventListener('click', e => { e.stopPropagation(); e.preventDefault(); toggle(); });
+      item.addEventListener('keydown', e => {
+        if (e.key === ' ' || e.key === 'Enter') { e.stopPropagation(); e.preventDefault(); toggle(); }
+      });
+    });
+
+    host.querySelectorAll('.qb-item:not(.part-extra-item)').forEach(item => {
       item.addEventListener('click', e => {
         e.stopPropagation(); e.preventDefault();
         const id = item.dataset.qbId;

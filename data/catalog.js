@@ -250,7 +250,8 @@ window.SLING_CATALOG = {
       label: 'Long-Range Fuel Tanks (Parts swap out)',
       desc: 'Long-Range-Tanks – Parts werden statt der Standard-Tanks geliefert.',
       prices: { sling2: 3624, tsi: 3639, highwing: 3800 },
-      image: 'assets/extras/longrange-tanks/main.jpg'
+      image: 'assets/extras/longrange-tanks/main.jpg',
+      kitPartId: 'wing'
     },
     {
       id: 'builder-tools',
