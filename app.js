@@ -19,6 +19,7 @@
       engineId: null,
       includeFFwd: true,
       propellerId: null,
+      propellerAddons: {},
       avionicsId: null,
       extras: [],
       services: [],
@@ -48,6 +49,8 @@
       if (c) {
         if (!Array.isArray(c.services))   c.services = [];
         if (!Array.isArray(c.quickbuild)) c.quickbuild = [];
+        if (!c.propellerAddons || typeof c.propellerAddons !== 'object') c.propellerAddons = {};
+        if (c.propellerId && !CATALOG.propellers.some(p => p.id === c.propellerId)) c.propellerId = null;
       }
       return c;
     } catch { return null; }
@@ -301,7 +304,12 @@
     }
 
     const prop = findProp(cfg.propellerId);
-    if (prop) lines.push({ type: 'add', label: `Propeller: ${prop.label}`, value: prop.price });
+    if (prop) {
+      lines.push({ type: 'add', label: `Propeller: ${prop.label}`, value: prop.price });
+      if (prop.addon && cfg.propellerAddons && cfg.propellerAddons[prop.addon.id]) {
+        lines.push({ type: 'add', label: `↳ ${prop.addon.label}`, value: prop.addon.priceAdd, approx: !!prop.addon.approxPrice });
+      }
+    }
 
     const av = findAvionics(cfg.avionicsId);
     if (av) lines.push({ type: 'add', label: `Avionik: ${av.label}`, value: av.price });
@@ -447,11 +455,11 @@
   }
 
   function stepIndex(id) {
-    const order = ['parts','engine','propeller','avionics','extras','summary'];
+    const order = ['parts','accessories','avionics','services','summary'];
     return order.indexOf(id);
   }
   function stepAtIndex(i) {
-    const order = ['parts','engine','propeller','avionics','extras','summary'];
+    const order = ['parts','accessories','avionics','services','summary'];
     return order[Math.max(0, Math.min(order.length - 1, i))];
   }
 
@@ -496,42 +504,28 @@
   const STEP_ICONS = {
     // 1 – Hangar (Aufbau): Hallengebäude mit Tor
     parts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M3 21V10l9-5 9 5v11"/><path d="M8 21v-7h8v7"/><path d="M3 21h18"/></svg>',
-    // 2 – Motor: Motorenblock mit zwei Zylindern
-    engine: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="9" width="18" height="9" rx="1"/><path d="M7 9V5h3v4M14 9V5h3v4"/><path d="M3 13H1.5M22.5 13H21"/><path d="M7 18v2M17 18v2"/></svg>',
-    // 3 – Propeller (Spinner)
-    propeller: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="2" fill="currentColor"/><path d="M12 10V3M12 14v7M10 12H3M14 12h7"/></svg>',
-    // 4 – Avionik: Rundinstrument mit Nadel
+    // 2 – Zubehör: Settings/Gear (Motor + Propeller + Extras)
+    accessories: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+    // 3 – Avionik: Rundinstrument mit Nadel
     avionics: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="9"/><path d="M12 3v2M21 12h-2M12 21v-2M3 12h2"/><path d="M12 12l4.5-3.5"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>',
-    // 5 – Extras: Plus im Kreis
-    extras: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>',
-    // 6 – Services: Handshake
+    // 4 – Services: Handshake
     services: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M11 17l2 2a1 1 0 0 0 1.4-1.4"/><path d="M14 14l2.5 2.5a1 1 0 0 0 1.4-1.4l-3.9-3.9a3 3 0 0 0-4.2 0l-.9.9a1 1 0 1 1-1.4-1.4l2.8-2.8a5.8 5.8 0 0 1 7-.9l.5.3a2 2 0 0 0 1.4.2L21 4"/><path d="M21 3l1 11h-2"/><path d="M3 3L2 14l6.5 6.5a1 1 0 1 0 1.4-1.4"/><path d="M3 4h6"/></svg>',
-    // 7 – Bestellen: startendes Flugzeug (steigend)
+    // 5 – Bestellen: startendes Flugzeug (steigend)
     summary: '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M21.5 2.5c-.3-.3-.7-.4-1-.3L3.6 7.4c-.5.1-.7.7-.4 1.1l4.8 4 5.5-5.5-3.6 6.7 4.5 4.5c.4.3 1 .2 1.1-.4l5.3-15.4c.1-.3 0-.7-.3-.9zM2.5 18.5c2-2 4-2 6 0"/></svg>'
   };
 
   const STEP_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>';
 
   const STEPS = [
-    { id: 'parts',     label: 'Kit-Teile' },
-    { id: 'engine',    label: 'Motor' },
-    { id: 'propeller', label: 'Propeller' },
-    { id: 'avionics',  label: 'Avionik' },
-    { id: 'extras',    label: 'Extras' },
-    { id: 'services',  label: 'Services' },
-    { id: 'summary',   label: 'Bestellen' }
+    { id: 'parts',       label: 'Kit-Teile' },
+    { id: 'accessories', label: 'Zubehör' },
+    { id: 'avionics',    label: 'Avionik' },
+    { id: 'services',    label: 'Services' },
+    { id: 'summary',     label: 'Bestellen' }
   ];
 
-  /* Liefert die für das aktuell gewählte Modell relevanten Steps.
-     Steps, in denen es keine echte Auswahl gibt (z.B. nur 1 Motor
-     verfügbar), werden ausgeblendet – ihr Item wird im Hintergrund
-     trotzdem ausgewählt, damit es in den Summen erscheint. */
   function activeSteps() {
-    const m = findModel(state.config.modelId);
-    return STEPS.filter(s => {
-      if (s.id === 'engine' && m && Array.isArray(m.compatibleEngines) && m.compatibleEngines.length <= 1) return false;
-      return true;
-    });
+    return STEPS.slice();
   }
 
   function renderSidebar() {
@@ -585,13 +579,11 @@
   }
 
   const PANEL_TITLES = {
-    parts:     'Kit Komponenten',
-    engine:    'Motor',
-    propeller: 'Propeller',
-    avionics:  'Avionik',
-    extras:    'Extras &amp; Optionen',
-    services:  'Services',
-    summary:   'Zusammenfassung &amp; Bestellung'
+    parts:       'Kit Komponenten',
+    accessories: 'Zubehör',
+    avionics:    'Avionik',
+    services:    'Services',
+    summary:     'Zusammenfassung &amp; Bestellung'
   };
 
   function renderPanelTitles() {
@@ -846,12 +838,22 @@
 
   function renderPropellers() {
     const host = document.getElementById('propellerList');
-    const brandMap = { 'sensenich': 'Sensenich', 'airmaster-3': 'Airmaster', 'duc-flashback-3r': 'Duc Hélices', 'mt-3blade': 'MT-Propeller' };
+    const brandMap = { 'duc-flashback-3r': 'Duc Hélices', 'mt-3blade': 'MT-Propeller' };
     const isFourSeater = state.config.modelId === 'tsi' || state.config.modelId === 'highwing';
     host.innerHTML = CATALOG.propellers.map(p => {
       const selected = state.config.propellerId === p.id;
       const chHtml = (isFourSeater && p.chNote)
         ? `<div class="opt-note opt-note-${p.chNote.type}"><strong>🇨🇭</strong> ${p.chNote.text}</div>`
+        : '';
+      const addonHtml = (p.addon && selected)
+        ? `<label class="opt-addon" data-prop-addon="${p.addon.id}">
+             <input type="checkbox" ${state.config.propellerAddons && state.config.propellerAddons[p.addon.id] ? 'checked' : ''} />
+             <span class="opt-addon-body">
+               <span class="opt-addon-title">+ ${p.addon.label}</span>
+               <span class="opt-addon-desc">${p.addon.desc || ''}</span>
+             </span>
+             <span class="opt-addon-price">+ ${p.addon.approxPrice ? formatApprox(p.addon.priceAdd) : format(p.addon.priceAdd)}</span>
+           </label>`
         : '';
       return `
         <label class="option is-radio ${selected ? 'selected' : ''}" data-prop="${p.id}" tabindex="0" role="radio" aria-checked="${selected}">
@@ -861,6 +863,7 @@
             <span class="opt-desc">${p.desc}</span>
             <div class="opt-price">${format(p.price)}</div>
             ${chHtml}
+            ${addonHtml}
             ${infoLinkHtml(p, brandMap[p.id] || 'Hersteller')}
           </span>
         </label>
@@ -868,8 +871,19 @@
     }).join('');
     host.querySelectorAll('.option').forEach(opt => {
       const pick = () => { state.config.propellerId = opt.dataset.prop; update(); };
-      opt.addEventListener('click', e => { if (e.target.closest('.opt-link')) return; e.preventDefault(); pick(); });
-      opt.addEventListener('keydown', e => { if (e.target.closest('.opt-link')) return; if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pick(); } });
+      opt.addEventListener('click', e => {
+        if (e.target.closest('.opt-link') || e.target.closest('.opt-addon')) return;
+        e.preventDefault(); pick();
+      });
+      opt.addEventListener('keydown', e => { if (e.target.closest('.opt-link') || e.target.closest('.opt-addon')) return; if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pick(); } });
+    });
+    host.querySelectorAll('.opt-addon input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', e => {
+        const addonId = e.target.closest('.opt-addon').dataset.propAddon;
+        if (!state.config.propellerAddons) state.config.propellerAddons = {};
+        state.config.propellerAddons[addonId] = e.target.checked;
+        update();
+      });
     });
     bindOptionLinks(host);
   }
@@ -1731,12 +1745,15 @@
       const json = decodeURIComponent(escape(atob(input)));
       const cfg = JSON.parse(json);
       if (!cfg.modelId || !findModel(cfg.modelId)) throw new Error('Ungültiges Modell');
+      const loadedPropId = cfg.propellerId || null;
+      const propStillValid = loadedPropId && CATALOG.propellers.some(p => p.id === loadedPropId);
       state.config = {
         modelId: cfg.modelId,
         parts: Array.isArray(cfg.parts) ? cfg.parts : [],
         engineId: cfg.engineId || null,
         includeFFwd: cfg.includeFFwd !== false,
-        propellerId: cfg.propellerId || null,
+        propellerId: propStillValid ? loadedPropId : null,
+        propellerAddons: (cfg.propellerAddons && typeof cfg.propellerAddons === 'object') ? cfg.propellerAddons : {},
         avionicsId: cfg.avionicsId || null,
         extras: Array.isArray(cfg.extras) ? cfg.extras : [],
         services: Array.isArray(cfg.services) ? cfg.services : []

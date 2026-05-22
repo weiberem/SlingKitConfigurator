@@ -134,17 +134,12 @@ window.SLING_CATALOG = {
   ],
 
   propellers: [
-    { id: 'sensenich',        label: 'Sensenich 2-Blatt Fixed',    desc: 'Bewährter Festpropeller, 2-Blatt Composite.',         price: 4250,
-      image: 'assets/propellers/sensenich/main.jpg',        infoUrl: 'https://sensenich.com/',
-      chNote: { type: 'warn', text: 'Aktuell in der Schweiz nicht für 4-Sitzer-Betrieb zertifiziert – Sling TSi / High Wing dürfen mit diesem Propeller nur als 2-Sitzer betrieben werden.' } },
-    { id: 'airmaster-3',      label: 'Airmaster AP430 3-Blatt CS', desc: 'Hydraulischer Verstellpropeller, 3-Blatt.',           price: 11200,
-      image: 'assets/propellers/airmaster-3/main.jpg',      infoUrl: 'https://propellor.com/',
-      chNote: { type: 'warn', text: 'Aktuell in der Schweiz nicht für 4-Sitzer-Betrieb zertifiziert – Sling TSi / High Wing dürfen mit diesem Propeller nur als 2-Sitzer betrieben werden.' } },
     { id: 'duc-flashback-3r', label: 'Duc Flashback-3 R 4-Blatt',  desc: 'Premium 4-Blatt Composite mit Hub-Cap und Spinner.',  price: 13755,
       image: 'assets/propellers/duc-flashback-3r/main.jpg', infoUrl: 'https://www.duc-helices.com/',
       chNote: { type: 'warn', text: 'Aktuell in der Schweiz nicht für 4-Sitzer-Betrieb zertifiziert – Sling TSi / High Wing dürfen mit diesem Propeller nur als 2-Sitzer betrieben werden.' } },
-    { id: 'mt-3blade',        label: 'MT-Propeller 3-Blatt CS',    desc: 'Constant-Speed Holz-Composite, 3-Blatt.',             price: 12450,
+    { id: 'mt-3blade',        label: 'MT-Propeller MTV-6 3-Blatt CS', desc: 'Constant-Speed Holz-Composite mit Manual Blue Vernier Control (Standard).', price: 12450,
       image: 'assets/propellers/mt-3blade/main.jpg',        infoUrl: 'https://www.mt-propeller.com/',
+      addon: { id: 'mt-rs-flight-system', label: 'RS Flight System SCU', desc: 'Elektronische Single-Lever-Control statt manueller Blue Vernier – automatische Drehzahlsteuerung.', priceAdd: 7287, approxPrice: true },
       chNote: { type: 'ok',   text: 'In der Schweiz für 4-Sitzer-Betrieb zugelassen – einzige aktuell für Sling TSi / High Wing zertifizierte Propeller-Option.' } }
   ],
 
