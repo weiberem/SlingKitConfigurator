@@ -19,6 +19,7 @@
       engineId: null,
       includeFFwd: true,
       propellerId: null,
+      propellerAddons: {},
       avionicsId: null,
       extras: [],
       services: [],
@@ -48,6 +49,8 @@
       if (c) {
         if (!Array.isArray(c.services))   c.services = [];
         if (!Array.isArray(c.quickbuild)) c.quickbuild = [];
+        if (!c.propellerAddons || typeof c.propellerAddons !== 'object') c.propellerAddons = {};
+        if (c.propellerId && !CATALOG.propellers.some(p => p.id === c.propellerId)) c.propellerId = null;
       }
       return c;
     } catch { return null; }
@@ -301,7 +304,12 @@
     }
 
     const prop = findProp(cfg.propellerId);
-    if (prop) lines.push({ type: 'add', label: `Propeller: ${prop.label}`, value: prop.price });
+    if (prop) {
+      lines.push({ type: 'add', label: `Propeller: ${prop.label}`, value: prop.price });
+      if (prop.addon && cfg.propellerAddons && cfg.propellerAddons[prop.addon.id]) {
+        lines.push({ type: 'add', label: `↳ ${prop.addon.label}`, value: prop.addon.priceAdd, approx: !!prop.addon.approxPrice });
+      }
+    }
 
     const av = findAvionics(cfg.avionicsId);
     if (av) lines.push({ type: 'add', label: `Avionik: ${av.label}`, value: av.price });
@@ -391,6 +399,7 @@
     });
 
     const img = document.getElementById('mpImg');
+    const bg = document.getElementById('mpBg');
     const fb = document.getElementById('mpFallback');
     fb.innerHTML = ICONS[m.icon] || ICONS['plane-low'];
 
@@ -399,7 +408,7 @@
     if (window.__mpTimer) { clearInterval(window.__mpTimer); window.__mpTimer = null; }
     if (photos.length) {
       let pi = 0;
-      const show = () => { tryImage(img, candidatePaths(photos[pi]), m.name); };
+      const show = () => { tryImage(img, bg, candidatePaths(photos[pi]), m.name); };
       show();
       if (photos.length > 1) {
         window.__mpTimer = setInterval(() => { pi = (pi + 1) % photos.length; show(); }, 5000);
@@ -407,6 +416,7 @@
     } else {
       img.style.display = 'none';
       img.removeAttribute('src');
+      if (bg) { bg.removeAttribute('src'); bg.dataset.loaded = 'false'; }
     }
   }
 
@@ -418,14 +428,26 @@
     return [p, ...others.map(e => base + e)];
   }
 
-  function tryImage(img, paths, alt) {
+  function tryImage(img, bg, paths, alt) {
     let i = 0;
     img.style.display = 'none';
     img.alt = alt || '';
     function next() {
-      if (i >= paths.length) { img.style.display = 'none'; img.onerror = null; img.onload = null; return; }
+      if (i >= paths.length) {
+        img.style.display = 'none';
+        img.onerror = null; img.onload = null;
+        if (bg) { bg.dataset.loaded = 'false'; bg.removeAttribute('src'); }
+        return;
+      }
       const p = paths[i++];
-      img.onload = () => { img.style.display = 'block'; };
+      img.onload = () => {
+        img.style.display = 'block';
+        if (bg) {
+          bg.onload = () => { bg.dataset.loaded = 'true'; };
+          bg.onerror = () => { bg.dataset.loaded = 'false'; };
+          bg.src = p;
+        }
+      };
       img.onerror = next;
       img.src = p;
     }
@@ -433,11 +455,11 @@
   }
 
   function stepIndex(id) {
-    const order = ['parts','engine','propeller','avionics','extras','summary'];
+    const order = ['parts','accessories','avionics','services','summary'];
     return order.indexOf(id);
   }
   function stepAtIndex(i) {
-    const order = ['parts','engine','propeller','avionics','extras','summary'];
+    const order = ['parts','accessories','avionics','services','summary'];
     return order[Math.max(0, Math.min(order.length - 1, i))];
   }
 
@@ -480,44 +502,30 @@
   }
 
   const STEP_ICONS = {
-    // 1 – Hangar (Aufbau): geschlossenes Hallengebäude mit Tor
+    // 1 – Hangar (Aufbau): Hallengebäude mit Tor
     parts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M3 21V10l9-5 9 5v11"/><path d="M8 21v-7h8v7"/><path d="M3 21h18"/></svg>',
-    // 2 – Motor: Flugzeug in Seitenansicht (Triebwerk sichtbar)
-    engine: '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M22 12c0-.6-.45-1-1.4-1H17l-3.5-6.5c-.3-.5-.8-.5-1.3-.5h-.7l2.4 7H9.5l-2-3H6l1 4H4c-1 0-1.5.4-1.5 1s.5 1 1.5 1h3l-1 4h1.5l2-3h4.4l-2.4 7h.7c.5 0 1 0 1.3-.5L17 13h3.6c.95 0 1.4-.4 1.4-1z"/></svg>',
-    // 3 – Propeller (Spinner)
-    propeller: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="2" fill="currentColor"/><path d="M12 10V3M12 14v7M10 12H3M14 12h7"/></svg>',
-    // 4 – Avionik: Cockpit-Instrumente
-    avionics: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="8.5" cy="12" r="2"/><circle cx="15.5" cy="12" r="2"/></svg>',
-    // 5 – Extras / Take-off: Flugzeug abhebend
-    extras: '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>',
-    // 6 – Services / Im Flug, Container/Welt – Versand & Bauhilfe
-    services: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>',
-    // 7 – Bestellen / Flugzeug in der Luft mit Spur
-    summary: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M3 17c2 0 2-1.5 4-1.5s2 1.5 4 1.5"/><path d="M21 4l-9.5 9.5L8 12 4 13l5 3 1 4 1.5-3.5L21 4z"/></svg>'
+    // 2 – Zubehör: Settings/Gear (Motor + Propeller + Extras)
+    accessories: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+    // 3 – Avionik: Rundinstrument mit Nadel
+    avionics: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="9"/><path d="M12 3v2M21 12h-2M12 21v-2M3 12h2"/><path d="M12 12l4.5-3.5"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>',
+    // 4 – Services: Handshake
+    services: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M11 17l2 2a1 1 0 0 0 1.4-1.4"/><path d="M14 14l2.5 2.5a1 1 0 0 0 1.4-1.4l-3.9-3.9a3 3 0 0 0-4.2 0l-.9.9a1 1 0 1 1-1.4-1.4l2.8-2.8a5.8 5.8 0 0 1 7-.9l.5.3a2 2 0 0 0 1.4.2L21 4"/><path d="M21 3l1 11h-2"/><path d="M3 3L2 14l6.5 6.5a1 1 0 1 0 1.4-1.4"/><path d="M3 4h6"/></svg>',
+    // 5 – Bestellen: startendes Flugzeug (steigend)
+    summary: '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M21.5 2.5c-.3-.3-.7-.4-1-.3L3.6 7.4c-.5.1-.7.7-.4 1.1l4.8 4 5.5-5.5-3.6 6.7 4.5 4.5c.4.3 1 .2 1.1-.4l5.3-15.4c.1-.3 0-.7-.3-.9zM2.5 18.5c2-2 4-2 6 0"/></svg>'
   };
 
   const STEP_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>';
 
   const STEPS = [
-    { id: 'parts',     label: 'Kit-Teile' },
-    { id: 'engine',    label: 'Motor' },
-    { id: 'propeller', label: 'Propeller' },
-    { id: 'avionics',  label: 'Avionik' },
-    { id: 'extras',    label: 'Extras' },
-    { id: 'services',  label: 'Services' },
-    { id: 'summary',   label: 'Bestellen' }
+    { id: 'parts',       label: 'Kit-Teile' },
+    { id: 'accessories', label: 'Zubehör' },
+    { id: 'avionics',    label: 'Avionik' },
+    { id: 'services',    label: 'Services' },
+    { id: 'summary',     label: 'Bestellen' }
   ];
 
-  /* Liefert die für das aktuell gewählte Modell relevanten Steps.
-     Steps, in denen es keine echte Auswahl gibt (z.B. nur 1 Motor
-     verfügbar), werden ausgeblendet – ihr Item wird im Hintergrund
-     trotzdem ausgewählt, damit es in den Summen erscheint. */
   function activeSteps() {
-    const m = findModel(state.config.modelId);
-    return STEPS.filter(s => {
-      if (s.id === 'engine' && m && Array.isArray(m.compatibleEngines) && m.compatibleEngines.length <= 1) return false;
-      return true;
-    });
+    return STEPS.slice();
   }
 
   function renderSidebar() {
@@ -571,13 +579,11 @@
   }
 
   const PANEL_TITLES = {
-    parts:     'Kit Komponenten',
-    engine:    'Motor',
-    propeller: 'Propeller',
-    avionics:  'Avionik',
-    extras:    'Extras &amp; Optionen',
-    services:  'Services',
-    summary:   'Zusammenfassung &amp; Bestellung'
+    parts:       'Kit Komponenten',
+    accessories: 'Zubehör',
+    avionics:    'Avionik',
+    services:    'Services',
+    summary:     'Zusammenfassung &amp; Bestellung'
   };
 
   function renderPanelTitles() {
@@ -868,7 +874,7 @@
     }).join('');
 
     host.insertAdjacentHTML('beforeend',
-      '<div class="approx-note">ℹ️ <strong>Motor-Preise sind unverbindliche Richtwerte</strong> – die finale Offerte erfolgt bei Bestellung direkt vom Hersteller bzw. Importeur (Rotax). Alternativ können Sie den Motor selbst organisieren („Eigener Motor").</div>'
+      '<div class="approx-note">ℹ️ <strong>Motor-Preise sind Schätzpreise</strong> (ohne MwSt) – die finale Offerte erfolgt bei Bestellung direkt vom Hersteller bzw. Importeur (Rotax). Alternativ können Sie den Motor selbst organisieren („Eigener Motor").</div>'
     );
     host.querySelectorAll('.option:not(.disabled)').forEach(opt => {
       const pick = () => { state.config.engineId = opt.dataset.engine; update(); };
@@ -880,12 +886,22 @@
 
   function renderPropellers() {
     const host = document.getElementById('propellerList');
-    const brandMap = { 'sensenich': 'Sensenich', 'airmaster-3': 'Airmaster', 'duc-flashback-3r': 'Duc Hélices', 'mt-3blade': 'MT-Propeller' };
+    const brandMap = { 'duc-flashback-3r': 'Duc Hélices', 'mt-3blade': 'MT-Propeller' };
     const isFourSeater = state.config.modelId === 'tsi' || state.config.modelId === 'highwing';
     host.innerHTML = CATALOG.propellers.map(p => {
       const selected = state.config.propellerId === p.id;
       const chHtml = (isFourSeater && p.chNote)
         ? `<div class="opt-note opt-note-${p.chNote.type}"><strong>🇨🇭</strong> ${p.chNote.text}</div>`
+        : '';
+      const addonHtml = (p.addon && selected)
+        ? `<label class="opt-addon" data-prop-addon="${p.addon.id}">
+             <input type="checkbox" ${state.config.propellerAddons && state.config.propellerAddons[p.addon.id] ? 'checked' : ''} />
+             <span class="opt-addon-body">
+               <span class="opt-addon-title">+ ${p.addon.label}</span>
+               <span class="opt-addon-desc">${p.addon.desc || ''}</span>
+             </span>
+             <span class="opt-addon-price">+ ${p.addon.approxPrice ? formatApprox(p.addon.priceAdd) : format(p.addon.priceAdd)}</span>
+           </label>`
         : '';
       return `
         <label class="option is-radio ${selected ? 'selected' : ''}" data-prop="${p.id}" tabindex="0" role="radio" aria-checked="${selected}">
@@ -895,6 +911,7 @@
             <span class="opt-desc">${p.desc}</span>
             <div class="opt-price">${format(p.price)}</div>
             ${chHtml}
+            ${addonHtml}
             ${infoLinkHtml(p, brandMap[p.id] || 'Hersteller')}
           </span>
         </label>
@@ -902,8 +919,19 @@
     }).join('');
     host.querySelectorAll('.option').forEach(opt => {
       const pick = () => { state.config.propellerId = opt.dataset.prop; update(); };
-      opt.addEventListener('click', e => { if (e.target.closest('.opt-link')) return; e.preventDefault(); pick(); });
-      opt.addEventListener('keydown', e => { if (e.target.closest('.opt-link')) return; if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pick(); } });
+      opt.addEventListener('click', e => {
+        if (e.target.closest('.opt-link') || e.target.closest('.opt-addon')) return;
+        e.preventDefault(); pick();
+      });
+      opt.addEventListener('keydown', e => { if (e.target.closest('.opt-link') || e.target.closest('.opt-addon')) return; if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pick(); } });
+    });
+    host.querySelectorAll('.opt-addon input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', e => {
+        const addonId = e.target.closest('.opt-addon').dataset.propAddon;
+        if (!state.config.propellerAddons) state.config.propellerAddons = {};
+        state.config.propellerAddons[addonId] = e.target.checked;
+        update();
+      });
     });
     bindOptionLinks(host);
   }
@@ -981,35 +1009,33 @@
     show(0);
   }
 
-  function renderExtras() {
-    const host = document.getElementById('extrasList');
-    const m = state.config.modelId;
-    host.innerHTML = CATALOG.extras.map(x => {
-      const compatible = extraCompatible(x, m);
-      const price = extraPrice(x, m);
-      const selected = state.config.extras.includes(x.id);
-      const noteHtml = (compatible && x.info) ? `<div class="opt-note">${x.info}</div>` : '';
-      const showDetails = compatible && hasExtraDetails(x);
-      return `
-        <div class="option-wrap">
-          <label class="option ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-extra="${x.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
-            <span class="opt-check">${checkSvg()}</span>
-            <span class="opt-body">
-              <span class="opt-title">${x.label}${x.group ? ` <span class="opt-grouptag">1 aus ${x.group === 'brakes' ? 'Bremsen' : x.group}</span>` : ''}</span>
-              <span class="opt-desc">${x.desc || ''}${compatible ? '' : ' <em>(nicht für gewähltes Modell)</em>'}</span>
-              <div class="opt-price">${compatible ? (x.approxPrice ? formatApprox(price) : format(price)) : '—'}</div>
-              ${noteHtml}
-              <div class="opt-action-row">
-                ${showDetails ? `<button class="opt-details-btn" type="button" data-details="${x.id}" aria-expanded="false">Details &amp; Bilder ▾</button>` : ''}
-                ${infoLinkHtml(x, 'Hersteller')}
-              </div>
-            </span>
-          </label>
-          ${showDetails ? `<div class="opt-details" id="opt-details-${x.id}" hidden>${renderExtraDetails(x)}</div>` : ''}
-        </div>
-      `;
-    }).join('');
+  function extraItemHtml(x, m) {
+    const compatible = extraCompatible(x, m);
+    const price = extraPrice(x, m);
+    const selected = state.config.extras.includes(x.id);
+    const noteHtml = (compatible && x.info) ? `<div class="opt-note">${x.info}</div>` : '';
+    const showDetails = compatible && hasExtraDetails(x);
+    return `
+      <div class="option-wrap">
+        <label class="option ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-extra="${x.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
+          <span class="opt-check">${checkSvg()}</span>
+          <span class="opt-body">
+            <span class="opt-title">${x.label}${x.group ? ` <span class="opt-grouptag">1 aus ${x.group === 'brakes' ? 'Bremsen' : x.group}</span>` : ''}</span>
+            <span class="opt-desc">${x.desc || ''}${compatible ? '' : ' <em>(nicht für gewähltes Modell)</em>'}</span>
+            <div class="opt-price">${compatible ? (x.approxPrice ? formatApprox(price) : format(price)) : '—'}</div>
+            ${noteHtml}
+            <div class="opt-action-row">
+              ${showDetails ? `<button class="opt-details-btn" type="button" data-details="${x.id}" aria-expanded="false">Details &amp; Bilder ▾</button>` : ''}
+              ${infoLinkHtml(x, 'Hersteller')}
+            </div>
+          </span>
+        </label>
+        ${showDetails ? `<div class="opt-details" id="opt-details-${x.id}" hidden>${renderExtraDetails(x)}</div>` : ''}
+      </div>
+    `;
+  }
 
+  function bindExtraItems(host) {
     host.querySelectorAll('.option:not(.disabled)').forEach(label => {
       const id = label.dataset.extra;
       const toggle = () => {
@@ -1018,14 +1044,12 @@
         } else {
           const x = findExtra(id);
           if (x && x.group) {
-            // Mutually exclusive: alle anderen aus derselben Gruppe abwählen
             state.config.extras = state.config.extras.filter(eid => {
               const other = findExtra(eid);
               return !other || other.group !== x.group;
             });
           }
           state.config.extras.push(id);
-          // Pflicht-Dependencies (z.B. BRS → parachute-prep) automatisch mit aufnehmen
           if (x && Array.isArray(x.requires)) {
             x.requires.forEach(reqId => {
               if (!state.config.extras.includes(reqId)) state.config.extras.push(reqId);
@@ -1061,8 +1085,27 @@
         }
       });
     });
-
     bindOptionLinks(host);
+  }
+
+  function renderExtras() {
+    const host = document.getElementById('extrasList');
+    const m = state.config.modelId;
+    const items = CATALOG.extras.filter(x => x.category !== 'avionics-addon');
+    host.innerHTML = items.map(x => extraItemHtml(x, m)).join('');
+    bindExtraItems(host);
+  }
+
+  function renderAvionicsAddons() {
+    const host = document.getElementById('avionicsAddonsList');
+    const section = document.getElementById('avionicsAddonsSection');
+    if (!host || !section) return;
+    const m = state.config.modelId;
+    const items = CATALOG.extras.filter(x => x.category === 'avionics-addon');
+    if (!items.length) { section.hidden = true; return; }
+    section.hidden = false;
+    host.innerHTML = items.map(x => extraItemHtml(x, m)).join('');
+    bindExtraItems(host);
   }
 
   function renderPanelNav() {
@@ -1765,12 +1808,15 @@
       const json = decodeURIComponent(escape(atob(input)));
       const cfg = JSON.parse(json);
       if (!cfg.modelId || !findModel(cfg.modelId)) throw new Error('Ungültiges Modell');
+      const loadedPropId = cfg.propellerId || null;
+      const propStillValid = loadedPropId && CATALOG.propellers.some(p => p.id === loadedPropId);
       state.config = {
         modelId: cfg.modelId,
         parts: Array.isArray(cfg.parts) ? cfg.parts : [],
         engineId: cfg.engineId || null,
         includeFFwd: cfg.includeFFwd !== false,
-        propellerId: cfg.propellerId || null,
+        propellerId: propStillValid ? loadedPropId : null,
+        propellerAddons: (cfg.propellerAddons && typeof cfg.propellerAddons === 'object') ? cfg.propellerAddons : {},
         avionicsId: cfg.avionicsId || null,
         extras: Array.isArray(cfg.extras) ? cfg.extras : [],
         services: Array.isArray(cfg.services) ? cfg.services : []
@@ -1822,6 +1868,7 @@
     renderEngines();
     renderPropellers();
     renderAvionics();
+    renderAvionicsAddons();
     renderExtras();
     renderServices();
     renderPanelNav();

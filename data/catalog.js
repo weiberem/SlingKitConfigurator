@@ -123,10 +123,10 @@ window.SLING_CATALOG = {
   },
 
   engines: [
-    { id: 'rotax912is',  label: 'Rotax 912 iSc Sport', desc: '100 PS · Einspritzung · Standard-Motor für Sling 2.', price: 33500,
+    { id: 'rotax912is',  label: 'Rotax 912 iSc Sport', desc: '100 PS · Einspritzung · Standard-Motor für Sling 2.', price: 26136,
       approxPrice: true, models: ['sling2'],
       image: 'assets/engines/rotax912is/main.jpg',  infoUrl: 'https://www.flyrotax.com/products/912-is-sport-isc-sport' },
-    { id: 'rotax916is',  label: 'Rotax 916 iS C',    desc: '160 PS · neueste Generation · Standard-Motor für Sling TSi und Sling High Wing.', price: 54500,
+    { id: 'rotax916is',  label: 'Rotax 916 iS C',    desc: '160 PS · neueste Generation · Standard-Motor für Sling TSi und Sling High Wing.', price: 56818,
       approxPrice: true, models: ['tsi', 'highwing'],
       image: 'assets/engines/rotax916is/main.jpg',  infoUrl: 'https://www.flyrotax.com/products/916-is-c' },
     { id: 'own-engine',  label: 'Eigener Motor (Kunde besorgt selbst)', desc: 'Sie organisieren den Motor (und FF/Fuel-Kit) direkt beim Hersteller oder einem Drittanbieter. Kein Motor im Sling-Kit-Preis enthalten.', price: 0,
@@ -134,17 +134,12 @@ window.SLING_CATALOG = {
   ],
 
   propellers: [
-    { id: 'sensenich',        label: 'Sensenich 2-Blatt Fixed',    desc: 'Bewährter Festpropeller, 2-Blatt Composite.',         price: 4250,
-      image: 'assets/propellers/sensenich/main.jpg',        infoUrl: 'https://sensenich.com/',
-      chNote: { type: 'warn', text: 'Aktuell in der Schweiz nicht für 4-Sitzer-Betrieb zertifiziert – Sling TSi / High Wing dürfen mit diesem Propeller nur als 2-Sitzer betrieben werden.' } },
-    { id: 'airmaster-3',      label: 'Airmaster AP430 3-Blatt CS', desc: 'Hydraulischer Verstellpropeller, 3-Blatt.',           price: 11200,
-      image: 'assets/propellers/airmaster-3/main.jpg',      infoUrl: 'https://propellor.com/',
-      chNote: { type: 'warn', text: 'Aktuell in der Schweiz nicht für 4-Sitzer-Betrieb zertifiziert – Sling TSi / High Wing dürfen mit diesem Propeller nur als 2-Sitzer betrieben werden.' } },
     { id: 'duc-flashback-3r', label: 'Duc Flashback-3 R 4-Blatt',  desc: 'Premium 4-Blatt Composite mit Hub-Cap und Spinner.',  price: 13755,
       image: 'assets/propellers/duc-flashback-3r/main.jpg', infoUrl: 'https://www.duc-helices.com/',
       chNote: { type: 'warn', text: 'Aktuell in der Schweiz nicht für 4-Sitzer-Betrieb zertifiziert – Sling TSi / High Wing dürfen mit diesem Propeller nur als 2-Sitzer betrieben werden.' } },
-    { id: 'mt-3blade',        label: 'MT-Propeller 3-Blatt CS',    desc: 'Constant-Speed Holz-Composite, 3-Blatt.',             price: 12450,
+    { id: 'mt-3blade',        label: 'MT-Propeller MTV-6 3-Blatt CS', desc: 'Constant-Speed Holz-Composite mit Manual Blue Vernier Control (Standard).', price: 12450,
       image: 'assets/propellers/mt-3blade/main.jpg',        infoUrl: 'https://www.mt-propeller.com/',
+      addon: { id: 'mt-rs-flight-system', label: 'RS Flight System SCU', desc: 'Elektronische Single-Lever-Control statt manueller Blue Vernier – automatische Drehzahlsteuerung.', priceAdd: 7287, approxPrice: true },
       chNote: { type: 'ok',   text: 'In der Schweiz für 4-Sitzer-Betrieb zugelassen – einzige aktuell für Sling TSi / High Wing zertifizierte Propeller-Option.' } }
   ],
 
@@ -278,24 +273,24 @@ window.SLING_CATALOG = {
     /* ----- Aithre Sauerstoff-Systeme ----- */
     {
       id: 'aithre-o2-single',
-      label: 'Aithre Altus Meso – Sauerstoff-System (1 Maker)',
-      desc: 'Portables Sauerstoff-System für ein Crew-Mitglied, mit Smart-App-Anbindung.',
-      info: 'Smallest unit, ideal für Sling 2 oder als Backup.',
+      label: 'Aithre Turbo O2i – Sauerstoff-System (Installed, 2-Place)',
+      desc: 'Fest verbautes Single-Outlet-Sauerstoff-System mit O2-Injection-Technik – kontinuierliche Sauerstoff-Erzeugung (>93%) für ein Crew-Mitglied, ohne Druckflaschen-Wechsel.',
+      info: 'Ideal für Sling 2 oder als Backup für Pilot in Sling TSi / High Wing.',
       approxPrice: true,
       group: 'o2',
-      prices: { sling2: 2500, tsi: 2500, highwing: 2500 },
+      prices: { sling2: 5000, tsi: 5000, highwing: 5000 },
       image: 'assets/extras/aithre-o2-single/main.jpg',
-      infoUrl: 'https://aithre.com/products/altus-meso-personal-portable-oxygen'
+      infoUrl: 'https://aithreaviation.com/products/aithre-turbo-oxygen-maker-with-o2-injection-installed'
     },
     {
       id: 'aithre-o2-dual',
-      label: 'Aithre Altus Mini Twin – Sauerstoff-System (2 Maker)',
-      desc: 'Dual-Outlet-Sauerstoff-System für zwei Crew-Mitglieder (Pilot + Copilot).',
+      label: 'Aithre Twin Turbo O2i – Sauerstoff-System (Installed, 4-Place)',
+      desc: 'Fest verbautes 4-Place-Sauerstoff-System mit O2-Injection-Technik – kontinuierliche Sauerstoff-Erzeugung (>93%) für die gesamte Crew, automatisch dosiert. Inkl. 2× Illyrian II Oximeter und Shield CO-Detektor.',
       approxPrice: true,
       group: 'o2',
-      prices: { sling2: 5800, tsi: 5800, highwing: 5800 },
+      prices: { sling2: 10000, tsi: 10000, highwing: 10000 },
       image: 'assets/extras/aithre-o2-dual/main.jpg',
-      infoUrl: 'https://aithre.com/products/altus-mini-twin-portable-oxygen-for-2'
+      infoUrl: 'https://aithreaviation.com/products/aithre-twin-turbo-oxygen-maker-installed-o2-injection-o2i'
     },
     {
       id: 'aithre-o2-reserve',
@@ -327,6 +322,7 @@ window.SLING_CATALOG = {
       desc: 'Kombiniertes Collision-Avoidance- und ADS-B-Out-System – in der Schweiz/Europa für die meisten Lufträume empfohlen.',
       details: 'FLARM ist in der Schweiz Standard im Sport- und Segelflugverkehr. ADS-B Out wird in zunehmend mehr europäischen Lufträumen verlangt. Der AT-1 vereint beides in einem Gerät und reduziert Panel-Aufwand sowie Stromverbrauch.',
       approxPrice: true,
+      category: 'avionics-addon',
       prices: { sling2: 4200, tsi: 4200, highwing: 4200 },
       image: 'assets/extras/airavionics-at-1/main.jpg',
       infoUrl: 'https://www.air-avionics.com/'
