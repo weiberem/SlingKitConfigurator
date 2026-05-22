@@ -126,8 +126,9 @@ window.SLING_CATALOG = {
     { id: 'rotax912is',  label: 'Rotax 912 iSc Sport', desc: '100 PS · Einspritzung · Standard-Motor für Sling 2.', price: 26136,
       approxPrice: true, models: ['sling2'],
       image: 'assets/engines/rotax912is/main.jpg',  infoUrl: 'https://www.flyrotax.com/products/912-is-sport-isc-sport' },
-    { id: 'rotax916is',  label: 'Rotax 916 iS C',    desc: '160 PS · neueste Generation · Standard-Motor für Sling TSi und Sling High Wing.', price: 56818,
+    { id: 'rotax916is',  label: 'Rotax 916 iS C',    desc: '160 PS · neueste Generation · Standard-Motor für Sling TSi und Sling High Wing. Schätzpreis inkl. Kraftstoffpumpe und Anschluss-Set.', price: 56818,
       approxPrice: true, models: ['tsi', 'highwing'],
+      addon: { id: 'rotax916is-alt-40a', label: '40A Externer Alternator', desc: 'Zusätzlicher 40-Ampere-Generator zur Standard-Lichtmaschine – höhere Stromreserve für Avionik und Zubehör.', priceAdd: 3182, approxPrice: true },
       image: 'assets/engines/rotax916is/main.jpg',  infoUrl: 'https://www.flyrotax.com/products/916-is-c' },
     { id: 'own-engine',  label: 'Eigener Motor (Kunde besorgt selbst)', desc: 'Sie organisieren den Motor (und FF/Fuel-Kit) direkt beim Hersteller oder einem Drittanbieter. Kein Motor im Sling-Kit-Preis enthalten.', price: 0,
       models: ['sling2', 'tsi', 'highwing'] }
@@ -137,9 +138,9 @@ window.SLING_CATALOG = {
     { id: 'duc-flashback-3r', label: 'Duc Flashback-3 R 4-Blatt',  desc: 'Premium 4-Blatt Composite mit Hub-Cap und Spinner.',  price: 13755,
       image: 'assets/propellers/duc-flashback-3r/main.jpg', infoUrl: 'https://www.duc-helices.com/',
       chNote: { type: 'warn', text: 'Aktuell in der Schweiz nicht für 4-Sitzer-Betrieb zertifiziert – Sling TSi / High Wing dürfen mit diesem Propeller nur als 2-Sitzer betrieben werden.' } },
-    { id: 'mt-3blade',        label: 'MT-Propeller MTV-6 3-Blatt CS', desc: 'Constant-Speed Holz-Composite mit Manual Blue Vernier Control (Standard).', price: 12450,
+    { id: 'mt-3blade',        label: 'MT-Propeller MTV-6 3-Blatt CS', desc: 'Constant-Speed Holz-Composite mit Manual Blue Vernier Control (Standard). Schätzpreis Sommer 2025: Propeller MTV-6-R + Spinner-Assy + Verpackung + manueller Governor.', price: 14670, approxPrice: true,
       image: 'assets/propellers/mt-3blade/main.jpg',        infoUrl: 'https://www.mt-propeller.com/',
-      addon: { id: 'mt-rs-flight-system', label: 'RS Flight System SCU', desc: 'Elektronische Single-Lever-Control statt manueller Blue Vernier – automatische Drehzahlsteuerung.', priceAdd: 7287, approxPrice: true },
+      addon: { id: 'mt-rs-flight-system', label: 'RS Flight System SCU', desc: 'Single-Lever Power Control (SLPC): elektronischer P-853-95-Propellerregler + SCU 9iS Main Unit + vorkonfektioniertes Wiring-Harness + Mounting-Kits. Ersetzt den manuellen Blue-Vernier-Governor.', priceAdd: 7470, approxPrice: true },
       chNote: { type: 'ok',   text: 'In der Schweiz für 4-Sitzer-Betrieb zugelassen – einzige aktuell für Sling TSi / High Wing zertifizierte Propeller-Option.' } }
   ],
 

@@ -17,6 +17,7 @@
       modelId: modelId || 'tsi',
       parts: [],
       engineId: null,
+      engineAddons: {},
       includeFFwd: true,
       propellerId: null,
       propellerAddons: {},
@@ -50,6 +51,7 @@
         if (!Array.isArray(c.services))   c.services = [];
         if (!Array.isArray(c.quickbuild)) c.quickbuild = [];
         if (!c.propellerAddons || typeof c.propellerAddons !== 'object') c.propellerAddons = {};
+        if (!c.engineAddons || typeof c.engineAddons !== 'object') c.engineAddons = {};
         if (c.propellerId && !CATALOG.propellers.some(p => p.id === c.propellerId)) c.propellerId = null;
       }
       return c;
@@ -296,6 +298,9 @@
     const engine = findEngine(cfg.engineId);
     if (engine && engine.id !== 'own-engine') {
       lines.push({ type: 'add', label: `Motor: ${engine.label}`, value: engine.price, approx: !!engine.approxPrice });
+      if (engine.addon && cfg.engineAddons && cfg.engineAddons[engine.addon.id]) {
+        lines.push({ type: 'add', label: `↳ ${engine.addon.label}`, value: engine.addon.priceAdd, approx: !!engine.addon.approxPrice });
+      }
     }
 
     if (cfg.includeFFwd && engine && engine.id !== 'own-engine') {
@@ -812,6 +817,16 @@
       const ffwdHtml = (!isOwn && state.config.includeFFwd && CATALOG.firewallForward.perEngine[e.id])
         ? ` <span style="color:var(--text-mute);font-weight:400">+ ${e.approxPrice ? formatApprox(CATALOG.firewallForward.perEngine[e.id]) : format(CATALOG.firewallForward.perEngine[e.id])} FF-Kit</span>`
         : '';
+      const addonHtml = (e.addon && selected)
+        ? `<label class="opt-addon" data-engine-addon="${e.addon.id}">
+             <input type="checkbox" ${state.config.engineAddons && state.config.engineAddons[e.addon.id] ? 'checked' : ''} />
+             <span class="opt-addon-body">
+               <span class="opt-addon-title">+ ${e.addon.label}</span>
+               <span class="opt-addon-desc">${e.addon.desc || ''}</span>
+             </span>
+             <span class="opt-addon-price">+ ${e.addon.approxPrice ? formatApprox(e.addon.priceAdd) : format(e.addon.priceAdd)}</span>
+           </label>`
+        : '';
       return `
         <label class="option is-radio ${selected ? 'selected' : ''}" data-engine="${e.id}" tabindex="0" role="radio" aria-checked="${selected}">
           <span class="opt-check">${checkSvg()}</span>
@@ -819,6 +834,7 @@
             <span class="opt-title">${e.label}</span>
             <span class="opt-desc">${e.desc}</span>
             <div class="opt-price">${priceTxt}${ffwdHtml}</div>
+            ${addonHtml}
             ${brand ? infoLinkHtml(e, brand) : ''}
           </span>
         </label>
@@ -830,8 +846,22 @@
     );
     host.querySelectorAll('.option:not(.disabled)').forEach(opt => {
       const pick = () => { state.config.engineId = opt.dataset.engine; update(); };
-      opt.addEventListener('click', e => { if (e.target.closest('.opt-link')) return; e.preventDefault(); pick(); });
-      opt.addEventListener('keydown', e => { if (e.target.closest('.opt-link')) return; if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pick(); } });
+      opt.addEventListener('click', e => {
+        if (e.target.closest('.opt-link') || e.target.closest('.opt-addon')) return;
+        e.preventDefault(); pick();
+      });
+      opt.addEventListener('keydown', e => {
+        if (e.target.closest('.opt-link') || e.target.closest('.opt-addon')) return;
+        if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pick(); }
+      });
+    });
+    host.querySelectorAll('.opt-addon input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', e => {
+        const addonId = e.target.closest('.opt-addon').dataset.engineAddon;
+        if (!state.config.engineAddons) state.config.engineAddons = {};
+        state.config.engineAddons[addonId] = e.target.checked;
+        update();
+      });
     });
     bindOptionLinks(host);
   }
@@ -1766,6 +1796,7 @@
         modelId: cfg.modelId,
         parts: Array.isArray(cfg.parts) ? cfg.parts : [],
         engineId: cfg.engineId || null,
+        engineAddons: (cfg.engineAddons && typeof cfg.engineAddons === 'object') ? cfg.engineAddons : {},
         includeFFwd: cfg.includeFFwd !== false,
         propellerId: propStillValid ? loadedPropId : null,
         propellerAddons: (cfg.propellerAddons && typeof cfg.propellerAddons === 'object') ? cfg.propellerAddons : {},
