@@ -339,8 +339,24 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   inset: 0;
   padding: 6px;
   transition: opacity .35s ease;
+  z-index: 2;
 }
 .mp-img[data-loaded="false"] { display: none; }
+.mp-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(22px) saturate(1.15) brightness(0.55);
+  transform: scale(1.2);
+  opacity: 0;
+  transition: opacity .5s ease;
+  z-index: 0;
+  pointer-events: none;
+}
+.mp-bg[data-loaded="true"] { opacity: 1; }
+.mp-fallback { z-index: 1; }
 .mp-fallback {
   color: var(--accent);
   opacity: 0.55;

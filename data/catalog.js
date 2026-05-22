@@ -123,10 +123,10 @@ window.SLING_CATALOG = {
   },
 
   engines: [
-    { id: 'rotax912is',  label: 'Rotax 912 iSc Sport', desc: '100 PS · Einspritzung · Standard-Motor für Sling 2.', price: 33500,
+    { id: 'rotax912is',  label: 'Rotax 912 iSc Sport', desc: '100 PS · Einspritzung · Standard-Motor für Sling 2.', price: 26136,
       approxPrice: true, models: ['sling2'],
       image: 'assets/engines/rotax912is/main.jpg',  infoUrl: 'https://www.flyrotax.com/products/912-is-sport-isc-sport' },
-    { id: 'rotax916is',  label: 'Rotax 916 iS C',    desc: '160 PS · neueste Generation · Standard-Motor für Sling TSi und Sling High Wing.', price: 54500,
+    { id: 'rotax916is',  label: 'Rotax 916 iS C',    desc: '160 PS · neueste Generation · Standard-Motor für Sling TSi und Sling High Wing.', price: 56818,
       approxPrice: true, models: ['tsi', 'highwing'],
       image: 'assets/engines/rotax916is/main.jpg',  infoUrl: 'https://www.flyrotax.com/products/916-is-c' },
     { id: 'own-engine',  label: 'Eigener Motor (Kunde besorgt selbst)', desc: 'Sie organisieren den Motor (und FF/Fuel-Kit) direkt beim Hersteller oder einem Drittanbieter. Kein Motor im Sling-Kit-Preis enthalten.', price: 0,

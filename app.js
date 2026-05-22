@@ -391,6 +391,7 @@
     });
 
     const img = document.getElementById('mpImg');
+    const bg = document.getElementById('mpBg');
     const fb = document.getElementById('mpFallback');
     fb.innerHTML = ICONS[m.icon] || ICONS['plane-low'];
 
@@ -399,7 +400,7 @@
     if (window.__mpTimer) { clearInterval(window.__mpTimer); window.__mpTimer = null; }
     if (photos.length) {
       let pi = 0;
-      const show = () => { tryImage(img, candidatePaths(photos[pi]), m.name); };
+      const show = () => { tryImage(img, bg, candidatePaths(photos[pi]), m.name); };
       show();
       if (photos.length > 1) {
         window.__mpTimer = setInterval(() => { pi = (pi + 1) % photos.length; show(); }, 5000);
@@ -407,6 +408,7 @@
     } else {
       img.style.display = 'none';
       img.removeAttribute('src');
+      if (bg) { bg.removeAttribute('src'); bg.dataset.loaded = 'false'; }
     }
   }
 
@@ -418,14 +420,26 @@
     return [p, ...others.map(e => base + e)];
   }
 
-  function tryImage(img, paths, alt) {
+  function tryImage(img, bg, paths, alt) {
     let i = 0;
     img.style.display = 'none';
     img.alt = alt || '';
     function next() {
-      if (i >= paths.length) { img.style.display = 'none'; img.onerror = null; img.onload = null; return; }
+      if (i >= paths.length) {
+        img.style.display = 'none';
+        img.onerror = null; img.onload = null;
+        if (bg) { bg.dataset.loaded = 'false'; bg.removeAttribute('src'); }
+        return;
+      }
       const p = paths[i++];
-      img.onload = () => { img.style.display = 'block'; };
+      img.onload = () => {
+        img.style.display = 'block';
+        if (bg) {
+          bg.onload = () => { bg.dataset.loaded = 'true'; };
+          bg.onerror = () => { bg.dataset.loaded = 'false'; };
+          bg.src = p;
+        }
+      };
       img.onerror = next;
       img.src = p;
     }
@@ -480,20 +494,20 @@
   }
 
   const STEP_ICONS = {
-    // 1 – Hangar (Aufbau): geschlossenes Hallengebäude mit Tor
+    // 1 – Hangar (Aufbau): Hallengebäude mit Tor
     parts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M3 21V10l9-5 9 5v11"/><path d="M8 21v-7h8v7"/><path d="M3 21h18"/></svg>',
-    // 2 – Motor: Flugzeug in Seitenansicht (Triebwerk sichtbar)
-    engine: '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M22 12c0-.6-.45-1-1.4-1H17l-3.5-6.5c-.3-.5-.8-.5-1.3-.5h-.7l2.4 7H9.5l-2-3H6l1 4H4c-1 0-1.5.4-1.5 1s.5 1 1.5 1h3l-1 4h1.5l2-3h4.4l-2.4 7h.7c.5 0 1 0 1.3-.5L17 13h3.6c.95 0 1.4-.4 1.4-1z"/></svg>',
+    // 2 – Motor: Motorenblock mit zwei Zylindern
+    engine: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="9" width="18" height="9" rx="1"/><path d="M7 9V5h3v4M14 9V5h3v4"/><path d="M3 13H1.5M22.5 13H21"/><path d="M7 18v2M17 18v2"/></svg>',
     // 3 – Propeller (Spinner)
     propeller: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="2" fill="currentColor"/><path d="M12 10V3M12 14v7M10 12H3M14 12h7"/></svg>',
-    // 4 – Avionik: Cockpit-Instrumente
-    avionics: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="8.5" cy="12" r="2"/><circle cx="15.5" cy="12" r="2"/></svg>',
-    // 5 – Extras / Take-off: Flugzeug abhebend
-    extras: '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>',
-    // 6 – Services / Im Flug, Container/Welt – Versand & Bauhilfe
-    services: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>',
-    // 7 – Bestellen / Flugzeug in der Luft mit Spur
-    summary: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M3 17c2 0 2-1.5 4-1.5s2 1.5 4 1.5"/><path d="M21 4l-9.5 9.5L8 12 4 13l5 3 1 4 1.5-3.5L21 4z"/></svg>'
+    // 4 – Avionik: Rundinstrument mit Nadel
+    avionics: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="9"/><path d="M12 3v2M21 12h-2M12 21v-2M3 12h2"/><path d="M12 12l4.5-3.5"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>',
+    // 5 – Extras: Plus im Kreis
+    extras: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>',
+    // 6 – Services: Handshake
+    services: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M11 17l2 2a1 1 0 0 0 1.4-1.4"/><path d="M14 14l2.5 2.5a1 1 0 0 0 1.4-1.4l-3.9-3.9a3 3 0 0 0-4.2 0l-.9.9a1 1 0 1 1-1.4-1.4l2.8-2.8a5.8 5.8 0 0 1 7-.9l.5.3a2 2 0 0 0 1.4.2L21 4"/><path d="M21 3l1 11h-2"/><path d="M3 3L2 14l6.5 6.5a1 1 0 1 0 1.4-1.4"/><path d="M3 4h6"/></svg>',
+    // 7 – Bestellen: startendes Flugzeug (steigend)
+    summary: '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M21.5 2.5c-.3-.3-.7-.4-1-.3L3.6 7.4c-.5.1-.7.7-.4 1.1l4.8 4 5.5-5.5-3.6 6.7 4.5 4.5c.4.3 1 .2 1.1-.4l5.3-15.4c.1-.3 0-.7-.3-.9zM2.5 18.5c2-2 4-2 6 0"/></svg>'
   };
 
   const STEP_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>';
@@ -820,7 +834,7 @@
     }).join('');
 
     host.insertAdjacentHTML('beforeend',
-      '<div class="approx-note">ℹ️ <strong>Motor-Preise sind unverbindliche Richtwerte</strong> – die finale Offerte erfolgt bei Bestellung direkt vom Hersteller bzw. Importeur (Rotax). Alternativ können Sie den Motor selbst organisieren („Eigener Motor").</div>'
+      '<div class="approx-note">ℹ️ <strong>Motor-Preise sind Schätzpreise</strong> (ohne MwSt) – die finale Offerte erfolgt bei Bestellung direkt vom Hersteller bzw. Importeur (Rotax). Alternativ können Sie den Motor selbst organisieren („Eigener Motor").</div>'
     );
     host.querySelectorAll('.option:not(.disabled)').forEach(opt => {
       const pick = () => { state.config.engineId = opt.dataset.engine; update(); };
