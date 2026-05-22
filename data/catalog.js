@@ -321,6 +321,7 @@ window.SLING_CATALOG = {
       desc: 'Kombiniertes Collision-Avoidance- und ADS-B-Out-System – in der Schweiz/Europa für die meisten Lufträume empfohlen.',
       details: 'FLARM ist in der Schweiz Standard im Sport- und Segelflugverkehr. ADS-B Out wird in zunehmend mehr europäischen Lufträumen verlangt. Der AT-1 vereint beides in einem Gerät und reduziert Panel-Aufwand sowie Stromverbrauch.',
       approxPrice: true,
+      category: 'avionics-addon',
       prices: { sling2: 4200, tsi: 4200, highwing: 4200 },
       image: 'assets/extras/airavionics-at-1/main.jpg',
       infoUrl: 'https://www.air-avionics.com/'

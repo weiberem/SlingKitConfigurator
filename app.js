@@ -961,35 +961,33 @@
     show(0);
   }
 
-  function renderExtras() {
-    const host = document.getElementById('extrasList');
-    const m = state.config.modelId;
-    host.innerHTML = CATALOG.extras.map(x => {
-      const compatible = extraCompatible(x, m);
-      const price = extraPrice(x, m);
-      const selected = state.config.extras.includes(x.id);
-      const noteHtml = (compatible && x.info) ? `<div class="opt-note">${x.info}</div>` : '';
-      const showDetails = compatible && hasExtraDetails(x);
-      return `
-        <div class="option-wrap">
-          <label class="option ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-extra="${x.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
-            <span class="opt-check">${checkSvg()}</span>
-            <span class="opt-body">
-              <span class="opt-title">${x.label}${x.group ? ` <span class="opt-grouptag">1 aus ${x.group === 'brakes' ? 'Bremsen' : x.group}</span>` : ''}</span>
-              <span class="opt-desc">${x.desc || ''}${compatible ? '' : ' <em>(nicht für gewähltes Modell)</em>'}</span>
-              <div class="opt-price">${compatible ? (x.approxPrice ? formatApprox(price) : format(price)) : '—'}</div>
-              ${noteHtml}
-              <div class="opt-action-row">
-                ${showDetails ? `<button class="opt-details-btn" type="button" data-details="${x.id}" aria-expanded="false">Details &amp; Bilder ▾</button>` : ''}
-                ${infoLinkHtml(x, 'Hersteller')}
-              </div>
-            </span>
-          </label>
-          ${showDetails ? `<div class="opt-details" id="opt-details-${x.id}" hidden>${renderExtraDetails(x)}</div>` : ''}
-        </div>
-      `;
-    }).join('');
+  function extraItemHtml(x, m) {
+    const compatible = extraCompatible(x, m);
+    const price = extraPrice(x, m);
+    const selected = state.config.extras.includes(x.id);
+    const noteHtml = (compatible && x.info) ? `<div class="opt-note">${x.info}</div>` : '';
+    const showDetails = compatible && hasExtraDetails(x);
+    return `
+      <div class="option-wrap">
+        <label class="option ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-extra="${x.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
+          <span class="opt-check">${checkSvg()}</span>
+          <span class="opt-body">
+            <span class="opt-title">${x.label}${x.group ? ` <span class="opt-grouptag">1 aus ${x.group === 'brakes' ? 'Bremsen' : x.group}</span>` : ''}</span>
+            <span class="opt-desc">${x.desc || ''}${compatible ? '' : ' <em>(nicht für gewähltes Modell)</em>'}</span>
+            <div class="opt-price">${compatible ? (x.approxPrice ? formatApprox(price) : format(price)) : '—'}</div>
+            ${noteHtml}
+            <div class="opt-action-row">
+              ${showDetails ? `<button class="opt-details-btn" type="button" data-details="${x.id}" aria-expanded="false">Details &amp; Bilder ▾</button>` : ''}
+              ${infoLinkHtml(x, 'Hersteller')}
+            </div>
+          </span>
+        </label>
+        ${showDetails ? `<div class="opt-details" id="opt-details-${x.id}" hidden>${renderExtraDetails(x)}</div>` : ''}
+      </div>
+    `;
+  }
 
+  function bindExtraItems(host) {
     host.querySelectorAll('.option:not(.disabled)').forEach(label => {
       const id = label.dataset.extra;
       const toggle = () => {
@@ -998,14 +996,12 @@
         } else {
           const x = findExtra(id);
           if (x && x.group) {
-            // Mutually exclusive: alle anderen aus derselben Gruppe abwählen
             state.config.extras = state.config.extras.filter(eid => {
               const other = findExtra(eid);
               return !other || other.group !== x.group;
             });
           }
           state.config.extras.push(id);
-          // Pflicht-Dependencies (z.B. BRS → parachute-prep) automatisch mit aufnehmen
           if (x && Array.isArray(x.requires)) {
             x.requires.forEach(reqId => {
               if (!state.config.extras.includes(reqId)) state.config.extras.push(reqId);
@@ -1041,8 +1037,27 @@
         }
       });
     });
-
     bindOptionLinks(host);
+  }
+
+  function renderExtras() {
+    const host = document.getElementById('extrasList');
+    const m = state.config.modelId;
+    const items = CATALOG.extras.filter(x => x.category !== 'avionics-addon');
+    host.innerHTML = items.map(x => extraItemHtml(x, m)).join('');
+    bindExtraItems(host);
+  }
+
+  function renderAvionicsAddons() {
+    const host = document.getElementById('avionicsAddonsList');
+    const section = document.getElementById('avionicsAddonsSection');
+    if (!host || !section) return;
+    const m = state.config.modelId;
+    const items = CATALOG.extras.filter(x => x.category === 'avionics-addon');
+    if (!items.length) { section.hidden = true; return; }
+    section.hidden = false;
+    host.innerHTML = items.map(x => extraItemHtml(x, m)).join('');
+    bindExtraItems(host);
   }
 
   function renderPanelNav() {
@@ -1805,6 +1820,7 @@
     renderEngines();
     renderPropellers();
     renderAvionics();
+    renderAvionicsAddons();
     renderExtras();
     renderServices();
     renderPanelNav();
