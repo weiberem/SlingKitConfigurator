@@ -248,7 +248,7 @@ window.SLING_CATALOG = {
     {
       id: 'longrange-tanks',
       label: 'Long-Range Fuel Tanks (Parts swap out)',
-      desc: 'Long-Range-Tanks – Parts werden statt der Standard-Tanks geliefert.',
+      desc: 'Zusätzlich 2× 25 L Tanks – ersetzen die Standard-Tanks (2× 99 L = 198 L) und ergeben 248 L nutzbaren Treibstoff.',
       prices: { sling2: 3624, tsi: 3639, highwing: 3800 },
       image: 'assets/extras/longrange-tanks/main.jpg',
       kitPartId: 'wing'
