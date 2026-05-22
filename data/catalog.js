@@ -277,22 +277,22 @@ window.SLING_CATALOG = {
     /* ----- Aithre Sauerstoff-Systeme ----- */
     {
       id: 'aithre-o2-single',
-      label: 'Aithre Altus Meso – Sauerstoff-System (1 Maker)',
-      desc: 'Portables Sauerstoff-System für ein Crew-Mitglied, mit Smart-App-Anbindung.',
-      info: 'Smallest unit, ideal für Sling 2 oder als Backup.',
+      label: 'Aithre Turbo O2i – Sauerstoff-System (Installed, 2-Place)',
+      desc: 'Fest verbautes Single-Outlet-Sauerstoff-System mit O2-Injection-Technik – kontinuierliche Sauerstoff-Erzeugung (>93%) für ein Crew-Mitglied, ohne Druckflaschen-Wechsel.',
+      info: 'Ideal für Sling 2 oder als Backup für Pilot in Sling TSi / High Wing.',
       approxPrice: true,
       group: 'o2',
-      prices: { sling2: 2500, tsi: 2500, highwing: 2500 },
+      prices: { sling2: 5000, tsi: 5000, highwing: 5000 },
       image: 'assets/extras/aithre-o2-single/main.jpg',
-      infoUrl: 'https://aithre.com/products/altus-meso-personal-portable-oxygen'
+      infoUrl: 'https://aithreaviation.com/products/aithre-turbo-oxygen-maker-with-o2-injection-installed'
     },
     {
       id: 'aithre-o2-dual',
-      label: 'Aithre Twin Turbo O2i – Sauerstoff-System (Installed, 2 Crew)',
-      desc: 'Fest verbautes Dual-Outlet-Sauerstoff-System mit O2-Injection-Technik – Sauerstoff wird automatisch dosiert für Pilot und Copilot (kein portables Druckflaschen-System).',
+      label: 'Aithre Twin Turbo O2i – Sauerstoff-System (Installed, 4-Place)',
+      desc: 'Fest verbautes 4-Place-Sauerstoff-System mit O2-Injection-Technik – kontinuierliche Sauerstoff-Erzeugung (>93%) für die gesamte Crew, automatisch dosiert. Inkl. 2× Illyrian II Oximeter und Shield CO-Detektor.',
       approxPrice: true,
       group: 'o2',
-      prices: { sling2: 5800, tsi: 5800, highwing: 5800 },
+      prices: { sling2: 10000, tsi: 10000, highwing: 10000 },
       image: 'assets/extras/aithre-o2-dual/main.jpg',
       infoUrl: 'https://aithreaviation.com/products/aithre-twin-turbo-oxygen-maker-installed-o2-injection-o2i'
     },
