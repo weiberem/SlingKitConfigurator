@@ -288,13 +288,13 @@ window.SLING_CATALOG = {
     },
     {
       id: 'aithre-o2-dual',
-      label: 'Aithre Altus Mini Twin – Sauerstoff-System (2 Maker)',
-      desc: 'Dual-Outlet-Sauerstoff-System für zwei Crew-Mitglieder (Pilot + Copilot).',
+      label: 'Aithre Twin Turbo O2i – Sauerstoff-System (Installed, 2 Crew)',
+      desc: 'Fest verbautes Dual-Outlet-Sauerstoff-System mit O2-Injection-Technik – Sauerstoff wird automatisch dosiert für Pilot und Copilot (kein portables Druckflaschen-System).',
       approxPrice: true,
       group: 'o2',
       prices: { sling2: 5800, tsi: 5800, highwing: 5800 },
       image: 'assets/extras/aithre-o2-dual/main.jpg',
-      infoUrl: 'https://aithre.com/products/altus-mini-twin-portable-oxygen-for-2'
+      infoUrl: 'https://aithreaviation.com/products/aithre-twin-turbo-oxygen-maker-installed-o2-injection-o2i'
     },
     {
       id: 'aithre-o2-reserve',
