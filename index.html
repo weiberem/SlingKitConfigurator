@@ -35,6 +35,7 @@
       </div>
 
       <div class="model-photo" id="modelPhoto" aria-hidden="true">
+        <img class="mp-bg" id="mpBg" src="" alt="" aria-hidden="true" />
         <span class="mp-fallback" id="mpFallback"></span>
         <img class="mp-img" id="mpImg" src="" alt="" />
       </div>
@@ -91,20 +92,29 @@
         <div class="qb-warning" id="qbWarning" hidden></div>
       </div>
 
-      <div class="panel" id="panel-engine" hidden>
+      <div class="panel" id="panel-accessories" hidden>
         <header class="panel-head">
-          <h2 id="title-engine">Motor</h2>
-          <p>Rotax-Triebwerke, freigegeben für das gewählte Modell.</p>
+          <h2 id="title-accessories">Zubehör</h2>
+          <p>Motor, Propeller und Extras – alles in einer Übersicht.</p>
         </header>
-        <div class="option-grid" id="engineList"></div>
-      </div>
 
-      <div class="panel" id="panel-propeller" hidden>
-        <header class="panel-head">
-          <h2 id="title-propeller">Propeller</h2>
-          <p>Verstellpropeller von Duc, Airmaster oder Sensenich.</p>
-        </header>
-        <div class="option-grid" id="propellerList"></div>
+        <section class="acc-section">
+          <h3 class="acc-section-title">Motor</h3>
+          <p class="acc-section-desc">Rotax-Triebwerk (Schätzpreis, wird bei Bestellung offeriert) oder eigenes Triebwerk.</p>
+          <div class="option-grid" id="engineList"></div>
+        </section>
+
+        <section class="acc-section">
+          <h3 class="acc-section-title">Propeller</h3>
+          <p class="acc-section-desc">Verstellpropeller von Duc oder MT-Propeller.</p>
+          <div class="option-grid" id="propellerList"></div>
+        </section>
+
+        <section class="acc-section">
+          <h3 class="acc-section-title">Extras &amp; Optionen</h3>
+          <p class="acc-section-desc">Beliebig kombinierbare Sonderausstattung.</p>
+          <div class="option-grid" id="extrasList"></div>
+        </section>
       </div>
 
       <div class="panel" id="panel-avionics" hidden>
@@ -113,14 +123,12 @@
           <p>Garmin Glass Cockpit – von VFR Basic bis Full IFR.</p>
         </header>
         <div class="option-grid" id="avionicsList"></div>
-      </div>
 
-      <div class="panel" id="panel-extras" hidden>
-        <header class="panel-head">
-          <h2 id="title-extras">Extras &amp; Optionen</h2>
-          <p>Beliebig kombinierbare Sonderausstattung.</p>
-        </header>
-        <div class="option-grid" id="extrasList"></div>
+        <section class="acc-section" id="avionicsAddonsSection" hidden>
+          <h3 class="acc-section-title">Add-Ons</h3>
+          <p class="acc-section-desc">Empfohlene Erweiterungen für den Schweizer/Europäischen Luftraum.</p>
+          <div class="option-grid" id="avionicsAddonsList"></div>
+        </section>
       </div>
 
       <div class="panel" id="panel-services" hidden>

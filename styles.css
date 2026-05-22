@@ -339,8 +339,24 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   inset: 0;
   padding: 6px;
   transition: opacity .35s ease;
+  z-index: 2;
 }
 .mp-img[data-loaded="false"] { display: none; }
+.mp-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(22px) saturate(1.15) brightness(0.55);
+  transform: scale(1.2);
+  opacity: 0;
+  transition: opacity .5s ease;
+  z-index: 0;
+  pointer-events: none;
+}
+.mp-bg[data-loaded="true"] { opacity: 1; }
+.mp-fallback { z-index: 1; }
 .mp-fallback {
   color: var(--accent);
   opacity: 0.55;
@@ -627,6 +643,58 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 .panel-head { margin-bottom: 22px; }
 .panel-head h2 { margin-bottom: 6px; }
 .panel-head p { margin: 0; color: var(--text-dim); }
+
+/* Zubehör-Panel: Sektionen innerhalb eines Panels */
+.acc-section {
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+.acc-section:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+.acc-section-title {
+  margin: 0 0 4px 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.acc-section-desc {
+  margin: 0 0 16px 0;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+}
+
+/* Propeller-Addon (z.B. MT + RS Flight System SCU) */
+.opt-addon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.opt-addon:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.18); }
+.opt-addon input[type="checkbox"] {
+  width: 16px; height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.opt-addon-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.opt-addon-title { font-weight: 500; font-size: 0.95rem; }
+.opt-addon-desc { font-size: 0.85rem; color: var(--text-dim); margin-top: 2px; }
+.opt-addon-price { color: var(--accent); font-weight: 600; font-size: 0.95rem; }
 
 .currency-pills {
   display: inline-flex;
