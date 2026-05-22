@@ -370,13 +370,18 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
     padding: 10px 14px;
     gap: 8px;
     flex-wrap: nowrap;
+    justify-content: space-between;
   }
-  .logo { gap: 10px; min-width: 0; flex: 0 1 auto; }
-  .logo-img { height: 44px; }
-  .logo-model { font-size: 1.5rem; top: -4px; }
+  .logo { gap: 8px; min-width: 0; flex: 0 1 auto; }
+  .logo-img { height: 36px; }
+  .logo-model { font-size: 1.3rem; top: -3px; }
 
-  .header-controls { gap: 6px; }
-  .icon-btn { display: none; }                    /* Saved/Compare auf Mobil ausgeblendet */
+  /* Hide carousel and model photo on mobile — logo suffix identifies the model */
+  .model-stage { display: none !important; }
+  .model-photo { display: none !important; }
+
+  .header-controls { gap: 6px; flex-shrink: 0; }
+  .icon-btn { display: none; }
   .dd-btn { padding: 6px 8px; min-width: 0; font-size: 0.82rem; gap: 4px; }
   .dd-menu { min-width: 110px; font-size: 0.85rem; }
 
@@ -386,22 +391,6 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   .step-num { width: 28px; height: 28px; }
   .step-num svg { width: 14px; height: 14px; }
   .step-sep { flex: 0 0 12px; }
-
-  .model-bay { padding: 14px 0; }
-  .model-bay-inner { padding: 0 14px; gap: 12px; }
-  .model-stage {
-    padding: 12px;
-    height: auto;
-    min-height: 120px;
-    gap: 10px;
-  }
-  .ms-arrow { width: 40px; height: 40px; flex-shrink: 0; }
-  .ms-content { min-width: 0; }
-  .ms-name { font-size: 1.3rem; }
-  .ms-tag { font-size: 0.62rem; }
-  .ms-from { font-size: 1.2rem; }
-
-  .model-photo { width: 100%; height: 200px; }
 
   .layout { padding: 16px 14px 40px; gap: 16px; }
   .panel { padding: 18px; }
