@@ -145,14 +145,14 @@ window.SLING_CATALOG = {
   ],
 
   avionics: [
-    { id: 'vfr',      label: 'VFR Basic',          desc: 'Garmin G5 (PFD), Funkgerät GTR 200B, Transponder GTX 45R Mode S.',         price: 14500, approxPrice: true,
+    { id: 'vfr',      label: 'VFR Basic',          desc: 'Garmin G5 (PFD), Funkgerät GTR 200B, Transponder GTX 45R Mode S. Klassisches Standby-Instrument als PFD – ideal, wenn Panel später selbst erweitert wird.',                                                                      price: 14500, approxPrice: true,
       image: 'assets/avionics/vfr/main.jpg',      infoUrl: 'https://www.garmin.com/aviation/' },
-    { id: 'standard', label: 'Garmin Standard',    desc: 'Single G3X Touch 10", GTR 200B, GTX 45R, Audio Panel.',                    price: 26500, approxPrice: true,
-      image: 'assets/avionics/standard/main.jpg', infoUrl: 'https://www.garmin.com/aviation/' },
-    { id: 'advanced', label: 'Garmin Advanced',    desc: 'Dual G3X Touch 10", GTN 650Xi, GFC 500 Autopilot.',                        price: 42500, approxPrice: true,
-      image: 'assets/avionics/advanced/main.jpg', infoUrl: 'https://www.garmin.com/aviation/' },
-    { id: 'premium',  label: 'Garmin Premium IFR', desc: 'Triple G3X Touch, GTN 750Xi, GFC 500, ADS-B In/Out, FlightStream, Wetter.', price: 58500, approxPrice: true,
-      image: 'assets/avionics/premium/main.jpg',  infoUrl: 'https://www.garmin.com/aviation/' }
+    { id: 'standard', label: 'Garmin Standard',    desc: 'Single Garmin AXIS GDU 116BX 11.6" (Experimental, 010-03004-00) als PFD/MFD, GTR 200B Radio, GTX 45R Transponder, Audio Panel. AXIS ist die neue Generation nach dem G3X Touch.',                                              price: 26500, approxPrice: true,
+      image: 'assets/avionics/standard/main.jpg', infoUrl: 'https://www.garmin.com/en-US/p/1258023' },
+    { id: 'advanced', label: 'Garmin Advanced',    desc: 'Dual Garmin AXIS GDU 116BX 11.6" (Experimental) als PFD + MFD, GTN 650Xi Touch-Navigator, GFC 500 Autopilot. IFR-fähige Ausstattung für Experimentals.',                                                                        price: 42500, approxPrice: true,
+      image: 'assets/avionics/advanced/main.jpg', infoUrl: 'https://www.garmin.com/en-US/p/1258023' },
+    { id: 'premium',  label: 'Garmin Premium IFR', desc: 'Triple Garmin AXIS GDU 116BX 11.6", GTN 750Xi Touch-Navigator, GFC 500 Autopilot, ADS-B In/Out, FlightStream (iPad-Sync), Wetter-Empfang. Voll ausgestattetes Panel.',                                                          price: 58500, approxPrice: true,
+      image: 'assets/avionics/premium/main.jpg',  infoUrl: 'https://www.garmin.com/en-US/p/1258023' }
   ],
 
   /* ------------------------------------------------------------------
