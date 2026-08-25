@@ -22,11 +22,15 @@
       propellerId: null,
       propellerAddons: {},
       avionicsId: null,
+      avionicsOptions: [],
       extras: [],
       services: [],
       quickbuild: []
     };
   }
+
+  /* Offene "Paket-Inhalt"-Panels der Avionik – bleibt über Re-Renders erhalten */
+  const openAvPanels = new Set();
 
   let state = {
     config: loadCurrent() || initFromURL() || autoSelectAll('tsi'),
@@ -50,9 +54,11 @@
       if (c) {
         if (!Array.isArray(c.services))   c.services = [];
         if (!Array.isArray(c.quickbuild)) c.quickbuild = [];
+        if (!Array.isArray(c.avionicsOptions)) c.avionicsOptions = [];
         if (!c.propellerAddons || typeof c.propellerAddons !== 'object') c.propellerAddons = {};
         if (!c.engineAddons || typeof c.engineAddons !== 'object') c.engineAddons = {};
         if (c.propellerId && !CATALOG.propellers.some(p => p.id === c.propellerId)) c.propellerId = null;
+        if (c.avionicsId && !CATALOG.avionics.some(a => a.id === c.avionicsId)) { c.avionicsId = null; c.avionicsOptions = []; }
       }
       return c;
     } catch { return null; }
@@ -244,6 +250,23 @@
   function findEngine(id)   { return CATALOG.engines.find(e => e.id === id) || null; }
   function findProp(id)     { return CATALOG.propellers.find(p => p.id === id) || null; }
   function findAvionics(id) { return CATALOG.avionics.find(a => a.id === id) || null; }
+
+  /* Gewählte Avionik-Paket-Optionen als Objekte (nur die des aktiven Pakets). */
+  function avionicsSelectedOptions(cfg) {
+    cfg = cfg || state.config;
+    const av = findAvionics(cfg.avionicsId);
+    if (!av || !Array.isArray(av.options)) return [];
+    const sel = Array.isArray(cfg.avionicsOptions) ? cfg.avionicsOptions : [];
+    return av.options.filter(o => sel.includes(o.id));
+  }
+
+  /* Gesamtpreis Avionik = Paket-Basis + gewählte Optionen. */
+  function avionicsPrice(cfg) {
+    cfg = cfg || state.config;
+    const av = findAvionics(cfg.avionicsId);
+    if (!av) return 0;
+    return av.price + avionicsSelectedOptions(cfg).reduce((s, o) => s + o.price, 0);
+  }
   function findExtra(id)    { return CATALOG.extras.find(x => x.id === id) || null; }
   function findService(id)  { return (CATALOG.services || []).find(s => s.id === id) || null; }
 
@@ -317,7 +340,12 @@
     }
 
     const av = findAvionics(cfg.avionicsId);
-    if (av) lines.push({ type: 'add', label: `Avionik: ${av.label}`, value: av.price });
+    if (av) {
+      lines.push({ type: 'add', label: `Avionik: ${av.label}`, value: av.price });
+      avionicsSelectedOptions(cfg).forEach(o => {
+        lines.push({ type: 'add', label: `↳ ${o.label}`, value: o.price });
+      });
+    }
 
     cfg.extras.forEach(eid => {
       const x = findExtra(eid);
@@ -972,8 +1000,35 @@
     host.innerHTML = CATALOG.avionics.map(a => {
       const compatible = !m || m.compatibleAvionics.includes(a.id);
       const selected = state.config.avionicsId === a.id;
-      const priceTxt = a.approxPrice ? formatApprox(a.price) : format(a.price);
-      const showDetails = compatible && !!a.details;
+      const price = selected ? avionicsPrice(state.config) : a.price;
+      const priceTxt = a.approxPrice ? formatApprox(price) : format(price);
+      const optCount = selected ? (state.config.avionicsOptions || []).length : 0;
+      const priceNote = optCount > 0 ? ` <span class="pkg-price-note">inkl. ${optCount} Option${optCount > 1 ? 'en' : ''}</span>` : '';
+      const showDetails = compatible && (Array.isArray(a.baseItems) || Array.isArray(a.options));
+      const isOpen = openAvPanels.has(a.id);
+      const baseHtml = (Array.isArray(a.baseItems) && a.baseItems.length) ? `
+        <div class="pkg-section-title">Enthalten</div>
+        ${a.baseItems.map(b => `
+          <div class="pkg-base-item">
+            <span class="pkg-base-label">${b.label}</span>
+            <span class="pkg-base-price">${format(b.price)}</span>
+          </div>
+        `).join('')}
+      ` : '';
+      const optsHtml = (Array.isArray(a.options) && a.options.length) ? `
+        <div class="pkg-section-title">Optionen – anwählbar</div>
+        ${a.options.map(o => {
+          const sel = selected && (state.config.avionicsOptions || []).includes(o.id);
+          return `
+            <label class="qb-item pkg-opt-item ${sel ? 'selected' : ''}" data-av-opt="${o.id}" data-av-pkg="${a.id}" tabindex="0" role="checkbox" aria-checked="${sel}">
+              <span class="qb-check">${sel ? checkSvg() : ''}</span>
+              <span class="qb-label">${o.label}${o.desc ? `<div class="qb-req">${o.desc}</div>` : ''}</span>
+              <span class="qb-price">+ ${format(o.price)}</span>
+            </label>
+          `;
+        }).join('')}
+        ${selected ? '' : '<div class="pkg-opt-hint">Beim Anwählen einer Option wird das Paket automatisch ausgewählt.</div>'}
+      ` : '';
       return `
         <div class="option-wrap">
           <label class="option is-radio ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-av="${a.id}" tabindex="0" role="radio" aria-checked="${selected}">
@@ -981,35 +1036,65 @@
             <span class="opt-body">
               <span class="opt-title">${a.label}</span>
               <span class="opt-desc">${a.desc}${compatible ? '' : ' <em>(nicht freigegeben)</em>'}</span>
-              <div class="opt-price">${priceTxt}</div>
+              <div class="opt-price">${priceTxt}${priceNote}</div>
               <div class="opt-action-row">
-                ${showDetails ? `<button class="opt-details-btn" type="button" data-av-details="${a.id}" aria-expanded="false">Paket-Inhalt ▾</button>` : ''}
+                ${showDetails ? `<button class="opt-details-btn" type="button" data-av-details="${a.id}" aria-expanded="${isOpen}">Paket-Inhalt ${isOpen ? '▴' : '▾'}</button>` : ''}
                 ${infoLinkHtml(a, 'Garmin')}
               </div>
             </span>
           </label>
-          ${showDetails ? `<div class="opt-details" id="av-details-${a.id}" hidden><div class="opt-details-text">${a.details}</div></div>` : ''}
+          ${showDetails ? `<div class="opt-details" id="av-details-${a.id}" ${isOpen ? '' : 'hidden'}>${baseHtml}${optsHtml}</div>` : ''}
         </div>
       `;
     }).join('');
     host.querySelectorAll('[data-av-details]').forEach(btn => {
       btn.addEventListener('click', e => {
         e.stopPropagation(); e.preventDefault();
-        const panel = host.querySelector(`#av-details-${btn.dataset.avDetails}`);
+        const id = btn.dataset.avDetails;
+        const panel = host.querySelector(`#av-details-${id}`);
         if (!panel) return;
         const willOpen = panel.hidden;
         panel.hidden = !willOpen;
+        if (willOpen) openAvPanels.add(id); else openAvPanels.delete(id);
         btn.setAttribute('aria-expanded', String(willOpen));
         btn.innerHTML = willOpen ? 'Paket-Inhalt ▴' : 'Paket-Inhalt ▾';
+      });
+    });
+    host.querySelectorAll('[data-av-opt]').forEach(item => {
+      const toggle = () => {
+        const pkgId = item.dataset.avPkg;
+        const optId = item.dataset.avOpt;
+        const pkg = findAvionics(pkgId);
+        if (!pkg) return;
+        if (m && !m.compatibleAvionics.includes(pkgId)) return;
+        if (state.config.avionicsId !== pkgId) {
+          state.config.avionicsId = pkgId;
+          state.config.avionicsOptions = [];
+        }
+        const arr = state.config.avionicsOptions;
+        const i = arr.indexOf(optId);
+        if (i >= 0) arr.splice(i, 1); else arr.push(optId);
+        openAvPanels.add(pkgId);
+        update();
+      };
+      item.addEventListener('click', e => { e.stopPropagation(); e.preventDefault(); toggle(); });
+      item.addEventListener('keydown', e => {
+        if (e.key === ' ' || e.key === 'Enter') { e.stopPropagation(); e.preventDefault(); toggle(); }
       });
     });
     host.insertAdjacentHTML('beforeend',
       '<div class="approx-note">ℹ️ <strong>Avionik-Preise sind unverbindliche Richtwerte</strong> – Summen der Garmin-Listenpreise aus dem AXIS Build-A-System Guide (Experimental, 07/2026), ohne Einbau und Verkabelung. Die finale Offerte erfolgt bei Bestellung direkt vom Hersteller (Garmin / Importeur). AXIS-Enablements, Garmin-Zubehör und FLARM/ADS-B finden sich unten bei den Add-Ons.</div>'
     );
-    host.querySelectorAll('.option:not(.disabled)').forEach(opt => {
-      const pick = () => { state.config.avionicsId = opt.dataset.av; update(); };
-      opt.addEventListener('click', e => { if (e.target.closest('.opt-link')) return; e.preventDefault(); pick(); });
-      opt.addEventListener('keydown', e => { if (e.target.closest('.opt-link')) return; if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pick(); } });
+    host.querySelectorAll('.option:not(.disabled)[data-av]').forEach(opt => {
+      const pick = () => {
+        if (state.config.avionicsId !== opt.dataset.av) {
+          state.config.avionicsId = opt.dataset.av;
+          state.config.avionicsOptions = [];
+        }
+        update();
+      };
+      opt.addEventListener('click', e => { if (e.target.closest('.opt-link, .opt-details-btn')) return; e.preventDefault(); pick(); });
+      opt.addEventListener('keydown', e => { if (e.target.closest('.opt-link, .opt-details-btn')) return; if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pick(); } });
     });
     bindOptionLinks(host);
   }
@@ -1281,7 +1366,10 @@
     const p = findProp(state.config.propellerId);
     if (p) rows.push([`Propeller: ${p.label}`, format(p.price)]);
     const a = findAvionics(state.config.avionicsId);
-    if (a) rows.push([`Avionik: ${a.label}`, format(a.price)]);
+    if (a) {
+      rows.push([`Avionik: ${a.label}`, format(a.price)]);
+      avionicsSelectedOptions(state.config).forEach(o => rows.push([`↳ ${o.label}`, format(o.price)]));
+    }
     state.config.extras.forEach(eid => {
       const x = findExtra(eid);
       if (!x) return;
@@ -1382,7 +1470,12 @@
         lines.push('  ' + pad(`                     FF + Fuel Kit (${eng.label})`, formatUSD(CATALOG.firewallForward.perEngine[eng.id])));
       }
       if (prop) lines.push('  ' + pad(`[ ${prop.id.padEnd(14)} ]  Propeller: ${prop.label}`, formatUSD(prop.price)));
-      if (av)   lines.push('  ' + pad(`[ ${av.id.padEnd(14)} ]  Avionics: ${av.label}`, formatUSD(av.price)));
+      if (av) {
+        lines.push('  ' + pad(`[ ${av.id.padEnd(14)} ]  Avionics: ${av.label}`, formatUSD(av.price)));
+        avionicsSelectedOptions(state.config).forEach(o => {
+          lines.push('  ' + pad(`     + Option: ${o.label}`, formatUSD(o.price)));
+        });
+      }
       lines.push('');
     }
 
@@ -1785,7 +1878,10 @@
     const pr = findProp(cfg.propellerId);
     if (pr) rows.push({ label: `Propeller: ${pr.label}`, value: format(pr.price) });
     const av = findAvionics(cfg.avionicsId);
-    if (av) rows.push({ label: `Avionik: ${av.label}`, value: format(av.price) });
+    if (av) {
+      rows.push({ label: `Avionik: ${av.label}`, value: format(av.price) });
+      avionicsSelectedOptions(cfg).forEach(o => rows.push({ label: `↳ ${o.label}`, value: format(o.price) }));
+    }
 
     if (cfg.extras.length) {
       rows.push({ group: 'Extras' });
@@ -1874,7 +1970,8 @@
         includeFFwd: cfg.includeFFwd !== false,
         propellerId: propStillValid ? loadedPropId : null,
         propellerAddons: (cfg.propellerAddons && typeof cfg.propellerAddons === 'object') ? cfg.propellerAddons : {},
-        avionicsId: cfg.avionicsId || null,
+        avionicsId: (cfg.avionicsId && CATALOG.avionics.some(a => a.id === cfg.avionicsId)) ? cfg.avionicsId : null,
+        avionicsOptions: Array.isArray(cfg.avionicsOptions) ? cfg.avionicsOptions : [],
         extras: Array.isArray(cfg.extras) ? cfg.extras : [],
         services: Array.isArray(cfg.services) ? cfg.services : []
       };
@@ -1920,6 +2017,11 @@
       const x = findExtra(eid);
       return !x || extraAvionicsOk(x);
     });
+    // Paket-Optionen bereinigen, die es im gewählten Avionik-Paket nicht gibt
+    const avSel = findAvionics(state.config.avionicsId);
+    state.config.avionicsOptions = (state.config.avionicsOptions || []).filter(oid =>
+      avSel && Array.isArray(avSel.options) && avSel.options.some(o => o.id === oid)
+    );
     persist();
     location.hash = encodeConfigToHash(state.config);
     renderModelStage();

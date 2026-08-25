@@ -991,6 +991,49 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 .part-extra-item { outline: none; }
 .part-extra-item:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
 
+/* ---------- Avionik Paket-Inhalt (Basis + anwählbare Optionen) ---------- */
+
+.pkg-section-title {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-mute);
+  font-weight: 700;
+  margin: 14px 0 6px;
+}
+.pkg-section-title:first-child { margin-top: 4px; }
+.pkg-base-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 2px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  border-bottom: 1px dashed var(--line);
+}
+.pkg-base-item:last-of-type { border-bottom: none; }
+.pkg-base-label { flex: 1; }
+.pkg-base-price {
+  color: var(--text-mute);
+  font-family: 'SF Mono', Menlo, monospace;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+.pkg-opt-item { outline: none; }
+.pkg-opt-item:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
+.pkg-opt-hint {
+  font-size: 0.75rem;
+  color: var(--text-mute);
+  font-style: italic;
+  margin-top: 6px;
+}
+.pkg-price-note {
+  font-size: 0.75rem;
+  color: var(--text-mute);
+  font-weight: 400;
+}
+
 /* ---------- Quickbuild Warnhinweise (51 %-Regel) ---------- */
 
 .qb-warning {

@@ -54,7 +54,7 @@ window.SLING_CATALOG = {
         { id: 'finishing',   label: 'Canopy, Dash, Final Assembly & Finishing Kit', desc: 'Komplettes Canopy-Kit inkl. Front- und Hauptcanopyrahmen, Front- und Hauptacrylglas, Closing-Skins und -Panels, lederbezogenes Top-Instrumentenpanel, Lüftungsdüsen, Instrumententafel-Cutout nach Kundenwunsch, individuelles Canopy-Schloss, alles für die finale Montage inkl. Wheel-Spats (3 Räder), Nosecowl, Composite-Closing-Fairings, Pushrod-Baugruppen, Hardware und Bauanleitung.', price: 11425 }
       ],
       compatibleEngines: ['rotax912is', 'own-engine'],
-      compatibleAvionics: ['vfr', 'standard', 'advanced', 'premium'],
+      compatibleAvionics: ['axis-vfr-min', 'axis-vfr-adv', 'axis-ifr'],
       image: 'assets/models/sling2/Sling2-InFlight.jpg',
       gallery: [
         'assets/models/sling2/Sling2-InFlight.jpg',
@@ -78,7 +78,7 @@ window.SLING_CATALOG = {
         { id: 'finishing',   label: 'Canopy, Dash, Final Assembly & Finishing Kit', desc: 'Komplettes Canopy-Kit inkl. Canopy-Rahmen, Frontscheibe, Türen und Fenster, lederbezogenes Top-Dashboard, Lüftungsdüsen, Instrumententafel-Cutout, individuelles Canopy-Schloss für beide Türen, alles für die finale Montage inkl. Nosecowl, Wheel-Spats (3 Räder), Composite-Closing-Fairings, Pushrod-Baugruppen, Hardware und Bauanleitung.', price: 22134 }
       ],
       compatibleEngines: ['rotax916is', 'own-engine'],
-      compatibleAvionics: ['standard', 'advanced', 'premium'],
+      compatibleAvionics: ['axis-vfr-min', 'axis-vfr-adv', 'axis-ifr'],
       image: 'assets/models/tsi/SlingTSI-InFlight.jpg',
       gallery: [
         'assets/models/tsi/SlingTSI-InFlight.jpg'
@@ -101,7 +101,7 @@ window.SLING_CATALOG = {
         { id: 'finishing',   label: 'Dash, Final Assembly & Finishing Kit', desc: 'Komplettes Dash-Kit (lederbezogen), Lüftungsdüsen, Instrumententafel-Cutout, alles für die finale Montage inkl. Nosecowl, Wheel-Spats (3 Räder), Composite-Closing-Fairings, Pushrod-Baugruppen, Hardware und Bauanleitung.', price: 10771 }
       ],
       compatibleEngines: ['rotax916is', 'own-engine'],
-      compatibleAvionics: ['standard', 'advanced', 'premium'],
+      compatibleAvionics: ['axis-vfr-min', 'axis-vfr-adv', 'axis-ifr'],
       image: 'assets/models/highwing/SlingHW-InFlight.jpg',
       gallery: [
         'assets/models/highwing/SlingHW-InFlight.jpg',
@@ -146,24 +146,73 @@ window.SLING_CATALOG = {
 
   /* ------------------------------------------------------------------
    * Avionik – Garmin AXIS Flight Displays (Nachfolger des G3X Touch).
-   * Paket-Preise: Summe der Garmin-Listenpreise aus dem offiziellen
+   * Drei Basis-Pakete mit fixem Kern ("baseItems") und anwählbaren
+   * Optionen ("options"). Preise: Garmin-Listenpreise aus dem
    * "AXIS Build-A-System Guide – Experimental Aircraft" (07/2026),
-   * gerundet, ohne Einbau/Verkabelung. IDs bleiben stabil (standard/
-   * advanced/premium), damit gespeicherte Konfigurationen weiter laden.
+   * ohne Einbau/Verkabelung. price = Summe der baseItems.
    * ----------------------------------------------------------------*/
   avionics: [
-    { id: 'vfr',      label: 'VFR Basic',        desc: 'Garmin G5 (PFD), COMM GTR 205X, Transponder GTX 45R mit GPS (ADS-B In/Out).', price: 14500, approxPrice: true,
-      image: 'assets/avionics/vfr/main.jpg',      infoUrl: 'https://www.garmin.com/aviation/',
-      details: 'Klassisches VFR-Panel ohne Grossdisplay:\n\n• Garmin G5 Flight Instrument (PFD) inkl. Battery Pack\n• GTR 205X COMM-Funkgerät mit 4-Platz-Intercom\n• GTX 45R Remote-Transponder mit GPS – ADS-B In/Out\n• GA 35S GPS/WAAS-Antenne' },
-    { id: 'standard', label: 'AXIS Standard',    desc: 'Single AXIS 11.6" (GDU 116BX), GTR 205X COMM, GTX 45R ADS-B In/Out, G5 Standby.', price: 18500, approxPrice: true,
+    {
+      id: 'axis-vfr-min',
+      label: 'AXIS VFR Minimum',
+      desc: 'Das minimal nötige AXIS-Panel: ein 11.6"-Display, Sensor-Kit, COM integriert – fertig. Alles Weitere per Option zuschaltbar.',
+      price: 9125, approxPrice: true,
+      image: 'assets/avionics/vfr/main.jpg', infoUrl: 'https://www.garmin.com/aviation/',
+      baseItems: [
+        { label: 'AXIS 11.6" Display GDU 116BX (Experimental)', price: 4980 },
+        { label: 'Display-Install-Kit + Printed-Material-Kit', price: 380 },
+        { label: 'LRU-Sensor-Kit: GSU 25C ADAHRS, GMU 11 Magnetometer, GTP 59 OAT (inkl. Connector-Kits)', price: 2045 },
+        { label: 'GTR 205XR Remote-COM – im AXIS-Display integriert bedient', price: 1720 }
+      ],
+      options: [
+        { id: 'opt-eis',       label: 'EIS-Motorüberwachung', desc: 'GEA 24B Engine-Interface + Rotax-Sensor-Kit', price: 1620 },
+        { id: 'opt-xpdr45gps', label: 'GTX 45R mit GPS – ADS-B In/Out Transponder', desc: 'Remote-Mount, inkl. GA 35S GPS/WAAS-Antenne', price: 5260 },
+        { id: 'opt-g5',        label: 'G5 Standby-Instrument', desc: 'Inkl. Install-Kit und Battery Pack', price: 2060 },
+        { id: 'opt-display2',  label: '2. AXIS-Display GDU 116BX', desc: 'Als MFD/EIS, inkl. Install-Kit', price: 5160 }
+      ]
+    },
+    {
+      id: 'axis-vfr-adv',
+      label: 'AXIS VFR Advanced',
+      desc: 'Voll ausgestattetes VFR-Panel: AXIS 11.6", Panel-COM mit Intercom, EIS-Motorüberwachung, ADS-B In/Out Transponder.',
+      price: 16445, approxPrice: true,
       image: 'assets/avionics/standard/main.jpg', infoUrl: 'https://www.garmin.com/aviation/',
-      details: 'Garmin AXIS – der Nachfolger des G3X Touch: gleicher Panel-Ausschnitt, ein Zoll mehr Display, HDMI-Video-Input, 3D SafeTaxi und modernes Widget-PFD.\n\nPaket-Inhalt (Garmin-Listenpreise, VFR):\n• AXIS 11.6" Display GDU 116BX\n• Display-Install-Kit + Printed-Material-Kit\n• LRU-Sensor-Kit: GSU 25C ADAHRS, GMU 11 Magnetometer, GTP 59 OAT (inkl. Connector-Kits)\n• GEA 24B Engine/Airframe-Interface + Rotax-Sensor-Kit (EIS-Motorüberwachung)\n• GTR 205X COMM-Funkgerät mit 4-Platz-Intercom/Audio-Panel\n• GTX 45R Remote-Transponder mit GPS – ADS-B In/Out + GA 35S Antenne\n• G5 Standby-Instrument inkl. Install-Kit und Battery Pack' },
-    { id: 'advanced', label: 'AXIS Advanced IFR', desc: 'Dual AXIS 11.6" (GDU 116C mit IFR GPS/COMM/Audio + GDU 116BX), GFC 500X Autopilot, GTX 45R, G5 Standby.', price: 38500, approxPrice: true,
-      image: 'assets/avionics/advanced/main.jpg', infoUrl: 'https://www.garmin.com/aviation/',
-      details: 'IFR-fähiges Dual-Screen-Panel – der GDU 116C bringt IFR GPS, COMM-Radio und 4-Platz-Audio-Panel bereits integriert mit (Industrie-Novum, spart Gewicht und separate Geräte).\n\nPaket-Inhalt (Garmin-Listenpreise):\n• AXIS 11.6" Display GDU 116C (TSO) – integriertes IFR GPS, COMM & Audio-Panel\n• AXIS 11.6" Display GDU 116BX als MFD/EIS\n• Display-Install-Kits, Printed-Material-Kit, GA 35S GPS/WAAS-Antenne\n• LRU-Sensor-Kit: GSU 25C ADAHRS, GMU 11 Magnetometer, GTP 59 OAT\n• GEA 24B Engine-Interface + Rotax-Sensor-Kit\n• GTX 45R Remote-Transponder – ADS-B In/Out\n• GFC 500X Autopilot: 2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits\n• G5 Standby-Instrument inkl. Install-Kit und Battery Pack' },
-    { id: 'premium',  label: 'AXIS Premium IFR', desc: 'Triple AXIS 11.6" (GDU 116NC mit IFR GPS/NAV/COMM/Audio + 2× GDU 116BX), GFC 500X 3-Achsen, GDL 52R SiriusXM/ADS-B, G5 Standby.', price: 54500, approxPrice: true,
-      image: 'assets/avionics/premium/main.jpg',  infoUrl: 'https://www.garmin.com/aviation/',
-      details: 'Full-IFR-Panel mit drei AXIS-Displays – der GDU 116NC integriert IFR GPS, NAV/COMM und Audio-Panel direkt im Display.\n\nPaket-Inhalt (Garmin-Listenpreise):\n• AXIS 11.6" Display GDU 116NC (TSO) – integriertes IFR GPS, NAV/COMM & Audio-Panel\n• 2× AXIS 11.6" Display GDU 116BX (MFD + EIS/Co-Pilot)\n• Display-Install-Kits, Printed-Material-Kit, GA 35S GPS/WAAS-Antenne\n• High-End-Sensor-Kit: GSU 25D ADAHRS + GMU 22 Magnetometer + GTP 59, zusätzliche redundante GSU 25C\n• GEA 24B Engine-Interface + Rotax-Sensor-Kit\n• GTX 45R Remote-Transponder – ADS-B In/Out\n• GDL 52R Datalink – SiriusXM & ADS-B Receiver inkl. Antennen\n• GFC 500X Autopilot 3-Achsen: 3× GSA 28 Servo (Pitch/Roll/Yaw-Damper), GMC 507, Install-Kits\n• G5 Standby-Instrument inkl. Install-Kit und Battery Pack\n\nFeature-Enablements wie ChartView, SurfaceWatch oder TAWS-B können als Add-on ergänzt werden.' }
+      baseItems: [
+        { label: 'AXIS 11.6" Display GDU 116BX (Experimental)', price: 4980 },
+        { label: 'Display-Install-Kit + Printed-Material-Kit', price: 380 },
+        { label: 'LRU-Sensor-Kit: GSU 25C ADAHRS, GMU 11 Magnetometer, GTP 59 OAT (inkl. Connector-Kits)', price: 2045 },
+        { label: 'GTR 205X Panel-COM mit 4-Platz-Intercom/Audio', price: 2160 },
+        { label: 'EIS-Motorüberwachung: GEA 24B + Rotax-Sensor-Kit', price: 1620 },
+        { label: 'GTX 45R mit GPS – ADS-B In/Out Transponder + GA 35S Antenne', price: 5260 }
+      ],
+      options: [
+        { id: 'opt-display2', label: '2. AXIS-Display GDU 116BX', desc: 'Als MFD/EIS, inkl. Install-Kit', price: 5160 },
+        { id: 'opt-g5',       label: 'G5 Standby-Instrument', desc: 'Inkl. Install-Kit und Battery Pack', price: 2060 },
+        { id: 'opt-ap2',      label: 'GFC 500X Autopilot 2-Achsen', desc: '2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits', price: 4105 },
+        { id: 'opt-yaw',      label: '3. Achse Yaw-Damper', desc: 'GSA 28 Servo + Connector-/Install-Kit – zusätzlich zum Autopilot', price: 1300 }
+      ]
+    },
+    {
+      id: 'axis-ifr',
+      label: 'AXIS IFR Edition',
+      desc: 'IFR-Panel um den GDU 116C (TSO): IFR GPS, COMM und Audio-Panel direkt im Display integriert, ADS-B In/Out, G5 Standby.',
+      price: 29305, approxPrice: true,
+      image: 'assets/avionics/premium/main.jpg', infoUrl: 'https://www.garmin.com/aviation/',
+      baseItems: [
+        { label: 'AXIS 11.6" Display GDU 116C (TSO) – IFR GPS, COMM & Audio-Panel integriert', price: 18400 },
+        { label: 'Install-Kit + Printed-Material-Kit + GA 35S GPS/WAAS-Antenne', price: 1000 },
+        { label: 'LRU-Sensor-Kit: GSU 25C ADAHRS, GMU 11 Magnetometer, GTP 59 OAT (inkl. Connector-Kits)', price: 2045 },
+        { label: 'EIS-Motorüberwachung: GEA 24B + Rotax-Sensor-Kit', price: 1620 },
+        { label: 'GTX 45R – ADS-B In/Out Transponder (IFR-GPS im Display vorhanden)', price: 4180 },
+        { label: 'G5 Standby-Instrument inkl. Install-Kit und Battery Pack', price: 2060 }
+      ],
+      options: [
+        { id: 'opt-nc',       label: 'Upgrade auf GDU 116NC', desc: 'NAV/COMM statt nur COMM integriert (ILS/VOR-Empfänger)', price: 5000 },
+        { id: 'opt-display2', label: '2. AXIS-Display GDU 116BX', desc: 'Als MFD/EIS, inkl. Install-Kit', price: 5160 },
+        { id: 'opt-ap2',      label: 'GFC 500X Autopilot 2-Achsen', desc: '2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits', price: 4105 },
+        { id: 'opt-yaw',      label: '3. Achse Yaw-Damper', desc: 'GSA 28 Servo + Connector-/Install-Kit – zusätzlich zum Autopilot', price: 1300 }
+      ]
+    }
   ],
 
   /* ------------------------------------------------------------------
@@ -347,7 +396,7 @@ window.SLING_CATALOG = {
       label: 'AXIS ChartView™ Enablement',
       desc: 'Freischaltung für georeferenzierte Jeppesen-Charts (Approach-Plates, SIDs/STARs, Airport-Diagramme) direkt auf den AXIS-Displays.',
       category: 'avionics-addon',
-      requiresAvionics: ['standard', 'advanced', 'premium'],
+      requiresAvionics: ['axis-vfr-min', 'axis-vfr-adv', 'axis-ifr'],
       prices: { sling2: 2200, tsi: 2200, highwing: 2200 },
       approxPrice: true,
       infoUrl: 'https://www.garmin.com/aviation/'
@@ -357,7 +406,7 @@ window.SLING_CATALOG = {
       label: 'AXIS SurfaceWatch™ Enablement',
       desc: 'Runway-Monitoring: warnt vor Starts/Landungen auf falscher oder zu kurzer Piste und vor Taxiway-Takeoffs.',
       category: 'avionics-addon',
-      requiresAvionics: ['standard', 'advanced', 'premium'],
+      requiresAvionics: ['axis-vfr-min', 'axis-vfr-adv', 'axis-ifr'],
       prices: { sling2: 2000, tsi: 2000, highwing: 2000 },
       approxPrice: true,
       infoUrl: 'https://www.garmin.com/aviation/'
@@ -367,7 +416,7 @@ window.SLING_CATALOG = {
       label: 'AXIS TAWS-B Enablement',
       desc: 'Terrain Awareness & Warning System Class B – akustische und visuelle Geländewarnungen nach TSO-Standard.',
       category: 'avionics-addon',
-      requiresAvionics: ['standard', 'advanced', 'premium'],
+      requiresAvionics: ['axis-vfr-min', 'axis-vfr-adv', 'axis-ifr'],
       prices: { sling2: 8500, tsi: 8500, highwing: 8500 },
       approxPrice: true,
       infoUrl: 'https://www.garmin.com/aviation/'
@@ -377,7 +426,7 @@ window.SLING_CATALOG = {
       label: 'Garmin GHA 15 – Height Advisor',
       desc: 'Radar-Höhenmesser-Funktion für die Landephase: präzise Höhe über Grund mit Callouts auf den AXIS-Displays.',
       category: 'avionics-addon',
-      requiresAvionics: ['standard', 'advanced', 'premium'],
+      requiresAvionics: ['axis-vfr-min', 'axis-vfr-adv', 'axis-ifr'],
       prices: { sling2: 1995, tsi: 1995, highwing: 1995 },
       approxPrice: true,
       infoUrl: 'https://www.garmin.com/aviation/'
@@ -387,7 +436,7 @@ window.SLING_CATALOG = {
       label: 'Garmin GCO 14 – CO-Detektor',
       desc: 'Kohlenmonoxid-Warngerät mit Anzeige und Alarmierung direkt auf den AXIS-Displays.',
       category: 'avionics-addon',
-      requiresAvionics: ['standard', 'advanced', 'premium'],
+      requiresAvionics: ['axis-vfr-min', 'axis-vfr-adv', 'axis-ifr'],
       prices: { sling2: 549, tsi: 549, highwing: 549 },
       approxPrice: true,
       infoUrl: 'https://www.garmin.com/aviation/'
@@ -395,9 +444,9 @@ window.SLING_CATALOG = {
     {
       id: 'gdl-52r',
       label: 'Garmin GDL 52R – SiriusXM & ADS-B Datalink',
-      desc: 'Remote-Receiver für SiriusXM-Wetter/-Radio und ADS-B In – inkl. Connector-Kit und SiriusXM-Antenne. Im Premium-Paket bereits enthalten.',
+      desc: 'Remote-Receiver für SiriusXM-Wetter/-Radio und ADS-B In – inkl. Connector-Kit und SiriusXM-Antenne.',
       category: 'avionics-addon',
-      requiresAvionics: ['standard', 'advanced'],
+      requiresAvionics: ['axis-vfr-min', 'axis-vfr-adv', 'axis-ifr'],
       prices: { sling2: 1530, tsi: 1530, highwing: 1530 },
       approxPrice: true,
       infoUrl: 'https://www.garmin.com/aviation/'
