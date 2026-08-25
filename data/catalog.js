@@ -165,8 +165,8 @@ window.SLING_CATALOG = {
         { label: 'GTR 205XR Remote-COM – im AXIS-Display integriert bedient', price: 1720 }
       ],
       options: [
-        { id: 'opt-eis',       label: 'EIS-Motorüberwachung', desc: 'GEA 24B Engine-Interface + Rotax-Sensor-Kit', price: 1620 },
-        { id: 'opt-xpdr45gps', label: 'GTX 45R mit GPS – ADS-B In/Out Transponder', desc: 'Remote-Mount, inkl. GA 35S GPS/WAAS-Antenne', price: 5260 },
+        { id: 'opt-eis',       label: 'EIS-Motorüberwachung', desc: 'GEA 24B Engine-Interface + Rotax-Sensor-Kit', price: 1620, default: true },
+        { id: 'opt-xpdr45gps', label: 'GTX 45R mit GPS – ADS-B In/Out Transponder', desc: 'Remote-Mount, inkl. GA 35S GPS/WAAS-Antenne', price: 5260, default: true },
         { id: 'opt-g5',        label: 'G5 Standby-Instrument', desc: 'Inkl. Install-Kit und Battery Pack', price: 2060 },
         { id: 'opt-display2',  label: '2. AXIS-Display GDU 116BX', desc: 'Als MFD/EIS, inkl. Install-Kit', price: 5160 }
       ]

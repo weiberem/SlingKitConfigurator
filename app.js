@@ -260,6 +260,12 @@
     return av.options.filter(o => sel.includes(o.id));
   }
 
+  /* Standardmässig angekreuzte Optionen eines Pakets. */
+  function avionicsDefaults(pkg) {
+    return (pkg && Array.isArray(pkg.options) ? pkg.options : [])
+      .filter(o => o.default).map(o => o.id);
+  }
+
   /* Gesamtpreis Avionik = Paket-Basis + gewählte Optionen. */
   function avionicsPrice(cfg) {
     cfg = cfg || state.config;
@@ -1068,12 +1074,15 @@
         if (!pkg) return;
         if (m && !m.compatibleAvionics.includes(pkgId)) return;
         if (state.config.avionicsId !== pkgId) {
+          // Paket erst auswählen (mit Defaults) und die angeklickte Option sicher aktivieren
           state.config.avionicsId = pkgId;
-          state.config.avionicsOptions = [];
+          state.config.avionicsOptions = avionicsDefaults(pkg);
+          if (!state.config.avionicsOptions.includes(optId)) state.config.avionicsOptions.push(optId);
+        } else {
+          const arr = state.config.avionicsOptions;
+          const i = arr.indexOf(optId);
+          if (i >= 0) arr.splice(i, 1); else arr.push(optId);
         }
-        const arr = state.config.avionicsOptions;
-        const i = arr.indexOf(optId);
-        if (i >= 0) arr.splice(i, 1); else arr.push(optId);
         openAvPanels.add(pkgId);
         update();
       };
@@ -1089,7 +1098,7 @@
       const pick = () => {
         if (state.config.avionicsId !== opt.dataset.av) {
           state.config.avionicsId = opt.dataset.av;
-          state.config.avionicsOptions = [];
+          state.config.avionicsOptions = avionicsDefaults(findAvionics(opt.dataset.av));
         }
         update();
       };
