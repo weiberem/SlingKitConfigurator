@@ -921,7 +921,7 @@
     host.innerHTML = CATALOG.propellers.map(p => {
       const selected = state.config.propellerId === p.id;
       const chHtml = (isFourSeater && p.chNote)
-        ? `<div class="opt-note opt-note-${p.chNote.type}"><strong>🇭🇨</strong> ${p.chNote.text}</div>`
+        ? `<div class="opt-note opt-note-${p.chNote.type}"><strong>🇨🇭</strong> ${p.chNote.text}</div>`
         : '';
       const addonHtml = (p.addon && selected)
         ? `<label class="opt-addon" data-prop-addon="${p.addon.id}">
