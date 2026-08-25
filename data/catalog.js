@@ -188,8 +188,7 @@ window.SLING_CATALOG = {
       options: [
         { id: 'opt-display2', label: '2. AXIS-Display GDU 116BX', desc: 'Als MFD/EIS, inkl. Install-Kit', price: 5160 },
         { id: 'opt-g5',       label: 'G5 Standby-Instrument', desc: 'Inkl. Install-Kit und Battery Pack', price: 2060 },
-        { id: 'opt-ap2',      label: 'GFC 500X Autopilot 2-Achsen', desc: '2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits', price: 4105 },
-        { id: 'opt-yaw',      label: '3. Achse Yaw-Damper', desc: 'GSA 28 Servo + Connector-/Install-Kit – zusätzlich zum Autopilot', price: 1300 }
+        { id: 'opt-ap2',      label: 'GFC 500X Autopilot 2-Achsen', desc: '2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits', price: 4105 }
       ]
     },
     {
@@ -209,8 +208,7 @@ window.SLING_CATALOG = {
       options: [
         { id: 'opt-nc',       label: 'Upgrade auf GDU 116NC', desc: 'NAV/COMM statt nur COMM integriert (ILS/VOR-Empfänger)', price: 5000 },
         { id: 'opt-display2', label: '2. AXIS-Display GDU 116BX', desc: 'Als MFD/EIS, inkl. Install-Kit', price: 5160 },
-        { id: 'opt-ap2',      label: 'GFC 500X Autopilot 2-Achsen', desc: '2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits', price: 4105 },
-        { id: 'opt-yaw',      label: '3. Achse Yaw-Damper', desc: 'GSA 28 Servo + Connector-/Install-Kit – zusätzlich zum Autopilot', price: 1300 }
+        { id: 'opt-ap2',      label: 'GFC 500X Autopilot 2-Achsen', desc: '2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits', price: 4105 }
       ]
     }
   ],
