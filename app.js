@@ -921,7 +921,7 @@
     host.innerHTML = CATALOG.propellers.map(p => {
       const selected = state.config.propellerId === p.id;
       const chHtml = (isFourSeater && p.chNote)
-        ? `<div class="opt-note opt-note-${p.chNote.type}"><strong>🇨🇭</strong> ${p.chNote.text}</div>`
+        ? `<div class="opt-note opt-note-${p.chNote.type}"><strong>🇭🇨</strong> ${p.chNote.text}</div>`
         : '';
       const addonHtml = (p.addon && selected)
         ? `<label class="opt-addon" data-prop-addon="${p.addon.id}">
@@ -973,20 +973,38 @@
       const compatible = !m || m.compatibleAvionics.includes(a.id);
       const selected = state.config.avionicsId === a.id;
       const priceTxt = a.approxPrice ? formatApprox(a.price) : format(a.price);
+      const showDetails = compatible && !!a.details;
       return `
-        <label class="option is-radio ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-av="${a.id}" tabindex="0" role="radio" aria-checked="${selected}">
-          <span class="opt-check"></span>
-          <span class="opt-body">
-            <span class="opt-title">${a.label}</span>
-            <span class="opt-desc">${a.desc}${compatible ? '' : ' <em>(nicht freigegeben)</em>'}</span>
-            <div class="opt-price">${priceTxt}</div>
-            ${infoLinkHtml(a, 'Garmin')}
-          </span>
-        </label>
+        <div class="option-wrap">
+          <label class="option is-radio ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-av="${a.id}" tabindex="0" role="radio" aria-checked="${selected}">
+            <span class="opt-check"></span>
+            <span class="opt-body">
+              <span class="opt-title">${a.label}</span>
+              <span class="opt-desc">${a.desc}${compatible ? '' : ' <em>(nicht freigegeben)</em>'}</span>
+              <div class="opt-price">${priceTxt}</div>
+              <div class="opt-action-row">
+                ${showDetails ? `<button class="opt-details-btn" type="button" data-av-details="${a.id}" aria-expanded="false">Paket-Inhalt ▾</button>` : ''}
+                ${infoLinkHtml(a, 'Garmin')}
+              </div>
+            </span>
+          </label>
+          ${showDetails ? `<div class="opt-details" id="av-details-${a.id}" hidden><div class="opt-details-text">${a.details}</div></div>` : ''}
+        </div>
       `;
     }).join('');
+    host.querySelectorAll('[data-av-details]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation(); e.preventDefault();
+        const panel = host.querySelector(`#av-details-${btn.dataset.avDetails}`);
+        if (!panel) return;
+        const willOpen = panel.hidden;
+        panel.hidden = !willOpen;
+        btn.setAttribute('aria-expanded', String(willOpen));
+        btn.innerHTML = willOpen ? 'Paket-Inhalt ▴' : 'Paket-Inhalt ▾';
+      });
+    });
     host.insertAdjacentHTML('beforeend',
-      '<div class="approx-note">ℹ️ <strong>Avionik-Preise sind unverbindliche Richtwerte</strong> – die finale Offerte erfolgt bei Bestellung direkt vom Hersteller (Garmin / Importeur). FLARM/ADS-B-Add-ons wie der AirAvionics AT-1 finden sich im Extras-Step.</div>'
+      '<div class="approx-note">ℹ️ <strong>Avionik-Preise sind unverbindliche Richtwerte</strong> – Summen der Garmin-Listenpreise aus dem AXIS Build-A-System Guide (Experimental, 07/2026), ohne Einbau und Verkabelung. Die finale Offerte erfolgt bei Bestellung direkt vom Hersteller (Garmin / Importeur). AXIS-Enablements, Garmin-Zubehör und FLARM/ADS-B finden sich unten bei den Add-Ons.</div>'
     );
     host.querySelectorAll('.option:not(.disabled)').forEach(opt => {
       const pick = () => { state.config.avionicsId = opt.dataset.av; update(); };
@@ -1039,19 +1057,27 @@
     show(0);
   }
 
+  function extraAvionicsOk(x) {
+    return !Array.isArray(x.requiresAvionics) || x.requiresAvionics.includes(state.config.avionicsId);
+  }
+
   function extraItemHtml(x, m) {
-    const compatible = extraCompatible(x, m);
+    const modelOk = extraCompatible(x, m);
+    const avionicsOk = extraAvionicsOk(x);
+    const compatible = modelOk && avionicsOk;
     const price = extraPrice(x, m);
     const selected = state.config.extras.includes(x.id);
     const noteHtml = (compatible && x.info) ? `<div class="opt-note">${x.info}</div>` : '';
     const showDetails = compatible && hasExtraDetails(x);
+    const incompatHint = !modelOk ? ' <em>(nicht für gewähltes Modell)</em>'
+      : (!avionicsOk ? ' <em>(nur in Verbindung mit einem AXIS-Avionik-Paket)</em>' : '');
     return `
       <div class="option-wrap">
         <label class="option ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-extra="${x.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
           <span class="opt-check">${checkSvg()}</span>
           <span class="opt-body">
             <span class="opt-title">${x.label}${x.group ? ` <span class="opt-grouptag">1 aus ${x.group === 'brakes' ? 'Bremsen' : x.group}</span>` : ''}</span>
-            <span class="opt-desc">${x.desc || ''}${compatible ? '' : ' <em>(nicht für gewähltes Modell)</em>'}</span>
+            <span class="opt-desc">${x.desc || ''}${incompatHint}</span>
             <div class="opt-price">${compatible ? (x.approxPrice ? formatApprox(price) : format(price)) : '—'}</div>
             ${noteHtml}
             <div class="opt-action-row">
@@ -1889,6 +1915,11 @@
   }
 
   function update() {
+    // Avionik-gebundene Add-ons entfernen, wenn das gewählte Paket nicht (mehr) passt
+    state.config.extras = state.config.extras.filter(eid => {
+      const x = findExtra(eid);
+      return !x || extraAvionicsOk(x);
+    });
     persist();
     location.hash = encodeConfigToHash(state.config);
     renderModelStage();
