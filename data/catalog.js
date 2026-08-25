@@ -112,16 +112,6 @@ window.SLING_CATALOG = {
     }
   ],
 
-  /* Optionaler Firewall-Forward / Fuel-Kit – Preise abhängig vom gewählten Motor */
-  firewallForward: {
-    label: 'Firewall Forward + Fuel Kit',
-    desc: 'Motoraufhängung, Cowling, Auspuff, Kraftstoffsystem ab Brandschott – passend zum gewählten Motor.',
-    perEngine: {
-      rotax912is:  6450,
-      rotax916is:  7711
-    }
-  },
-
   engines: [
     { id: 'rotax912is',  label: 'Rotax 912 iSc Sport', desc: '100 PS · Einspritzung · Standard-Motor für Sling 2.', price: 26136,
       approxPrice: true, models: ['sling2'],
@@ -227,6 +217,7 @@ window.SLING_CATALOG = {
       id: 'ffwd-kit',
       label: 'Firewall Forward & Fuel System Kit',
       desc: 'Komplettes Firewall-Forward- und Fuel-System-Kit, abgestimmt auf den jeweiligen Standard-Motor (912iS für Sling 2, 916iS für TSi und High Wing).',
+      info: 'Empfohlen bei Bestellung mit Rotax-Motor – einzige Firewall-Forward-Position im Configurator (wird nicht mehr zusätzlich beim Motor eingerechnet).',
       prices: { sling2: 10325, tsi: 10461, highwing: 10461 },
       image: 'assets/extras/ffwd-kit/main.jpg'
     },

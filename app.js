@@ -18,7 +18,6 @@
       parts: [],
       engineId: null,
       engineAddons: {},
-      includeFFwd: true,
       propellerId: null,
       propellerAddons: {},
       avionicsId: null,
@@ -176,9 +175,6 @@
     CATALOG.extras.forEach(x => {
       if (prices[`extra:${x.id}`] != null) { x.price = prices[`extra:${x.id}`]; applied++; }
     });
-    Object.keys(CATALOG.firewallForward.perEngine).forEach(eid => {
-      if (prices[`ffwd:${eid}`] != null) { CATALOG.firewallForward.perEngine[eid] = prices[`ffwd:${eid}`]; applied++; }
-    });
     if (meta.rate_chf) { const v = parseFloat(meta.rate_chf); if (isFinite(v) && v > 0) CATALOG.defaultRates.CHF = v; }
     if (meta.rate_eur) { const v = parseFloat(meta.rate_eur); if (isFinite(v) && v > 0) CATALOG.defaultRates.EUR = v; }
     if (meta.bundle_discount_pct) { const v = parseFloat(meta.bundle_discount_pct); if (isFinite(v) && v >= 0) CATALOG.bundleDiscountPct = v > 1 ? v / 100 : v; }
@@ -330,11 +326,6 @@
       if (engine.addon && cfg.engineAddons && cfg.engineAddons[engine.addon.id]) {
         lines.push({ type: 'add', label: `↳ ${engine.addon.label}`, value: engine.addon.priceAdd, approx: !!engine.addon.approxPrice });
       }
-    }
-
-    if (cfg.includeFFwd && engine && engine.id !== 'own-engine') {
-      const ffPrice = (CATALOG.firewallForward.perEngine || {})[engine.id];
-      if (ffPrice) lines.push({ type: 'add', label: `${CATALOG.firewallForward.label} (${engine.label})`, value: ffPrice, approx: !!engine.approxPrice });
     }
 
     const prop = findProp(cfg.propellerId);
@@ -896,9 +887,6 @@
       const brand = isOwn ? null : 'Rotax';
       const priceTxt = isOwn ? '<em>Nicht im Sling-Preis enthalten</em>' :
         (e.approxPrice ? formatApprox(e.price) : format(e.price));
-      const ffwdHtml = (!isOwn && state.config.includeFFwd && CATALOG.firewallForward.perEngine[e.id])
-        ? ` <span style="color:var(--text-mute);font-weight:400">+ ${e.approxPrice ? formatApprox(CATALOG.firewallForward.perEngine[e.id]) : format(CATALOG.firewallForward.perEngine[e.id])} FF-Kit</span>`
-        : '';
       const addonHtml = (e.addon && selected)
         ? `<label class="opt-addon" data-engine-addon="${e.addon.id}">
              <input type="checkbox" ${state.config.engineAddons && state.config.engineAddons[e.addon.id] ? 'checked' : ''} />
@@ -915,7 +903,7 @@
           <span class="opt-body">
             <span class="opt-title">${e.label}</span>
             <span class="opt-desc">${e.desc}</span>
-            <div class="opt-price">${priceTxt}${ffwdHtml}</div>
+            <div class="opt-price">${priceTxt}</div>
             ${addonHtml}
             ${brand ? infoLinkHtml(e, brand) : ''}
           </span>
@@ -1369,9 +1357,6 @@
 
     const e = findEngine(state.config.engineId);
     if (e) rows.push([`Motor: ${e.label}`, format(e.price)]);
-    if (state.config.includeFFwd && e && CATALOG.firewallForward.perEngine[e.id]) {
-      rows.push([`Firewall Forward + Fuel Kit (${e.label})`, format(CATALOG.firewallForward.perEngine[e.id])]);
-    }
     const p = findProp(state.config.propellerId);
     if (p) rows.push([`Propeller: ${p.label}`, format(p.price)]);
     const a = findAvionics(state.config.avionicsId);
@@ -1475,9 +1460,6 @@
     if (eng || prop || av) {
       lines.push('-- POWERPLANT & AVIONIK --');
       if (eng)  lines.push('  ' + pad(`[ ${eng.id.padEnd(14)} ]  Engine: ${eng.label}`,   formatUSD(eng.price)));
-      if (eng && state.config.includeFFwd && CATALOG.firewallForward.perEngine[eng.id]) {
-        lines.push('  ' + pad(`                     FF + Fuel Kit (${eng.label})`, formatUSD(CATALOG.firewallForward.perEngine[eng.id])));
-      }
       if (prop) lines.push('  ' + pad(`[ ${prop.id.padEnd(14)} ]  Propeller: ${prop.label}`, formatUSD(prop.price)));
       if (av) {
         lines.push('  ' + pad(`[ ${av.id.padEnd(14)} ]  Avionics: ${av.label}`, formatUSD(av.price)));
@@ -1881,9 +1863,6 @@
     const e = findEngine(cfg.engineId);
     if (e || cfg.propellerId || cfg.avionicsId) rows.push({ group: 'Antrieb & Avionik' });
     if (e) rows.push({ label: `Motor: ${e.label}`, value: format(e.price) });
-    if (cfg.includeFFwd && e && CATALOG.firewallForward.perEngine[e.id]) {
-      rows.push({ label: `Firewall Forward + Fuel Kit (${e.label})`, value: format(CATALOG.firewallForward.perEngine[e.id]) });
-    }
     const pr = findProp(cfg.propellerId);
     if (pr) rows.push({ label: `Propeller: ${pr.label}`, value: format(pr.price) });
     const av = findAvionics(cfg.avionicsId);
@@ -1976,7 +1955,6 @@
         parts: Array.isArray(cfg.parts) ? cfg.parts : [],
         engineId: cfg.engineId || null,
         engineAddons: (cfg.engineAddons && typeof cfg.engineAddons === 'object') ? cfg.engineAddons : {},
-        includeFFwd: cfg.includeFFwd !== false,
         propellerId: propStillValid ? loadedPropId : null,
         propellerAddons: (cfg.propellerAddons && typeof cfg.propellerAddons === 'object') ? cfg.propellerAddons : {},
         avionicsId: (cfg.avionicsId && CATALOG.avionics.some(a => a.id === cfg.avionicsId)) ? cfg.avionicsId : null,
