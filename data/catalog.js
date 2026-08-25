@@ -511,8 +511,14 @@ window.SLING_CATALOG = {
       label: 'Tür-zu-Tür Service Schweiz',
       desc: 'Komplette Abwicklung: Versand-Organisation ab Johannesburg, Zoll, Mehrwertsteuer-Import und Lieferung an die Wunschadresse in der Schweiz.',
       price: 1022,
-      priceNote: '+ Versandkosten ca. CHF 6\'000 und MwSt – beides individuell nach Lieferadresse',
-      info: 'Pauschale für die Service-Leistung (Organisation und Abwicklung). Effektive Versand- und Importkosten werden separat in Rechnung gestellt.'
+      priceNote: 'Transportkosten (ca.) und Einfuhr-MwSt 8.1 % werden separat in der Preisübersicht ausgewiesen – effektive Kosten individuell nach Lieferadresse',
+      info: 'Pauschale für die Service-Leistung (Organisation und Abwicklung). Effektive Versand- und Importkosten werden separat in Rechnung gestellt.',
+      /* Zusätzliche Positionen, die bei Auswahl separat eingerechnet werden */
+      extraLines: [
+        { label: 'Transportkosten Schweiz (Schätzung)', price: 6820, approx: true }
+      ],
+      /* Schweizer Einfuhr-MwSt – wird auf den Gesamtwert (inkl. Transport, nach Rabatt) gerechnet */
+      vatPct: 0.081
     },
     {
       id: 'build-help',

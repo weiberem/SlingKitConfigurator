@@ -351,6 +351,7 @@
       if (typeof p === 'number') lines.push({ type: 'add', label: x.label, value: p });
     });
 
+    let vatPct = 0;
     (cfg.services || []).forEach(sid => {
       const s = findService(sid);
       if (!s) return;
@@ -359,6 +360,10 @@
       } else {
         lines.push({ type: 'add', label: s.label, value: s.price });
       }
+      if (Array.isArray(s.extraLines)) {
+        s.extraLines.forEach(x => lines.push({ type: 'add', label: `↳ ${x.label}`, value: x.price, approx: !!x.approx }));
+      }
+      if (typeof s.vatPct === 'number' && s.vatPct > vatPct) vatPct = s.vatPct;
     });
 
     // Quickbuild – ausgewählte Items
@@ -389,8 +394,10 @@
     const subtotal = lines.reduce((s, l) => s + l.value, 0);
     const pct = CATALOG.bundleDiscountPct || 0;
     const discount = allSelected && pct > 0 ? Math.round(subtotal * pct) : 0;
-    const total = subtotal - discount;
-    return { lines, partsSubtotal, subtotal, total, discount, discountPct: allSelected ? pct : 0 };
+    // Schweizer Einfuhr-MwSt auf den Gesamtwert (nach Rabatt), sofern ein Service sie definiert
+    const vat = vatPct > 0 ? Math.round((subtotal - discount) * vatPct) : 0;
+    const total = subtotal - discount + vat;
+    return { lines, partsSubtotal, subtotal, total, discount, discountPct: allSelected ? pct : 0, vat, vatPct };
   }
 
   /* -------- Icons -------- */
@@ -1326,6 +1333,10 @@
       showLines.push({ label: `Komplett-Kit-Rabatt (${pctText}%)`, value: -t.discount, discount: true });
     }
 
+    if (t.vat > 0) {
+      showLines.push({ label: `MwSt Schweiz (${(t.vatPct * 100).toFixed(1)} %) – Einfuhr`, value: t.vat, add: true });
+    }
+
     if (showLines.length === 0) {
       linesHost.innerHTML = '<li><span class="sum-name muted">Noch keine Auswahl getroffen.</span></li>';
     } else {
@@ -1375,7 +1386,13 @@
       if (!s) return;
       const val = s.quoteOnly ? '<em style="color:var(--text-mute)">Auf Anfrage</em>' : format(s.price);
       rows.push([s.label + (s.priceNote ? ` <span class="muted" style="font-size:0.78rem">(${s.priceNote})</span>` : ''), val]);
+      if (Array.isArray(s.extraLines)) {
+        s.extraLines.forEach(x => rows.push([`↳ ${x.label}`, x.approx ? formatApprox(x.price) : format(x.price)]));
+      }
     });
+    if (t.vat > 0) {
+      rows.push([`MwSt Schweiz (${(t.vatPct * 100).toFixed(1)} %) – Einfuhr`, format(t.vat)]);
+    }
 
     const host = document.getElementById('fullSummary');
     host.innerHTML = `
@@ -1501,6 +1518,9 @@
       svs.forEach(s => {
         const v = s.quoteOnly ? '(auf Anfrage)' : formatUSD(s.price);
         lines.push('  ' + pad(`[ ${s.id.padEnd(22)} ]  ${s.label}`, v));
+        if (Array.isArray(s.extraLines)) {
+          s.extraLines.forEach(x => lines.push('  ' + pad(`     + ${x.label}`, formatUSD(x.price))));
+        }
         if (s.priceNote) lines.push('       ↳ ' + s.priceNote);
         if (s.info)      lines.push('       ↳ ' + s.info);
       });
@@ -1524,7 +1544,12 @@
       lines.push('  ' + pad('Subtotal',                       formatUSD(t.subtotal)));
       lines.push('  ' + pad(`Komplett-Kit-Rabatt (${(t.discountPct * 100).toFixed(0)}%)`, '-' + formatUSD(t.discount)));
     }
-    lines.push('  ' + pad('GESAMT (USD, ohne MwSt, ab Werk JNB)', formatUSD(t.total)));
+    if (t.vat > 0) {
+      lines.push('  ' + pad(`MwSt Schweiz (${(t.vatPct * 100).toFixed(1)} %) – Einfuhr`, '+' + formatUSD(t.vat)));
+      lines.push('  ' + pad('GESAMT (USD, inkl. Transport & MwSt Schweiz)', formatUSD(t.total)));
+    } else {
+      lines.push('  ' + pad('GESAMT (USD, ohne MwSt, ab Werk JNB)', formatUSD(t.total)));
+    }
     lines.push(dblsep);
     lines.push('');
     lines.push('Hinweise:');
@@ -1882,14 +1907,20 @@
     }
 
     if ((cfg.services || []).length) {
-      rows.push({ group: 'Services (ohne MwSt, ab Werk Johannesburg)' });
+      rows.push({ group: 'Services' });
       cfg.services.forEach(sid => {
         const s = findService(sid);
         if (!s) return;
         const val = s.quoteOnly ? 'Auf Anfrage' : format(s.price);
         const label = s.label + (s.priceNote ? ` — ${s.priceNote}` : '');
         rows.push({ label, value: val });
+        if (Array.isArray(s.extraLines)) {
+          s.extraLines.forEach(x => rows.push({ label: `↳ ${x.label}`, value: x.approx ? formatApprox(x.price) : format(x.price) }));
+        }
       });
+    }
+    if (t.vat > 0) {
+      rows.push({ label: `MwSt Schweiz (${(t.vatPct * 100).toFixed(1)} %) – Einfuhr`, value: format(t.vat) });
     }
 
     document.getElementById('pvTable').innerHTML = `
