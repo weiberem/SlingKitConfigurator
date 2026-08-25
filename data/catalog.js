@@ -156,7 +156,8 @@ window.SLING_CATALOG = {
       ],
       options: [
         { id: 'opt-eis',       label: 'EIS-Motorüberwachung', desc: 'GEA 24B Engine-Interface + Rotax-Sensor-Kit', price: 1620, default: true },
-        { id: 'opt-xpdr45gps', label: 'GTX 45R mit GPS – ADS-B In/Out Transponder', desc: 'Remote-Mount, inkl. GA 35S GPS/WAAS-Antenne', price: 5260, default: true },
+        { id: 'opt-xpdr45gps', label: 'GTX 45R mit GPS – ADS-B In/Out Transponder', desc: 'Remote-Mount, inkl. GA 35S GPS/WAAS-Antenne', price: 5260, default: true, group: 'xpdr' },
+        { id: 'opt-xpdr35',    label: 'GTX 35R – ADS-B Out Transponder', desc: 'Günstigere Variante ohne ADS-B In – ideal in Kombination mit dem AirAvionics AT-1 (FLARM), siehe Add-Ons', price: 2765, group: 'xpdr' },
         { id: 'opt-g5',        label: 'G5 Standby-Instrument', desc: 'Inkl. Install-Kit und Battery Pack', price: 2060 },
         { id: 'opt-display2',  label: '2. AXIS-Display GDU 116BX', desc: 'Als MFD/EIS, inkl. Install-Kit', price: 5160 }
       ]
@@ -164,8 +165,8 @@ window.SLING_CATALOG = {
     {
       id: 'axis-vfr-adv',
       label: 'AXIS VFR Advanced',
-      desc: 'Dual-Screen VFR-Panel: 2× AXIS 11.6", Remote-COM im Display integriert plus zweites Panel-COM mit Intercom in der Panel-Mitte, EIS, ADS-B In/Out.',
-      price: 23325, approxPrice: true,
+      desc: 'Dual-Screen VFR-Panel: 2× AXIS 11.6", Remote-COM im Display integriert plus zweites Panel-COM mit Intercom in der Panel-Mitte, EIS. Transponder als Option wählbar.',
+      price: 18065, approxPrice: true,
       image: 'assets/avionics/standard/main.jpg', infoUrl: 'https://www.garmin.com/aviation/',
       baseItems: [
         { label: '2× AXIS 11.6" Display GDU 116BX (Experimental) – PFD + MFD/EIS', price: 9960 },
@@ -173,10 +174,11 @@ window.SLING_CATALOG = {
         { label: 'LRU-Sensor-Kit: GSU 25C ADAHRS, GMU 11 Magnetometer, GTP 59 OAT (inkl. Connector-Kits)', price: 2045 },
         { label: 'GTR 205XR Remote-COM – im AXIS-Display integriert bedient', price: 1720 },
         { label: '2. COM: GTR 205X Panel-COM mit 4-Platz-Intercom/Audio – in der Panel-Mitte', price: 2160 },
-        { label: 'EIS-Motorüberwachung: GEA 24B + Rotax-Sensor-Kit', price: 1620 },
-        { label: 'GTX 45R mit GPS – ADS-B In/Out Transponder + GA 35S Antenne', price: 5260 }
+        { label: 'EIS-Motorüberwachung: GEA 24B + Rotax-Sensor-Kit', price: 1620 }
       ],
       options: [
+        { id: 'opt-xpdr45gps', label: 'GTX 45R mit GPS – ADS-B In/Out Transponder', desc: 'Remote-Mount, inkl. GA 35S GPS/WAAS-Antenne', price: 5260, default: true, group: 'xpdr' },
+        { id: 'opt-xpdr35',    label: 'GTX 35R – ADS-B Out Transponder', desc: 'Günstigere Variante ohne ADS-B In – ideal in Kombination mit dem AirAvionics AT-1 (FLARM), siehe Add-Ons', price: 2765, group: 'xpdr' },
         { id: 'opt-g5',  label: 'G5 Standby-Instrument', desc: 'Inkl. Install-Kit und Battery Pack', price: 2060 },
         { id: 'opt-ap2', label: 'GFC 500X Autopilot 2-Achsen', desc: '2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits', price: 4105 }
       ]
@@ -184,8 +186,8 @@ window.SLING_CATALOG = {
     {
       id: 'axis-ifr',
       label: 'AXIS IFR Edition',
-      desc: 'IFR-Panel mit der Top-AXIS-Version: 2× AXIS 11.6" gross (GDU 116NC mit integriertem IFR GPS/NAV/COMM/Audio + GDU 116BX) plus AXIS 8" klein in der Panel-Mitte, ADS-B In/Out, G5 Standby.',
-      price: 43785, approxPrice: true,
+      desc: 'IFR-Panel mit der Top-AXIS-Version: 2× AXIS 11.6" gross (GDU 116NC mit integriertem IFR GPS/NAV/COMM/Audio + GDU 116BX) plus AXIS 8" klein in der Panel-Mitte, G5 Standby. Transponder als Option wählbar.',
+      price: 39605, approxPrice: true,
       image: 'assets/avionics/premium/main.jpg', infoUrl: 'https://www.garmin.com/aviation/',
       baseItems: [
         { label: 'AXIS 11.6" Display GDU 116NC (TSO) – Top-Version: IFR GPS, NAV/COMM (ILS/VOR) & Audio-Panel integriert', price: 23400 },
@@ -195,10 +197,11 @@ window.SLING_CATALOG = {
         { label: 'GA 35S GPS/WAAS-Antenne', price: 400 },
         { label: 'LRU-Sensor-Kit: GSU 25C ADAHRS, GMU 11 Magnetometer, GTP 59 OAT (inkl. Connector-Kits)', price: 2045 },
         { label: 'EIS-Motorüberwachung: GEA 24B + Rotax-Sensor-Kit', price: 1620 },
-        { label: 'GTX 45R – ADS-B In/Out Transponder (IFR-GPS im Display vorhanden)', price: 4180 },
         { label: 'G5 Standby-Instrument inkl. Install-Kit und Battery Pack', price: 2060 }
       ],
       options: [
+        { id: 'opt-xpdr45', label: 'GTX 45R – ADS-B In/Out Transponder', desc: 'Remote-Mount – IFR-GPS als Positionsquelle im Display vorhanden', price: 4180, default: true, group: 'xpdr' },
+        { id: 'opt-xpdr35', label: 'GTX 35R – ADS-B Out Transponder', desc: 'Günstigere Variante ohne ADS-B In – ideal in Kombination mit dem AirAvionics AT-1 (FLARM), siehe Add-Ons', price: 2765, group: 'xpdr' },
         { id: 'opt-ap2', label: 'GFC 500X Autopilot 2-Achsen', desc: '2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits', price: 4105 }
       ]
     }
@@ -370,7 +373,8 @@ window.SLING_CATALOG = {
     {
       id: 'airavionics-at-1',
       label: 'AirAvionics AT-1 – FLARM + ADS-B Out',
-      desc: 'Kombiniertes Collision-Avoidance- und ADS-B-Out-System – in der Schweiz/Europa für die meisten Lufträume empfohlen.',
+      desc: 'Kombiniertes FLARM- und ADS-B-System – in der Schweiz/Europa für die meisten Lufträume empfohlen.',
+      info: 'Hinweis: ADS-B Out ist im GTX 45R bereits enthalten – mit GTX 45R ergänzt der AT-1 primär FLARM. Alternativ im Avionik-Paket den günstigeren GTX 35R wählen und ADS-B mit dem AT-1 abdecken.',
       details: 'FLARM ist in der Schweiz Standard im Sport- und Segelflugverkehr. ADS-B Out wird in zunehmend mehr europäischen Lufträumen verlangt. Der AT-1 vereint beides in einem Gerät und reduziert Panel-Aufwand sowie Stromverbrauch.',
       approxPrice: true,
       category: 'avionics-addon',

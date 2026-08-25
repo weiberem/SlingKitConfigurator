@@ -262,6 +262,19 @@
       .filter(o => o.default).map(o => o.id);
   }
 
+  /* Option in arr aktivieren – Optionen derselben Gruppe (z.B. Transponder-Wahl)
+     werden dabei abgewählt (entweder/oder). */
+  function addAvionicsOption(pkg, arr, optId) {
+    const opt = (pkg.options || []).find(o => o.id === optId);
+    if (opt && opt.group) {
+      for (let k = arr.length - 1; k >= 0; k--) {
+        const other = (pkg.options || []).find(o => o.id === arr[k]);
+        if (other && other.group === opt.group && other.id !== optId) arr.splice(k, 1);
+      }
+    }
+    if (!arr.includes(optId)) arr.push(optId);
+  }
+
   /* Gesamtpreis Avionik = Paket-Basis + gewählte Optionen. */
   function avionicsPrice(cfg) {
     cfg = cfg || state.config;
@@ -1072,11 +1085,12 @@
           // Paket erst auswählen (mit Defaults) und die angeklickte Option sicher aktivieren
           state.config.avionicsId = pkgId;
           state.config.avionicsOptions = avionicsDefaults(pkg);
-          if (!state.config.avionicsOptions.includes(optId)) state.config.avionicsOptions.push(optId);
+          addAvionicsOption(pkg, state.config.avionicsOptions, optId);
         } else {
           const arr = state.config.avionicsOptions;
           const i = arr.indexOf(optId);
-          if (i >= 0) arr.splice(i, 1); else arr.push(optId);
+          if (i >= 0) arr.splice(i, 1);
+          else addAvionicsOption(pkg, arr, optId);
         }
         openAvPanels.add(pkgId);
         update();
