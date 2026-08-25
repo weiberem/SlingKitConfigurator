@@ -174,41 +174,43 @@ window.SLING_CATALOG = {
     {
       id: 'axis-vfr-adv',
       label: 'AXIS VFR Advanced',
-      desc: 'Voll ausgestattetes VFR-Panel: AXIS 11.6", Panel-COM mit Intercom, EIS-Motorüberwachung, ADS-B In/Out Transponder.',
-      price: 16445, approxPrice: true,
+      desc: 'Dual-Screen VFR-Panel: 2× AXIS 11.6", Remote-COM im Display integriert plus zweites Panel-COM mit Intercom in der Panel-Mitte, EIS, ADS-B In/Out.',
+      price: 23325, approxPrice: true,
       image: 'assets/avionics/standard/main.jpg', infoUrl: 'https://www.garmin.com/aviation/',
       baseItems: [
-        { label: 'AXIS 11.6" Display GDU 116BX (Experimental)', price: 4980 },
-        { label: 'Display-Install-Kit + Printed-Material-Kit', price: 380 },
+        { label: '2× AXIS 11.6" Display GDU 116BX (Experimental) – PFD + MFD/EIS', price: 9960 },
+        { label: '2× Display-Install-Kit + Printed-Material-Kit', price: 560 },
         { label: 'LRU-Sensor-Kit: GSU 25C ADAHRS, GMU 11 Magnetometer, GTP 59 OAT (inkl. Connector-Kits)', price: 2045 },
-        { label: 'GTR 205X Panel-COM mit 4-Platz-Intercom/Audio', price: 2160 },
+        { label: 'GTR 205XR Remote-COM – im AXIS-Display integriert bedient', price: 1720 },
+        { label: '2. COM: GTR 205X Panel-COM mit 4-Platz-Intercom/Audio – in der Panel-Mitte', price: 2160 },
         { label: 'EIS-Motorüberwachung: GEA 24B + Rotax-Sensor-Kit', price: 1620 },
         { label: 'GTX 45R mit GPS – ADS-B In/Out Transponder + GA 35S Antenne', price: 5260 }
       ],
       options: [
-        { id: 'opt-display2', label: '2. AXIS-Display GDU 116BX', desc: 'Als MFD/EIS, inkl. Install-Kit', price: 5160 },
-        { id: 'opt-g5',       label: 'G5 Standby-Instrument', desc: 'Inkl. Install-Kit und Battery Pack', price: 2060 },
-        { id: 'opt-ap2',      label: 'GFC 500X Autopilot 2-Achsen', desc: '2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits', price: 4105 }
+        { id: 'opt-g5',  label: 'G5 Standby-Instrument', desc: 'Inkl. Install-Kit und Battery Pack', price: 2060 },
+        { id: 'opt-ap2', label: 'GFC 500X Autopilot 2-Achsen', desc: '2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits', price: 4105 }
       ]
     },
     {
       id: 'axis-ifr',
       label: 'AXIS IFR Edition',
-      desc: 'IFR-Panel um den GDU 116C (TSO): IFR GPS, COMM und Audio-Panel direkt im Display integriert, ADS-B In/Out, G5 Standby.',
-      price: 29305, approxPrice: true,
+      desc: 'IFR-Panel: 2× AXIS 11.6" gross (GDU 116C mit integriertem IFR GPS/COMM/Audio + GDU 116BX) plus AXIS 8" klein in der Panel-Mitte, ADS-B In/Out, G5 Standby.',
+      price: 38785, approxPrice: true,
       image: 'assets/avionics/premium/main.jpg', infoUrl: 'https://www.garmin.com/aviation/',
       baseItems: [
         { label: 'AXIS 11.6" Display GDU 116C (TSO) – IFR GPS, COMM & Audio-Panel integriert', price: 18400 },
-        { label: 'Install-Kit + Printed-Material-Kit + GA 35S GPS/WAAS-Antenne', price: 1000 },
+        { label: 'AXIS 11.6" Display GDU 116BX – zweites Grossdisplay (MFD/EIS)', price: 4980 },
+        { label: 'AXIS 8" Display GDU 80PX – klein, in der Panel-Mitte', price: 4140 },
+        { label: 'Display-Install-Kits + Printed-Material-Kit', price: 960 },
+        { label: 'GA 35S GPS/WAAS-Antenne', price: 400 },
         { label: 'LRU-Sensor-Kit: GSU 25C ADAHRS, GMU 11 Magnetometer, GTP 59 OAT (inkl. Connector-Kits)', price: 2045 },
         { label: 'EIS-Motorüberwachung: GEA 24B + Rotax-Sensor-Kit', price: 1620 },
         { label: 'GTX 45R – ADS-B In/Out Transponder (IFR-GPS im Display vorhanden)', price: 4180 },
         { label: 'G5 Standby-Instrument inkl. Install-Kit und Battery Pack', price: 2060 }
       ],
       options: [
-        { id: 'opt-nc',       label: 'Upgrade auf GDU 116NC', desc: 'NAV/COMM statt nur COMM integriert (ILS/VOR-Empfänger)', price: 5000 },
-        { id: 'opt-display2', label: '2. AXIS-Display GDU 116BX', desc: 'Als MFD/EIS, inkl. Install-Kit', price: 5160 },
-        { id: 'opt-ap2',      label: 'GFC 500X Autopilot 2-Achsen', desc: '2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits', price: 4105 }
+        { id: 'opt-nc',  label: 'Upgrade auf GDU 116NC', desc: 'NAV/COMM statt nur COMM integriert (ILS/VOR-Empfänger)', price: 5000 },
+        { id: 'opt-ap2', label: 'GFC 500X Autopilot 2-Achsen', desc: '2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits', price: 4105 }
       ]
     }
   ],
