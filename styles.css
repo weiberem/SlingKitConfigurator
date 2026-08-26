@@ -749,6 +749,28 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
 
 .option:hover { border-color: var(--line-strong); background: var(--bg-card-hover); }
 
+/* Seitliches Vorschaubild in Options-Karten */
+.opt-thumb {
+  flex: 0 0 92px;
+  width: 92px;
+  height: 92px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  align-self: flex-start;
+  order: 10;              /* rechts neben dem Text */
+}
+.opt-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+@media (max-width: 720px) {
+  .opt-thumb { flex-basis: 64px; width: 64px; height: 64px; border-radius: 8px; }
+}
+
 .option.selected {
   border-color: var(--accent);
   background: var(--accent-soft-2);

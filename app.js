@@ -889,6 +889,14 @@
     return `<a class="opt-link" href="${item.infoUrl}" target="_blank" rel="noopener noreferrer">${brand} ↗</a>`;
   }
 
+  /* Seitliches Vorschaubild einer Option (Bild aus image bzw. gallery[0]).
+     Blendet sich selbst aus, wenn die Datei (noch) nicht existiert. */
+  function thumbHtml(item) {
+    const src = item.image || (Array.isArray(item.gallery) && item.gallery[0]) || null;
+    if (!src) return '';
+    return `<span class="opt-thumb"><img src="${src}" alt="" loading="lazy" onerror="this.closest('.opt-thumb').style.display='none'" /></span>`;
+  }
+
   function bindOptionLinks(host) {
     host.querySelectorAll('.opt-link').forEach(a => {
       a.addEventListener('click', e => e.stopPropagation());
@@ -920,6 +928,7 @@
       return `
         <label class="option is-radio ${selected ? 'selected' : ''}" data-engine="${e.id}" tabindex="0" role="radio" aria-checked="${selected}">
           <span class="opt-check">${checkSvg()}</span>
+          ${thumbHtml(e)}
           <span class="opt-body">
             <span class="opt-title">${e.label}</span>
             <span class="opt-desc">${e.desc}</span>
@@ -978,6 +987,7 @@
       return `
         <label class="option is-radio ${selected ? 'selected' : ''}" data-prop="${p.id}" tabindex="0" role="radio" aria-checked="${selected}">
           <span class="opt-check"></span>
+          ${thumbHtml(p)}
           <span class="opt-body">
             <span class="opt-title">${p.label}</span>
             <span class="opt-desc">${p.desc}</span>
@@ -1047,6 +1057,7 @@
         <div class="option-wrap">
           <label class="option is-radio ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-av="${a.id}" tabindex="0" role="radio" aria-checked="${selected}">
             <span class="opt-check"></span>
+            ${compatible ? thumbHtml(a) : ''}
             <span class="opt-body">
               <span class="opt-title">${a.label}</span>
               <span class="opt-desc">${a.desc}${compatible ? '' : ' <em>(nicht freigegeben)</em>'}</span>
@@ -1178,6 +1189,7 @@
       <div class="option-wrap">
         <label class="option ${selected ? 'selected' : ''} ${compatible ? '' : 'disabled'}" data-extra="${x.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
           <span class="opt-check">${checkSvg()}</span>
+          ${compatible ? thumbHtml(x) : ''}
           <span class="opt-body">
             <span class="opt-title">${x.label}${x.group ? ` <span class="opt-grouptag">1 aus ${x.group === 'brakes' ? 'Bremsen' : x.group}</span>` : ''}</span>
             <span class="opt-desc">${x.desc || ''}${incompatHint}</span>
@@ -1307,6 +1319,7 @@
       return `
         <label class="option ${selected ? 'selected' : ''}" data-service="${s.id}" tabindex="0" role="checkbox" aria-checked="${selected}">
           <span class="opt-check">${checkSvg()}</span>
+          ${thumbHtml(s)}
           <span class="opt-body">
             <span class="opt-title">${s.label}</span>
             <span class="opt-desc">${s.desc || ''}</span>

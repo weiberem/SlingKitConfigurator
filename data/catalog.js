@@ -513,6 +513,7 @@ window.SLING_CATALOG = {
     {
       id: 'door2door-ch',
       label: 'Tür-zu-Tür Service Schweiz',
+      image: 'assets/services/door2door-ch/main.jpg',
       desc: 'Komplette Abwicklung: Versand-Organisation ab Johannesburg, Zoll, Mehrwertsteuer-Import und Lieferung an die Wunschadresse in der Schweiz.',
       price: 1022,
       priceNote: 'Transportkosten (ca.) und Einfuhr-MwSt 8.1 % werden separat in der Preisübersicht ausgewiesen – effektive Kosten individuell nach Lieferadresse',
@@ -527,6 +528,7 @@ window.SLING_CATALOG = {
     {
       id: 'build-help',
       label: 'Bauhilfe (Pakete oder Stundensatz)',
+      image: 'assets/services/build-help/main.jpg',
       desc: 'Individuelle Bauunterstützung durch erfahrene Techniker – buchbar als Paket oder zum Stundensatz.',
       info: '⚠️ Wichtig: Die 51 %-Regel für Experimental-Builders muss eingehalten werden. Umfang und Buchung immer in Absprache mit der EAS (Experimental Aviation of Switzerland).',
       quoteOnly: true
