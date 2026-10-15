@@ -303,6 +303,34 @@
     </div>
   </div>
 
+  <!-- UVP-Hinweis beim Öffnen des Configurators -->
+  <div class="modal" id="uvpModal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card">
+      <button class="modal-close" data-close aria-label="Schliessen">×</button>
+      <h3>Preisinformation</h3>
+      <p class="muted">Alle Preise in diesem Configurator sind <strong>UVP (unverbindliche Preisempfehlungen)</strong> – in USD, ohne MwSt, ab Werk Johannesburg, umgerechnet zum aktuellen Tageskurs.</p>
+      <p class="muted">Nach einem unverbindlichen Erstgespräch erhalten Sie eine <strong>verbindliche Offerte</strong>.</p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" data-close>Verstanden</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bestätigung nach Absenden der Anfrage -->
+  <div class="modal" id="inquiryModal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card">
+      <button class="modal-close" data-close aria-label="Schliessen">×</button>
+      <h3>✓ Anfrage ausgelöst</h3>
+      <p class="muted">Ihr E-Mail-Programm öffnet sich mit der vorbereiteten Anfrage – bitte senden Sie die E-Mail ab. Falls sich kein E-Mail-Programm öffnet, senden Sie Ihre Konfiguration bitte direkt an <strong id="inquiryModalEmail"></strong>.</p>
+      <p class="muted">Wir melden uns für ein unverbindliches Erstgespräch. Alle angezeigten Preise sind <strong>UVP</strong> – anschliessend erhalten Sie eine <strong>verbindliche Offerte</strong>.</p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" data-close>OK</button>
+      </div>
+    </div>
+  </div>
+
   <script defer src="/_vercel/insights/script.js"></script>
   <script src="data/catalog.js"></script>
   <script src="app.js"></script>

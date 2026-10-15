@@ -240,6 +240,41 @@
     }
   }
 
+  /* -------- Live-Tageskurs (USD -> CHF/EUR) + Marge -------- */
+
+  const RATE_MARKUP = 0.02;                 // + 2 Rappen/Cent auf den Tageskurs
+  const KEY_RATES_LIVE = 'sling-rates-live-v1';
+
+  function applyLiveRates(chf, eur) {
+    if (isFinite(chf) && chf > 0) state.rates.CHF = Math.round((chf + RATE_MARKUP) * 10000) / 10000;
+    if (isFinite(eur) && eur > 0) state.rates.EUR = Math.round((eur + RATE_MARKUP) * 10000) / 10000;
+  }
+
+  async function fetchDailyRates() {
+    const today = new Date().toISOString().slice(0, 10);
+    try {
+      const cached = JSON.parse(localStorage.getItem(KEY_RATES_LIVE));
+      if (cached && cached.date === today) {
+        applyLiveRates(cached.chf, cached.eur);
+        update();
+        return;
+      }
+    } catch {}
+    try {
+      const res = await fetch('https://api.frankfurter.app/latest?from=USD&to=CHF,EUR');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      const chf = data && data.rates && data.rates.CHF;
+      const eur = data && data.rates && data.rates.EUR;
+      applyLiveRates(chf, eur);
+      try { localStorage.setItem(KEY_RATES_LIVE, JSON.stringify({ date: today, chf, eur })); } catch {}
+      update();
+      console.log(`[FX] Tageskurs geladen: 1 USD = ${chf} CHF / ${eur} EUR (+${RATE_MARKUP} Marge)`);
+    } catch (e) {
+      console.warn('[FX] Tageskurs nicht verfügbar – verwende hinterlegte Kurse.', e.message);
+    }
+  }
+
   /* -------- Lookups (function decls so they're hoisted) -------- */
 
   function findModel(id)    { return CATALOG.models.find(m => m.id === id) || null; }
@@ -2252,7 +2287,10 @@
       ].join('\n');
       const subject = `Sling-Anfrage – ${m ? m.name : 'Konfiguration'} (${format(t.total)})`;
       location.href = `mailto:${encodeURIComponent(ic.email || '')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      status.textContent = `✓ Ihr E-Mail-Programm öffnet sich mit der Anfrage${ic.email ? ` an ${ic.email}` : ''}. Falls nicht, senden Sie Ihre Konfiguration bitte direkt an ${ic.email || 'uns'}.`;
+      const mailEl = document.getElementById('inquiryModalEmail');
+      if (mailEl) mailEl.textContent = ic.email || '';
+      showModal('inquiryModal');
+      status.textContent = `✓ Anfrage ausgelöst – E-Mail an ${ic.email || 'uns'}.`;
     });
   }
 
@@ -2276,6 +2314,15 @@
     });
     setPriceStand(CATALOG.pricesUpdated, 'local');
     fetchSheetPrices();
+    fetchDailyRates();
+
+    // UVP-Hinweis beim Öffnen (einmal pro Browser-Session)
+    try {
+      if (!sessionStorage.getItem('sling-uvp-seen')) {
+        showModal('uvpModal');
+        sessionStorage.setItem('sling-uvp-seen', '1');
+      }
+    } catch { showModal('uvpModal'); }
 
     wireDropdown('langDropdown', val => {
       document.getElementById('langLabel').textContent = val;
