@@ -685,8 +685,8 @@
     renderPanelTitles();
     document.getElementById('summaryNote').textContent =
       state.currency === 'USD'
-        ? 'Alle Preise in USD, ohne MwSt, ab Werk Johannesburg'
-        : `Umgerechnet zu 1 USD = ${(state.rates[state.currency] || 1).toFixed(4)} ${state.currency}`;
+        ? 'Alle Preise UVP, in USD, ohne MwSt, ab Werk Johannesburg'
+        : `UVP – umgerechnet zu 1 USD = ${(state.rates[state.currency] || 1).toFixed(4)} ${state.currency}`;
   }
 
   function renderCurrencyPills() {
@@ -941,7 +941,7 @@
     }).join('');
 
     host.insertAdjacentHTML('beforeend',
-      '<div class="approx-note">ℹ️ <strong>Motor-Preise sind Schätzpreise</strong> (ohne MwSt) – die finale Offerte erfolgt bei Bestellung direkt vom Hersteller bzw. Importeur (Rotax). Alternativ können Sie den Motor selbst organisieren („Eigener Motor").</div>'
+      '<div class="approx-note">ℹ️ <strong>Motor-Preise sind UVP / Schätzpreise</strong> (ohne MwSt) – die finale Offerte erfolgt bei Bestellung direkt vom Hersteller bzw. Importeur (Rotax). Alternativ können Sie den Motor selbst organisieren („Eigener Motor").</div>'
     );
     host.querySelectorAll('.option:not(.disabled)').forEach(opt => {
       const pick = () => { state.config.engineId = opt.dataset.engine; update(); };
@@ -1112,7 +1112,7 @@
       });
     });
     host.insertAdjacentHTML('beforeend',
-      '<div class="approx-note">ℹ️ <strong>Avionik-Preise sind unverbindliche Richtwerte</strong> – Summen der Garmin-Listenpreise aus dem AXIS Build-A-System Guide (Experimental, 07/2026), ohne Einbau und Verkabelung. Die finale Offerte erfolgt bei Bestellung direkt vom Hersteller (Garmin / Importeur). AXIS-Enablements, Garmin-Zubehör und FLARM/ADS-B finden sich unten bei den Add-Ons.</div>'
+      '<div class="approx-note">ℹ️ <strong>Avionik-Preise sind UVP</strong> (unverbindliche Preisempfehlung) – Summen der Garmin-Listenpreise aus dem AXIS Build-A-System Guide (Experimental, 07/2026), ohne Einbau und Verkabelung. Die finale Offerte erfolgt bei Bestellung direkt vom Hersteller (Garmin / Importeur). AXIS-Enablements, Garmin-Zubehör und FLARM/ADS-B finden sich unten bei den Add-Ons.</div>'
     );
     host.querySelectorAll('.option:not(.disabled)[data-av]').forEach(opt => {
       const pick = () => {
@@ -1902,8 +1902,8 @@
     document.getElementById('pvConfigName').textContent = `Währung: ${state.currency} · Kurs: ${state.currency === 'USD' ? '1.0000 (Basis)' : (state.rates[state.currency] || 1).toFixed(4)}`;
     document.getElementById('pvYear').textContent = new Date().getFullYear();
     document.getElementById('pvNote').textContent = state.currency === 'USD'
-      ? 'Alle Preise in USD, ohne MwSt, ab Werk Johannesburg'
-      : `Umgerechnet zu 1 USD = ${(state.rates[state.currency] || 1).toFixed(4)} ${state.currency}`;
+      ? 'Alle Preise UVP, in USD, ohne MwSt, ab Werk Johannesburg'
+      : `UVP – umgerechnet zu 1 USD = ${(state.rates[state.currency] || 1).toFixed(4)} ${state.currency}`;
 
     // Tabellen-Rows
     const rows = [];
@@ -2232,15 +2232,27 @@
       status.classList.remove('error');
       if (!form.reportValidity()) return;
       const t = totals();
-      const payload = {
-        contact: Object.fromEntries(new FormData(form).entries()),
-        config: state.config,
-        totals: { usd: t.total, currency: state.currency, displayed: format(t.total), rate: state.rates[state.currency] },
-        url: location.href
-      };
-      console.log('Sling Anfrage:', payload);
-      status.textContent = 'Danke! Deine Anfrage wurde erfasst. Wir melden uns in Kürze.';
-      form.reset();
+      const m = findModel(state.config.modelId);
+      const data = Object.fromEntries(new FormData(form).entries());
+      const ic = CATALOG.inquiryContact || {};
+      const body = [
+        'Unverbindliche Anfrage über den Sling Kit Configurator',
+        '',
+        `Name:    ${[data.firstName, data.lastName].filter(Boolean).join(' ') || '—'}`,
+        `E-Mail:  ${data.email || '—'}`,
+        `Telefon: ${data.phone || '—'}`,
+        `Land:    ${data.country || '—'}`,
+        '',
+        `Modell:            ${m ? m.name : '—'}`,
+        `Gesamtpreis (UVP): ${format(t.total)}`,
+        '',
+        ...(data.message ? ['Nachricht:', data.message, ''] : []),
+        'Konfigurations-Link:',
+        buildShareUrl(state.config)
+      ].join('\n');
+      const subject = `Sling-Anfrage – ${m ? m.name : 'Konfiguration'} (${format(t.total)})`;
+      location.href = `mailto:${encodeURIComponent(ic.email || '')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      status.textContent = `✓ Ihr E-Mail-Programm öffnet sich mit der Anfrage${ic.email ? ` an ${ic.email}` : ''}. Falls nicht, senden Sie Ihre Konfiguration bitte direkt an ${ic.email || 'uns'}.`;
     });
   }
 

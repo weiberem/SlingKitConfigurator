@@ -17,6 +17,12 @@ window.SLING_CATALOG = {
     cc: ''
   },
 
+  /* Empfänger der Kunden-Anfragen aus dem "Unverbindliche Anfrage"-Formular */
+  inquiryContact: {
+    name: 'Sling Aircraft Switzerland',
+    email: 'remy.weibel@gmail.com'
+  },
+
 
   /* --- Google Sheet als Preis-Quelle ---
    * Leer lassen, um nur die lokalen Preise unten zu verwenden.

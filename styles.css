@@ -1468,6 +1468,13 @@ p { margin: 0 0 0.8em; color: var(--text-dim); }
   gap: 14px;
 }
 
+.form-intro {
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  line-height: 1.55;
+  margin: 0 0 16px;
+}
+
 .inquiry-form h3 { margin: 0 0 6px; }
 
 .inquiry-form label {
