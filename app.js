@@ -2286,7 +2286,8 @@
         buildShareUrl(state.config)
       ].join('\n');
       const subject = `Sling-Anfrage – ${m ? m.name : 'Konfiguration'} (${format(t.total)})`;
-      location.href = `mailto:${encodeURIComponent(ic.email || '')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      const bccPart = ic.bcc ? `bcc=${encodeURIComponent(ic.bcc)}&` : '';
+      location.href = `mailto:${encodeURIComponent(ic.email || '')}?${bccPart}subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       const mailEl = document.getElementById('inquiryModalEmail');
       if (mailEl) mailEl.textContent = ic.email || '';
       showModal('inquiryModal');

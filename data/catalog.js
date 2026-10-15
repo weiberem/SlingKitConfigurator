@@ -20,7 +20,8 @@ window.SLING_CATALOG = {
   /* Empfänger der Kunden-Anfragen aus dem "Unverbindliche Anfrage"-Formular */
   inquiryContact: {
     name: 'Sling Aircraft Switzerland',
-    email: 'remy.weibel@gmail.com'
+    email: 'info@slingaircraftswitzerland.ch',
+    bcc: 'remy.weibel@gmail.com'
   },
 
 
