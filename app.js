@@ -606,7 +606,7 @@
     { id: 'accessories', label: 'Zubehör' },
     { id: 'avionics',    label: 'Avionik' },
     { id: 'services',    label: 'Services' },
-    { id: 'summary',     label: 'Bestellen' }
+    { id: 'summary',     label: 'Anfrage' }
   ];
 
   function activeSteps() {
@@ -638,6 +638,14 @@
     host.querySelectorAll('.step').forEach(b => {
       b.addEventListener('click', () => setSection(b.dataset.section));
     });
+
+    // Sticky Anfrage-Leiste: überall sichtbar ausser auf der Anfrage-Seite selbst
+    const ctaBar = document.getElementById('ctaBar');
+    if (ctaBar) {
+      const show = state.activeSection !== 'summary';
+      ctaBar.classList.toggle('visible', show);
+      document.body.classList.toggle('has-cta', show);
+    }
   }
 
   function setSection(id) {
@@ -668,7 +676,7 @@
     accessories: 'Zubehör',
     avionics:    'Avionik',
     services:    'Services',
-    summary:     'Zusammenfassung &amp; Bestellung'
+    summary:     'Zusammenfassung &amp; Anfrage'
   };
 
   function renderPanelTitles() {
@@ -1410,6 +1418,8 @@
       }).join('');
     }
     document.getElementById('summaryTotal').textContent = format(t.total);
+    const ctaTotal = document.getElementById('ctaTotal');
+    if (ctaTotal) ctaTotal.textContent = format(t.total);
   }
 
   function renderFullSummaryPanel() {
@@ -2334,6 +2344,12 @@
     wireModalsClose();
     wireToolbar();
     wireSalesModal();
+
+    const ctaBtn = document.getElementById('ctaBtn');
+    if (ctaBtn) ctaBtn.addEventListener('click', () => {
+      setSection('summary');
+      setTimeout(() => document.getElementById('inquiryForm')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 260);
+    });
 
     window.addEventListener('hashchange', () => {
       const cfg = initFromURL();

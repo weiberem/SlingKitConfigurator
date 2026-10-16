@@ -166,7 +166,8 @@ window.SLING_CATALOG = {
         { id: 'opt-xpdr45gps', label: 'GTX 45R mit GPS – ADS-B In/Out Transponder', desc: 'Remote-Mount, inkl. GA 35S GPS/WAAS-Antenne', price: 5260, default: true, group: 'xpdr' },
         { id: 'opt-xpdr35',    label: 'GTX 35R – ADS-B Out Transponder', desc: 'Günstigere Variante ohne ADS-B In – ideal in Kombination mit dem AirAvionics AT-1 (FLARM), siehe Add-Ons', price: 2765, group: 'xpdr' },
         { id: 'opt-g5',        label: 'G5 Standby-Instrument', desc: 'Inkl. Install-Kit und Battery Pack', price: 2060 },
-        { id: 'opt-display2',  label: '2. AXIS-Display GDU 116BX', desc: 'Als MFD/EIS, inkl. Install-Kit', price: 5160 }
+        { id: 'opt-display2',  label: '2. AXIS-Display GDU 116BX', desc: 'Als MFD/EIS, inkl. Install-Kit', price: 5160 },
+        { id: 'opt-harness',   label: 'Plug-and-Play-Kabelbaum (konfektionierte Verkabelung)', desc: 'Vorkonfektionierter Kabelbaum nach Panel-Layout – stecken statt crimpen. Abgewählt: nur Geräte & Antennen.', price: 2000, default: true }
       ]
     },
     {
@@ -187,7 +188,8 @@ window.SLING_CATALOG = {
         { id: 'opt-xpdr45gps', label: 'GTX 45R mit GPS – ADS-B In/Out Transponder', desc: 'Remote-Mount, inkl. GA 35S GPS/WAAS-Antenne', price: 5260, default: true, group: 'xpdr' },
         { id: 'opt-xpdr35',    label: 'GTX 35R – ADS-B Out Transponder', desc: 'Günstigere Variante ohne ADS-B In – ideal in Kombination mit dem AirAvionics AT-1 (FLARM), siehe Add-Ons', price: 2765, group: 'xpdr' },
         { id: 'opt-g5',  label: 'G5 Standby-Instrument', desc: 'Inkl. Install-Kit und Battery Pack', price: 2060 },
-        { id: 'opt-ap2', label: 'GFC 500X Autopilot 2-Achsen', desc: '2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits', price: 4105 }
+        { id: 'opt-ap2', label: 'GFC 500X Autopilot 2-Achsen', desc: '2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits', price: 4105 },
+        { id: 'opt-harness', label: 'Plug-and-Play-Kabelbaum (konfektionierte Verkabelung)', desc: 'Vorkonfektionierter Kabelbaum nach Panel-Layout – mehr Geräte als beim Minimum, entsprechend höherer Konfektions-Aufwand. Abgewählt: nur Geräte & Antennen.', price: 2800, default: true }
       ]
     },
     {
@@ -209,7 +211,8 @@ window.SLING_CATALOG = {
       options: [
         { id: 'opt-xpdr45', label: 'GTX 45R – ADS-B In/Out Transponder', desc: 'Remote-Mount – IFR-GPS als Positionsquelle im Display vorhanden', price: 4180, default: true, group: 'xpdr' },
         { id: 'opt-xpdr35', label: 'GTX 35R – ADS-B Out Transponder', desc: 'Günstigere Variante ohne ADS-B In – ideal in Kombination mit dem AirAvionics AT-1 (FLARM), siehe Add-Ons', price: 2765, group: 'xpdr' },
-        { id: 'opt-ap2', label: 'GFC 500X Autopilot 2-Achsen', desc: '2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits', price: 4105 }
+        { id: 'opt-ap2', label: 'GFC 500X Autopilot 2-Achsen', desc: '2× GSA 28 Servo (Pitch/Roll), GMC 507 Mode-Controller, Install-Kits', price: 4105 },
+        { id: 'opt-harness', label: 'Plug-and-Play-Kabelbaum (konfektionierte Verkabelung)', desc: 'Vorkonfektionierter Kabelbaum nach Panel-Layout – umfangreichstes Panel, entsprechend höchster Konfektions-Aufwand. Abgewählt: nur Geräte & Antennen.', price: 3500, default: true }
       ]
     }
   ],
