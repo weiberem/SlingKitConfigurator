@@ -1105,6 +1105,7 @@
               <span class="opt-title">${a.label}</span>
               <span class="opt-desc">${a.desc}${compatible ? '' : ' <em>(nicht freigegeben)</em>'}</span>
               <div class="opt-price">${priceTxt}${priceNote}</div>
+              ${(compatible && a.info) ? `<div class="opt-note">${a.info}</div>` : ''}
               <div class="opt-action-row">
                 ${showDetails ? `<button class="opt-details-btn" type="button" data-av-details="${a.id}" aria-expanded="${isOpen}">Paket-Inhalt ${isOpen ? '▴' : '▾'}</button>` : ''}
                 ${infoLinkHtml(a, 'Garmin')}
@@ -1155,7 +1156,7 @@
       });
     });
     host.insertAdjacentHTML('beforeend',
-      '<div class="approx-note">ℹ️ <strong>Avionik-Preise sind UVP</strong> (unverbindliche Preisempfehlung) – Summen der Garmin-Listenpreise aus dem AXIS Build-A-System Guide (Experimental, 07/2026), ohne Einbau und Verkabelung. Die finale Offerte erfolgt bei Bestellung direkt vom Hersteller (Garmin / Importeur). AXIS-Enablements, Garmin-Zubehör und FLARM/ADS-B finden sich unten bei den Add-Ons.</div>'
+      '<div class="approx-note">ℹ️ <strong>Avionik-Preise sind UVP</strong> (unverbindliche Preisempfehlung) – Summen der Garmin-Listenpreise aus dem AXIS Build-A-System Guide (Experimental, 07/2026), ohne Einbau und Verkabelung. Die finale Offerte erfolgt bei Bestellung direkt vom Hersteller (Garmin / Importeur). AXIS-Enablements, Garmin-Zubehör und FLARM/ADS-B finden sich unten bei den Add-Ons. Setup-, Antennen- und Komplett-Panel-Preise basieren auf der Offerte Midwest Panel Builders (09/2026).</div>'
     );
     host.querySelectorAll('.option:not(.disabled)[data-av]').forEach(opt => {
       const pick = () => {
