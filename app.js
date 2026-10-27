@@ -8,6 +8,7 @@
   const KEY_RATES = 'sling-config-rates-v2';
   const KEY_CURRENCY = 'sling-config-currency-v2';
   const KEY_PRICES_CACHE = 'sling-prices-cache-v1';
+  const KEY_LANG = 'sling-config-lang-v1';
   const PRICES_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
 
   /* -------- State -------- */
@@ -35,6 +36,7 @@
     config: loadCurrent() || initFromURL() || autoSelectAll('tsi'),
     rates: loadRates(),
     currency: loadCurrency(),
+    lang: (function () { try { return localStorage.getItem(KEY_LANG) || 'DE'; } catch { return 'DE'; } })(),
     activeSection: 'parts',
     saved: loadSaved(),
     compareIds: []
@@ -273,6 +275,67 @@
     } catch (e) {
       console.warn('[FX] Tageskurs nicht verfügbar – verwende hinterlegte Kurse.', e.message);
     }
+  }
+
+  /* -------- Sprache (DE/EN) --------
+     Die Seite rendert immer deutsch; translateDom() übersetzt danach alle
+     Text-Knoten über das Wörterbuch in data/i18n-en.js. Statische Knoten
+     merken sich ihr deutsches Original, dynamische werden ohnehin bei
+     jedem update() neu erzeugt. -------- */
+
+  const I18N_ATTRS = ['placeholder', 'title', 'aria-label'];
+
+  function translateText(core) {
+    const dict = window.SLING_I18N_EN || {};
+    if (dict[core] !== undefined) return dict[core];
+    const rx = window.SLING_I18N_EN_RX || [];
+    for (let i = 0; i < rx.length; i++) {
+      const m = core.match(rx[i][0]);
+      if (m) return rx[i][1](m);
+    }
+    return undefined;
+  }
+
+  function translateDom() {
+    const en = state.lang === 'EN';
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n => {
+      const tag = n.parentElement && n.parentElement.tagName;
+      if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'TEXTAREA') return;
+      if (n.__de === undefined) n.__de = n.nodeValue;
+      const src = n.__de;
+      if (!en) { if (n.nodeValue !== src) n.nodeValue = src; return; }
+      const core = src.trim();
+      if (!core) return;
+      const out = translateText(core);
+      if (out !== undefined && out !== core) {
+        const lead = src.slice(0, src.length - src.trimStart().length);
+        const trail = src.slice(src.trimEnd().length);
+        n.nodeValue = lead + out + trail;
+      }
+    });
+    document.querySelectorAll('[placeholder], [title], [aria-label]').forEach(el => {
+      I18N_ATTRS.forEach(attr => {
+        if (!el.hasAttribute(attr)) return;
+        if (!el.__deAttr) el.__deAttr = {};
+        if (el.__deAttr[attr] === undefined) el.__deAttr[attr] = el.getAttribute(attr);
+        const src = el.__deAttr[attr];
+        if (!en) { if (el.getAttribute(attr) !== src) el.setAttribute(attr, src); return; }
+        const out = translateText(src.trim());
+        if (out !== undefined) el.setAttribute(attr, out);
+      });
+    });
+  }
+
+  function setLanguage(lang) {
+    state.lang = lang;
+    try { localStorage.setItem(KEY_LANG, lang); } catch {}
+    const label = document.getElementById('langLabel');
+    if (label) label.textContent = lang;
+    document.documentElement.lang = lang === 'EN' ? 'en' : 'de';
+    update();
   }
 
   /* -------- Lookups (function decls so they're hoisted) -------- */
@@ -662,6 +725,7 @@
       if (id === 'compare') renderComparePanel();
       if (id === 'summary') renderFullSummaryPanel();
       renderSidebar();
+      translateDom();
     };
     if (cur && !cur.hidden) {
       cur.classList.add('leaving');
@@ -2131,6 +2195,7 @@
     if (state.activeSection === 'summary') renderFullSummaryPanel();
     if (state.activeSection === 'saved') renderSavedPanel();
     if (state.activeSection === 'compare') renderComparePanel();
+    translateDom();
   }
 
   /* -------- Wire-up -------- */
@@ -2314,7 +2379,8 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('year').textContent = new Date().getFullYear();
-    document.getElementById('langLabel').textContent = 'DE';
+    document.getElementById('langLabel').textContent = state.lang;
+    document.documentElement.lang = state.lang === 'EN' ? 'en' : 'de';
 
     renderSidebar();
     bindModelStage();
@@ -2336,10 +2402,7 @@
       }
     } catch { showModal('uvpModal'); }
 
-    wireDropdown('langDropdown', val => {
-      document.getElementById('langLabel').textContent = val;
-      // i18n hook – aktuell nur DE inhaltlich verfügbar
-    });
+    wireDropdown('langDropdown', val => setLanguage(val));
     wireCurrencyDropdown();
     wireCurrencyPills();
     wireModalsClose();
