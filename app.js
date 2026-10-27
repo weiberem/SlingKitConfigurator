@@ -9,6 +9,8 @@
   const KEY_CURRENCY = 'sling-config-currency-v2';
   const KEY_PRICES_CACHE = 'sling-prices-cache-v1';
   const KEY_LANG = 'sling-config-lang-v1';
+  const KEY_VAT = 'sling-config-vat-v1';
+  const CH_VAT_PCT = 0.081;              // Schweizer Einfuhr-MwSt für die Brutto-Anzeige
   const PRICES_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
 
   /* -------- State -------- */
@@ -37,6 +39,7 @@
     rates: loadRates(),
     currency: loadCurrency(),
     lang: (function () { try { return localStorage.getItem(KEY_LANG) || 'DE'; } catch { return 'DE'; } })(),
+    showVat: (function () { try { return localStorage.getItem(KEY_VAT) === '1'; } catch { return false; } })(),
     activeSection: 'parts',
     saved: loadSaved(),
     compareIds: []
@@ -406,7 +409,7 @@
   function format(usd, currencyOverride) {
     if (!isFinite(usd)) return '—';
     const cur = currencyOverride || state.currency;
-    const val = usd * (state.rates[cur] || 1);
+    const val = usd * (state.rates[cur] || 1) * (state.showVat ? 1 + CH_VAT_PCT : 1);
     const rounded = Math.round(val);
     const grouped = rounded.toLocaleString('de-CH').replace(/,/g, "'");
     if (cur === 'EUR') return `EUR ${grouped}`;
@@ -506,7 +509,7 @@
     const pct = CATALOG.bundleDiscountPct || 0;
     const discount = allSelected && pct > 0 ? Math.round(subtotal * pct) : 0;
     // Schweizer Einfuhr-MwSt auf den Gesamtwert (nach Rabatt), sofern ein Service sie definiert
-    const vat = vatPct > 0 ? Math.round((subtotal - discount) * vatPct) : 0;
+    const vat = (vatPct > 0 && !state.showVat) ? Math.round((subtotal - discount) * vatPct) : 0;
     const total = subtotal - discount + vat;
     return { lines, partsSubtotal, subtotal, total, discount, discountPct: allSelected ? pct : 0, vat, vatPct };
   }
@@ -791,9 +794,11 @@
     renderCurrencyMenu();
     renderPanelTitles();
     document.getElementById('summaryNote').textContent =
-      state.currency === 'USD'
-        ? 'Alle Preise UVP, in USD, ohne MwSt, ab Werk Johannesburg'
-        : `UVP – umgerechnet zu 1 USD = ${(state.rates[state.currency] || 1).toFixed(4)} ${state.currency}`;
+      state.showVat
+        ? 'Alle Preise UVP inkl. 8.1 % MwSt Schweiz'
+        : (state.currency === 'USD'
+          ? 'Alle Preise UVP, in USD, ohne MwSt, ab Werk Johannesburg'
+          : `UVP – umgerechnet zu 1 USD = ${(state.rates[state.currency] || 1).toFixed(4)} ${state.currency}`);
   }
 
   function renderCurrencyPills() {
@@ -2011,9 +2016,11 @@
     document.getElementById('pvDate').textContent = new Date().toLocaleDateString('de-CH', { day: '2-digit', month: 'long', year: 'numeric' });
     document.getElementById('pvConfigName').textContent = `Währung: ${state.currency} · Kurs: ${state.currency === 'USD' ? '1.0000 (Basis)' : (state.rates[state.currency] || 1).toFixed(4)}`;
     document.getElementById('pvYear').textContent = new Date().getFullYear();
-    document.getElementById('pvNote').textContent = state.currency === 'USD'
-      ? 'Alle Preise UVP, in USD, ohne MwSt, ab Werk Johannesburg'
-      : `UVP – umgerechnet zu 1 USD = ${(state.rates[state.currency] || 1).toFixed(4)} ${state.currency}`;
+    document.getElementById('pvNote').textContent = state.showVat
+      ? 'Alle Preise UVP inkl. 8.1 % MwSt Schweiz'
+      : (state.currency === 'USD'
+        ? 'Alle Preise UVP, in USD, ohne MwSt, ab Werk Johannesburg'
+        : `UVP – umgerechnet zu 1 USD = ${(state.rates[state.currency] || 1).toFixed(4)} ${state.currency}`);
 
     // Tabellen-Rows
     const rows = [];
@@ -2183,6 +2190,7 @@
     renderSidebar();
     renderHeader();
     renderCurrencyPills();
+    document.querySelectorAll('.vat-input').forEach(cb => { cb.checked = state.showVat; });
     renderParts();
     renderEngines();
     renderPropellers();
@@ -2408,6 +2416,14 @@
     wireModalsClose();
     wireToolbar();
     wireSalesModal();
+
+    document.querySelectorAll('.vat-input').forEach(cb => {
+      cb.addEventListener('change', e => {
+        state.showVat = e.target.checked;
+        try { localStorage.setItem(KEY_VAT, state.showVat ? '1' : '0'); } catch {}
+        update();
+      });
+    });
 
     const ctaBtn = document.getElementById('ctaBtn');
     if (ctaBtn) ctaBtn.addEventListener('click', () => {

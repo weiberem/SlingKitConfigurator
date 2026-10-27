@@ -82,6 +82,11 @@
             <button class="cur-pill" data-currency="USD" aria-pressed="true">USD</button>
             <button class="cur-pill" data-currency="CHF" aria-pressed="false">CHF</button>
             <button class="cur-pill" data-currency="EUR" aria-pressed="false">EUR</button>
+            <label class="vat-toggle">
+              <input type="checkbox" id="vatToggleTop" class="vat-input" />
+              <span class="vat-slider" aria-hidden="true"></span>
+              <span class="vat-text">inkl. MwSt (8.1 %)</span>
+            </label>
           </div>
         </header>
 
@@ -182,6 +187,12 @@
         <h3>Preisübersicht</h3>
         <ul class="summary-lines" id="summaryLines"></ul>
       </div>
+
+      <label class="vat-toggle vat-toggle-card">
+        <input type="checkbox" id="vatToggleCard" class="vat-input" />
+        <span class="vat-slider" aria-hidden="true"></span>
+        <span class="vat-text">inkl. MwSt (8.1 %)</span>
+      </label>
 
       <div class="summary-total">
         <span>Gesamtpreis</span>

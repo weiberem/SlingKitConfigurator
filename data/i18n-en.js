@@ -392,6 +392,8 @@ window.SLING_I18N_EN = {
   'Alle Preise UVP (unverbindliche Preisempfehlung). Nach einem Erstgespräch folgt eine verbindliche Offerte.':
     'All prices MSRP (non-binding recommended prices). A binding offer follows after an initial consultation.',
   'Alle Preise ohne MwSt, ab Werk Johannesburg': 'All prices excl. VAT, ex works Johannesburg',
+  'inkl. MwSt (8.1 %)': 'incl. VAT (8.1%)',
+  'Alle Preise UVP inkl. 8.1 % MwSt Schweiz': 'All prices MSRP incl. 8.1% Swiss VAT',
   'Konfiguration online aufrufen': 'Open this configuration online',
   'Schlüssel': 'Key',
   'Direkt-Link': 'Direct link'
